@@ -1,0 +1,23 @@
+# Node
+node_modules/
+dist/
+.env
+
+# Logs
+*.log
+
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# TypeScript
+*.tsbuildinfo
+
+# VSCode
+.vscode/
+
+#bancoDeDados
+src/database/database.sqlite
