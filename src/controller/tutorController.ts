@@ -1,10 +1,10 @@
 import { Request, Response} from "express"
 
-class userController{
+class tutorController{
 
     async create(request: Request, response: Response){
         
     }
 }
 
-export {userController};
+export {tutorController};
