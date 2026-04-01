@@ -2,7 +2,7 @@ import { dataSource } from "../database/dataSource";
 import { tutors } from "../models/tutor";
 import { Repository } from "typeorm";
 
-class tutorRepository{
+class TutorRepository{
 
     private repository: Repository<tutors>
 
@@ -20,4 +20,4 @@ class tutorRepository{
     }
 }
 
-export {tutorRepository}
+export {TutorRepository}
