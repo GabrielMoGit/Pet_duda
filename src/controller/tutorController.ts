@@ -14,8 +14,8 @@ class tutorController{
             })
         }
 
-        const tutor = tutorRepository.createAndSave(name, phone)
-        
+        tutorRepository.createAndSave(name, phone)
+
         return response.status(200).json({
             message: "Tutor cadastrado!"
         })
