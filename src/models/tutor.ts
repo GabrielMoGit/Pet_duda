@@ -1,11 +1,12 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
 import { v4 } from "uuid"
 
-@Entity("Tutors")
+@Entity("tutors")
+
 class tutors{
 
     @PrimaryColumn()
-    id!: string
+    readonly id!: string
 
     @Column()
     name!: string
