@@ -2,16 +2,11 @@ import { Tittle } from './styles'
 import { MyButton } from '../../components/buttons/styles'
 import { useState} from 'react'
 
-function Home(){
-
-    const [count, setCount] = useState(0)
-
+export function App(){
     return <div>
         <Tittle>Home</Tittle>
-        <MyButton onClick={() => setCount(count + 1)}>
-            Clicou {count} vezes
+        <MyButton>
+            Olá
         </MyButton>
     </div>
 }
-
-export default Home
