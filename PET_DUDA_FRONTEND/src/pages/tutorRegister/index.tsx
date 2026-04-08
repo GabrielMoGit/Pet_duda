@@ -1,15 +1,41 @@
 import { StyledInput } from '../../components/input/index'
 import { RegisterButton } from '../../components/buttons/registerButton'
 import { useState } from 'react'
+import { api } from '../../services/api'
 
 export function TutorRegister(){
     
    const [name, setName] = useState('')
    const [phone, setPhone] = useState('')
+   const [message, setMessage] = useState('')
 
-   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
+
+   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
     e.preventDefault()
-    console.log(name, phone)
+    
+    try{
+        await api.post('/tutor',{
+            name,
+            phone
+        })
+
+        setMessage("Tutor cadastrado com sucesso!")
+        setName('')
+        setPhone('')
+    }
+    catch(error: any){
+        if(error.response){
+            if(error.response.status === 400){
+                setMessage("telefone já cadastrado!")
+            }else{
+                setMessage('Erro ao cadastrar tutor')
+            }
+        }
+        else{
+            setMessage("Erro de conexão com o servidor")
+        }
+    }
+
    }
 
     return (
@@ -34,6 +60,7 @@ export function TutorRegister(){
                 <RegisterButton 
                     type="submit">Cadastrar
                 </RegisterButton>
+                <p style={{ color: 'red' }}>{message}</p>
             </form>
         </div>
     )
