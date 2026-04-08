@@ -7,22 +7,27 @@ export function TutorRegister(){
    const [name, setName] = useState('')
    const [phone, setPhone] = useState('')
 
+   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
+    e.preventDefault()
+    console.log(name, phone)
+   }
+
     return (
         <div>
             <h1>Cadastrar Tutor</h1>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <StyledInput 
                 placeholder="Nome" 
                 value={name}
-                onChange={(e) => (e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 />
                 <br />
                 <br />
                 <StyledInput 
                 placeholder="telefone" 
                 value = {phone}
-                onChange={(e) => (e.target.value)}
+                onChange={(e) => setPhone(e.target.value)}
                 />
                 <br />
                 <br />
