@@ -5,13 +5,14 @@ import { api } from '../../services/api'
 
 export function TutorRegister(){
     
-   const [name, setName] = useState('')
-   const [phone, setPhone] = useState('')
-   const [message, setMessage] = useState('')
+    const [name, setName] = useState('')
+    const [phone, setPhone] = useState('')
+    const [message, setMessage] = useState('')
+    const [hasError, setHasError] = useState(false)
+    const [hasSuccess, setHasSuccess] = useState(false)
 
-
-   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
-    e.preventDefault()
+    async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
+        e.preventDefault()
     
     try{
         await api.post('/tutor',{
@@ -19,7 +20,9 @@ export function TutorRegister(){
             phone
         })
 
+        setHasSuccess(true)
         setMessage("Tutor cadastrado com sucesso!")
+        setTimeout(() => setHasSuccess(false), 1000)
         setName('')
         setPhone('')
     }
@@ -27,10 +30,12 @@ export function TutorRegister(){
         if(error.response){
             if(error.response.status === 400){
                 setMessage("telefone já cadastrado!")
+                setHasError(true)
+                setTimeout(() => setHasError(false), 1000)
             }else{
                 setMessage('Erro ao cadastrar tutor')
             }
-        }
+        }   
         else{
             setMessage("Erro de conexão com o servidor")
         }
@@ -47,6 +52,8 @@ export function TutorRegister(){
                 placeholder="Nome" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                hasError={hasError}
+                hasSuccess={hasSuccess}
                 />
                 <br />
                 <br />
@@ -54,6 +61,8 @@ export function TutorRegister(){
                 placeholder="telefone" 
                 value = {phone}
                 onChange={(e) => setPhone(e.target.value)}
+                hasError={hasError}
+                hasSuccess={hasSuccess}
                 />
                 <br />
                 <br />
