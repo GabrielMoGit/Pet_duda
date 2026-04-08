@@ -1,3 +1,4 @@
+import { Input } from '../../components/input/index'
 
 export function Home(){
     
@@ -6,9 +7,10 @@ export function Home(){
             <h1>Cadastrar Tutor</h1>
 
             <form>
-                <input type="text" placeholder="Nome" />
-                <input type="text" placeholder="telefone" />
-
+                <Input placeholder="Nome" />
+                <br />
+                <Input placeholder="telefone" />
+                <br />
                 <button type="submit">Cadastrar</button>
             </form>
         </div>

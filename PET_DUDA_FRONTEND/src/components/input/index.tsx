@@ -4,7 +4,7 @@ type Props = {
     placeholder: string
 }
 
-function Input({placeholder}: Props){
+export function Input({placeholder}: Props){
     return(
         <InputStyled placeholder={placeholder} />
     )
