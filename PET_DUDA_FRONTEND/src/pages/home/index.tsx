@@ -1,4 +1,5 @@
 import { Input } from '../../components/input/index'
+import { RegisterButton } from '../../components/buttons/registerButton'
 
 export function Home(){
     
@@ -9,9 +10,13 @@ export function Home(){
             <form>
                 <Input placeholder="Nome" />
                 <br />
+                <br />
                 <Input placeholder="telefone" />
                 <br />
-                <button type="submit">Cadastrar</button>
+                <br />
+                <RegisterButton 
+                    type="submit">Cadastrar
+                </RegisterButton>
             </form>
         </div>
     )
