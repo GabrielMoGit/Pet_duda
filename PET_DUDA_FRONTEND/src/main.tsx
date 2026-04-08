@@ -1,9 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Home } from "./pages/home"
+import { TutorRegister } from "./pages/tutorRegister"
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Home/>
+    <TutorRegister/>
   </StrictMode>,
 )
