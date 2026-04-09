@@ -14,6 +14,11 @@ class pets{
     @Column()
     name!: string
 
+    constructor(){
+        if(!this.id){
+            this.id = v4()
+        }
+    }
 }
 
 export {pets}
