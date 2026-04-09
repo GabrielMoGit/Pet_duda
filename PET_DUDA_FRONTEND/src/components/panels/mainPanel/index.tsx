@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Container, Panel, PanelHeader, Content } from './styles'
-import { GenericButton } from "../buttons/genericButton";
+import { GenericButton } from "../../buttons/genericButton";
 
 
 
@@ -16,7 +16,8 @@ export function Layout() {
       </Panel>
 
       <Content>
-        <Outlet /> {/* Aqui o conteúdo da rota vai aparecer */}
+        <Outlet/> 
+        {}
       </Content>
     </Container>
   );

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const InputStyled = styled.input<{hasError: boolean, hasSuccess: boolean}>`
+export const GenericInputStyled = styled.input<{hasError: boolean, hasSuccess: boolean}>`
     width: 30%;
     padding: 10px;
     border-radius: 8px;

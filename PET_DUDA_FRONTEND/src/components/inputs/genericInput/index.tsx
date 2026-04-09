@@ -1,4 +1,4 @@
-import { InputStyled } from './styles'
+import { GenericInputStyled } from './styles'
 
 type Props = {
     placeholder: string
@@ -8,9 +8,9 @@ type Props = {
     hasSuccess: boolean
 }
 
-export function StyledInput({placeholder, value, onChange, hasError, hasSuccess}: Props){
+export function GenericStyledInput({placeholder, value, onChange, hasError, hasSuccess}: Props){
     return(
-        <InputStyled
+        <GenericInputStyled
         placeholder={placeholder}
         value={value}
         onChange={onChange}

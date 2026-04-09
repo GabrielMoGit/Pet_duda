@@ -1,4 +1,4 @@
-import { StyledInput } from '../../components/input/index'
+import { GenericStyledInput } from '../../components/inputs/genericInput'
 import { RegisterButton } from '../../components/buttons/registerButton'
 import { useState } from 'react'
 import { api } from '../../services/api'
@@ -48,7 +48,7 @@ export function TutorRegister(){
             <h1>Cadastrar Tutor</h1>
 
             <form onSubmit={handleSubmit}>
-                <StyledInput 
+                <GenericStyledInput 
                 placeholder="Nome" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -57,7 +57,7 @@ export function TutorRegister(){
                 />
                 <br />
                 <br />
-                <StyledInput 
+                <GenericStyledInput 
                 placeholder="telefone" 
                 value = {phone}
                 onChange={(e) =>{
