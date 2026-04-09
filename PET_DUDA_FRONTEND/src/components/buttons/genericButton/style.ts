@@ -1,22 +1,21 @@
 import styled from "styled-components";
 
 export const GenericButtonStyled = styled.button`
-    width: 10%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
+    width: 100%;               
+  padding: 10px 16px;        
+  background-color: #fff;    
+  color: #000;               
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;       
+  overflow: hidden;          
+  text-overflow: ellipsis;   
+  transition: background-color 0.2s;
 
-    background-color: #007bff;
-    color: white;
-
-    font-size: 16px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-
-    &:hover{
-    background-color: #0056b3;
-    }
+  &:hover {
+    background-color: #ddd;  /* efeito hover */
+  }
 `

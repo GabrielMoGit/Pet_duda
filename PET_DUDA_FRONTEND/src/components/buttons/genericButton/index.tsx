@@ -2,7 +2,7 @@ import { GenericButtonStyled } from "./style";
 
 type GenericButtonProps = {
     children: string
-    type?: 'button'
+    type?: 'button' | 'submit'
     onClick?: () => void
 }
 

@@ -11,19 +11,7 @@ export function Home(){
 
     return(
         <div>
-            <h1>Pet MK</h1>
-            <GenericButton
-            type = 'button'
-            onClick={() => navigate('/register')}>
-                cadastrar Tutor
-            </GenericButton>
-            <br />
-            <br />
-            <GenericButton
-            type = 'button'
-            onClick = {() => {}}>
-                Listar Tutores
-            </GenericButton>
+            
         </div>
     )
 }

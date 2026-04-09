@@ -92,11 +92,6 @@ export function TutorRegister(){
                     <RegisterButton 
                     type="submit">Cadastrar
                     </RegisterButton>
-                    <CancelButton 
-                    type = 'button'
-                    onClick={() => navigate('/home')}
-                    >Cancelar
-                    </CancelButton>  
                 </div>
             </form>
         </div>
