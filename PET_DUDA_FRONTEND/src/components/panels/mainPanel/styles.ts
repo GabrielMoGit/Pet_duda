@@ -25,4 +25,17 @@ export const PanelHeader = styled.div`
 export const Content = styled.div`
   flex: 1;
   padding: 20px;
+  min-height: 0;
+  background-image: url("/background.webp");
+  background-size: cover;    
+  background-position: center; 
+  background-repeat: no-repeat; 
 `;
+
+export const PageContent = styled.div`
+  width: 98%;
+  padding: 20px;
+  height: 95%;
+  background-color: rgba(142, 140, 140, 0.4);
+  border-radius: 10px
+`

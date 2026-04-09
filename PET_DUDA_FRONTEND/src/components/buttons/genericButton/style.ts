@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const GenericButtonStyled = styled.button`
-    width: 100%;               
+  width: 100%;               
   padding: 10px 16px;        
   background-color: #fff;    
   color: #000;               

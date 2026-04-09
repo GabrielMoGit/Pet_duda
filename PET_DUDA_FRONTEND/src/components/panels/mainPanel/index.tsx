@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { Container, Panel, PanelHeader, Content } from './styles'
+import { Container, Panel, PanelHeader, Content, PageContent } from './styles'
 import { GenericButton } from "../../buttons/genericButton";
 
 
@@ -16,8 +16,9 @@ export function Layout() {
       </Panel>
 
       <Content>
-        <Outlet/> 
-        {}
+        <PageContent>
+          <Outlet/> 
+        </PageContent>
       </Content>
     </Container>
   );
