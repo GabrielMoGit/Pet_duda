@@ -16,6 +16,10 @@ class PetRepository{
         return this.repository.save(pet)
     }
 
+    async checkIfPetAlreadyExistForTutor(name: string, id_tutor: string){
+        return this.repository.findOneBy({name, id_tutor})
+    }
+
 }
 
 export {PetRepository}

@@ -5,7 +5,7 @@ import { PetRepository } from "../repositories/petRepository";
 class petController{
 
     async create(request: Request, response: Response){
-        const {name, id_tutor, phone} = request.body
+        const {name, phone} = request.body
         const tutorRepository = new TutorRepository()
         const petRepository = new PetRepository()
 
@@ -14,6 +14,14 @@ class petController{
         if(!tutorAlreadyExist){
             return response.status(400).json({
                 error: "Tutor inexistente"
+            })
+        }
+
+        const petAlreadyExist = await petRepository.checkIfPetAlreadyExistForTutor(name, tutorAlreadyExist.id)
+
+        if(petAlreadyExist){
+            return response.status(400).json({
+                error: "Pet já cadastrado para esse tutor"
             })
         }
 
