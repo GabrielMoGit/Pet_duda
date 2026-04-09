@@ -10,14 +10,14 @@ export const Panel = styled.div`
   background-color: #cf7814;
   padding: 20px;
   display: flex;
-  flex-direction: column;  /* coluna: topo -> baixo */
-  gap: 10px;               /* espaço entre itens */
+  flex-direction: column;  
+  gap: 10px;               
 `;
 
 export const PanelHeader = styled.div`
   font-size: 50px;
   font-weight: bold;
-  margin-bottom: 20px;    /* espaço entre o texto e os botões */
+  margin-bottom: 20px;    
   color: #fff;
   text-align: center;
 `;
@@ -32,10 +32,17 @@ export const Content = styled.div`
   background-repeat: no-repeat; 
 `;
 
-export const PageContent = styled.div`
+type PageContentProps = {
+  hasContent: boolean
+}
+ 
+export const PageContent = styled.div<PageContentProps>`
   width: 98%;
   padding: 20px;
   height: 95%;
-  background-color: rgba(142, 140, 140, 0.4);
+  background-color: ${({hasContent}) => 
+    hasContent  
+      ? "rgba(142, 140, 140, 0.0)"
+      : "rgba(142, 140, 140, 0.4)"};
   border-radius: 10px
 `
