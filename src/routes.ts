@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { userController} from "./controller/userController";
+import { tutorController} from "./controller/tutorController";
 
 const router = Router();
 
-const UserController = new userController();
+const TutorController = new tutorController();
 
-router.post("/users", UserController.create)
+router.post("/tutor", TutorController.create)
 
 export {router};

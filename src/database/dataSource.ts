@@ -2,11 +2,9 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 
 export const dataSource = new DataSource({
-  type: "sqlite",
-  database: "database.sqlite",
-  synchronize: true,
-  logging: false,
+   type: "sqlite",
+  database: "src/database/database.sqlite",
   entities: ["src/models/*.ts"],
-  migrations: [],
-  subscribers: [],
+  migrations: ["src/database/migrations/*.ts"],
+  synchronize: false,
 })
