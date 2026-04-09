@@ -3,12 +3,14 @@ import { GenericButtonStyled } from "./style";
 type GenericButtonProps = {
     children: string
     type?: 'button'
+    onClick?: () => void
 }
 
-export function GenericButton({children, type = 'button'}: GenericButtonProps){
+export function GenericButton({children, type = 'button', onClick}: GenericButtonProps){
     return(
         <GenericButtonStyled 
-            type={type}>
+            type={type}
+            onClick={onClick}>
             {children}
         </GenericButtonStyled>
     )
