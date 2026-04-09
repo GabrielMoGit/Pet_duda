@@ -18,7 +18,11 @@ export function Layout() {
         <GenericButton onClick={() => {
           navigate("/register")
           setHasContent(false)
-          }}>Registrar</GenericButton>
+          }}>Cadastrar Tutor</GenericButton>
+          <GenericButton onClick={() => {
+          navigate("/petRegister")
+          setHasContent(false)
+          }}>Cadastrar Pet</GenericButton>
       </Panel>
 
       <Content>
