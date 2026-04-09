@@ -15,7 +15,7 @@ class tutors{
     phone!: string
 
     @CreateDateColumn()
-    created_at!: Date;
+    created_at!: Date
 
     constructor(){
         if(!this.id){
@@ -24,4 +24,4 @@ class tutors{
     }
 }
 
-export {tutors};
+export {tutors}
