@@ -1,7 +1,9 @@
 import { StyledInput } from '../../components/input/index'
 import { RegisterButton } from '../../components/buttons/registerButton'
+import { CancelButton } from '../../components/buttons/cancelButton'
 import { useState } from 'react'
 import { api } from '../../services/api'
+import { useNavigate } from 'react-router-dom'
 
 export function TutorRegister(){
 
@@ -10,6 +12,7 @@ export function TutorRegister(){
     const [message, setMessage] = useState('')
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
+    const navigate = useNavigate()
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
@@ -85,10 +88,16 @@ export function TutorRegister(){
                 />
                 <br />
                 <p style={{ color: 'red' }}>{message}</p>
-                <RegisterButton 
+                <div style={{display: 'flex', gap: '10px'}}>
+                    <RegisterButton 
                     type="submit">Cadastrar
-                </RegisterButton>
-                
+                    </RegisterButton>
+                    <CancelButton 
+                    type = 'button'
+                    onClick={() => navigate('/home')}
+                    >Cancelar
+                    </CancelButton>  
+                </div>
             </form>
         </div>
     )
