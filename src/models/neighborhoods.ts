@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
 import { v4 } from "uuid"
 
-@Entity("neighbothoods")
+@Entity("neighborhoods")
 
-class neighbothoods{
+class neighborhoods{
 
     @PrimaryColumn()
     readonly id!: string
@@ -19,4 +19,4 @@ class neighbothoods{
 
 }
 
-export { neighbothoods }
+export { neighborhoods }

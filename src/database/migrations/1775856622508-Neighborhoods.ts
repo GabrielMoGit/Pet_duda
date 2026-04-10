@@ -6,7 +6,7 @@ export class Neighborhoods1775856622508 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: "neighbothoods",
+                name: "neighborhoods",
                 columns:[
                     {
                         name: "id",
