@@ -12,7 +12,7 @@ class petController{
         const tutorAlreadyExist = await tutorRepository.findByPhone(phone)
 
         if(!tutorAlreadyExist){
-            return response.status(400).json({
+            return response.status(404).json({
                 error: "Tutor inexistente"
             })
         }

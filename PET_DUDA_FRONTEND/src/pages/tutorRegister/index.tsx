@@ -14,34 +14,33 @@ export function TutorRegister(){
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
         const cleanPhone = phone.replace(/\D/g, '')
-    try{
-        await api.post('/tutor',{
-            name,
-            phone: cleanPhone
-        })
+        try{
+            await api.post('/pet',{
+                name,
+                phone: cleanPhone
+            })
 
-        setHasSuccess(true)
-        setMessage("Tutor cadastrado com sucesso!")
-        setTimeout(() => setHasSuccess(false), 500)
-        setName('')
-        setPhone('')
-    }
-    catch(error: any){
-        if(error.response){
-            if(error.response.status === 400){
-                setMessage("telefone já cadastrado!")
-                setHasError(true)
-                setTimeout(() => setHasError(false), 500)
-            }else{
-                setMessage('Erro ao cadastrar tutor')
+            setHasSuccess(true)
+            setMessage("Tutor cadastrado com sucesso!")
+            setTimeout(() => setHasSuccess(false), 500)
+            setName('')
+            setPhone('')
+        }
+        catch(error: any){
+            if(error.response){
+                if(error.response.status === 400){
+                    setMessage("telefone já cadastrado!")
+                    setHasError(true)
+                    setTimeout(() => setHasError(false), 500)
+                }else{
+                    setMessage('Erro ao cadastrar tutor')
+                }
+            }   
+            else{
+                setMessage("Erro de conexão com o servidor")
             }
-        }   
-        else{
-            setMessage("Erro de conexão com o servidor")
         }
     }
-
-   }
 
     return (
         <div>
