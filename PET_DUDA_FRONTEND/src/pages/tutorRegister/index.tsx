@@ -15,13 +15,13 @@ export function TutorRegister(){
         e.preventDefault()
         const cleanPhone = phone.replace(/\D/g, '')
         try{
-            await api.post('/pet',{
+            const response = await api.post('/tutor',{
                 name,
                 phone: cleanPhone
             })
 
             setHasSuccess(true)
-            setMessage("Tutor cadastrado com sucesso!")
+            setMessage(response.data.message)
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
             setPhone('')
@@ -29,7 +29,7 @@ export function TutorRegister(){
         catch(error: any){
             if(error.response){
                 if(error.response.status === 400){
-                    setMessage("telefone já cadastrado!")
+                    setMessage(error.response.data.error)
                     setHasError(true)
                     setTimeout(() => setHasError(false), 500)
                 }else{
