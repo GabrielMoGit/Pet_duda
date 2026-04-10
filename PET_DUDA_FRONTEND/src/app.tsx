@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/panels/mainPanel'
 import { Home } from './pages/Home'
 import { TutorRegister } from './pages/tutorRegister'
+import { PetRegister } from './pages/petsRegister'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           <Route index element={<Home />} />      
           <Route path="home" element={<Home />} />
           <Route path="register" element={<TutorRegister />} />
+          <Route path="petRegister" element={<PetRegister/>} />
         </Route>
       </Routes>
     </BrowserRouter>

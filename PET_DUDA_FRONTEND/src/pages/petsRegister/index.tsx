@@ -3,7 +3,7 @@ import { RegisterButton } from '../../components/buttons/registerButton'
 import { useState } from 'react'
 import { api } from '../../services/api'
 
-export function TutorRegister(){
+export function PetRegister(){
 
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
@@ -13,9 +13,10 @@ export function TutorRegister(){
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
+        
         const cleanPhone = phone.replace(/\D/g, '')
         try{
-            const response = await api.post('/tutor',{
+            const response = await api.post('/pet',{
                 name,
                 phone: cleanPhone
             })
@@ -28,36 +29,31 @@ export function TutorRegister(){
         }
         catch(error: any){
             if(error.response){
+                if(error.response.status === 404){
+                    setMessage(error.response.data.error)
+                    setHasError(true)
+                    setTimeout(() => setHasError(false), 500)
+                }
                 if(error.response.status === 400){
                     setMessage(error.response.data.error)
                     setHasError(true)
                     setTimeout(() => setHasError(false), 500)
-                }else{
-                    setMessage('Erro ao cadastrar tutor')
                 }
             }   
             else{
                 setMessage("Erro de conexão com o servidor")
             }
         }
+    
     }
 
-    return (
+    return(
         <div>
-            <h1>Cadastrar Tutor</h1>
+            <h1>Cadastrar Pet</h1>
 
             <form onSubmit={handleSubmit}>
                 <GenericStyledInput 
-                placeholder="Nome" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                hasError={hasError}
-                hasSuccess={hasSuccess}
-                />
-                <br />
-                <br />
-                <GenericStyledInput 
-                placeholder="telefone" 
+                placeholder="telefone do Tutor" 
                 value = {phone}
                 onChange={(e) =>{
                     const onlyNumbers = e.target.value.replace(/\D/g, '')
@@ -83,6 +79,15 @@ export function TutorRegister(){
                 hasSuccess={hasSuccess}
                 />
                 <br />
+                <br />
+                <GenericStyledInput 
+                placeholder="Nome" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                hasError={hasError}
+                hasSuccess={hasSuccess}
+                />
+                <br />
                 <p style={{ color: 'red' }}>{message}</p>
                 <div style={{display: 'flex', gap: '10px'}}>
                     <RegisterButton 
@@ -93,3 +98,4 @@ export function TutorRegister(){
         </div>
     )
 }
+

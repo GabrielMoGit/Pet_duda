@@ -1,21 +1,18 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
 import { v4 } from "uuid"
 
-@Entity("tutors")
+@Entity("pets")
 
-class tutors{
+class pets{
 
     @PrimaryColumn()
     readonly id!: string
+    
+    @Column()
+    readonly id_tutor!: string
 
     @Column()
     name!: string
-
-    @Column()
-    phone!: string
-
-    @CreateDateColumn()
-    created_at!: Date
 
     constructor(){
         if(!this.id){
@@ -24,4 +21,4 @@ class tutors{
     }
 }
 
-export {tutors}
+export {pets}
