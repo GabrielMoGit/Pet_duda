@@ -45,9 +45,10 @@ export function TutorRegister(){
     return (
         <div>
             <h1>Cadastrar Tutor</h1>
-
+            
             <form onSubmit={handleSubmit}>
-                <GenericStyledInput 
+                <div style={{ display: 'flex', gap: '10px'}}>
+                    <GenericStyledInput 
                 placeholder="Nome" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -83,12 +84,14 @@ export function TutorRegister(){
                 hasSuccess={hasSuccess}
                 />
                 <br />
+                </div>
                 <p style={{ color: 'red' }}>{message}</p>
                 <div style={{display: 'flex', gap: '10px'}}>
                     <RegisterButton 
                     type="submit">Cadastrar
                     </RegisterButton>
                 </div>
+                
             </form>
         </div>
     )
