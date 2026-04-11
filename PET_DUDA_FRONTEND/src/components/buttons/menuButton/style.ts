@@ -10,7 +10,7 @@ export const MenuButtonStyled = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
   white-space: nowrap;       
   overflow: hidden;          
   text-overflow: ellipsis;   
