@@ -5,16 +5,16 @@ export const Container = styled.div`
   height: 100vh;
 `;
 
-export const Panel = styled.div`
+export const SidePanel = styled.div`
   width: 200px;
-  background-color: #cf7814;
-  padding: 20px;
+  background-color: #000000;
+  padding: 10px;
   display: flex;
   flex-direction: column;  
   gap: 10px;               
 `;
 
-export const PanelHeader = styled.div`
+export const SidePanelHeader = styled.div`
   font-size: 50px;
   font-weight: bold;
   margin-bottom: 20px;    
@@ -37,12 +37,23 @@ type PageContentProps = {
 }
  
 export const PageContent = styled.div<PageContentProps>`
-  width: 98%;
+  width: 93%;
   padding: 20px;
-  height: 95%;
-  background-color: ${({hasContent}) => 
+  height: 87%;
+  margin-top: 25px;
+  margin-left: 25px;
+  background-color: ${({ hasContent }) => 
     hasContent  
       ? "rgba(142, 140, 140, 0.0)"
       : "rgba(142, 140, 140, 0.4)"};
-  border-radius: 10px
-`
+
+  ${({ hasContent }) =>
+    !hasContent &&
+    `
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    `
+  }
+
+  border-radius: 10px;
+`;
