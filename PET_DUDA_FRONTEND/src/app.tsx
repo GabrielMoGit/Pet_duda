@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Layout } from './components/panels/mainPanel'
+import { Layout } from './components/layout'
 import { Home } from './pages/Home'
 import { TutorRegister } from './pages/tutorRegister'
 import { PetRegister } from './pages/petsRegister'
