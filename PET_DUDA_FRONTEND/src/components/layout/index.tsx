@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Container, SidePanel, SidePanelHeader, Content, PageContent } from '../layout/styles'
-import { GenericButton } from "../buttons/genericButton";
+import { MenuButton } from "../buttons/menuButton";
 import { useState } from "react";
 
 export function Layout() {
@@ -11,18 +11,18 @@ export function Layout() {
     <Container>
       <SidePanel>
         <SidePanelHeader>MK</SidePanelHeader>
-        <GenericButton onClick={() => {
+        <MenuButton onClick={() => {
           navigate("/home")
           setHasContent(true)
-          }}>Página inicial</GenericButton>
-        <GenericButton onClick={() => {
+          }}>Página inicial</MenuButton>
+        <MenuButton onClick={() => {
           navigate("/register")
           setHasContent(false)
-          }}>Cadastrar Tutor</GenericButton>
-          <GenericButton onClick={() => {
+          }}>Cadastrar Tutor</MenuButton>
+          <MenuButton onClick={() => {
           navigate("/petRegister")
           setHasContent(false)
-          }}>Cadastrar Pet</GenericButton>
+          }}>Cadastrar Pet</MenuButton>
       </SidePanel>
 
       <Content>

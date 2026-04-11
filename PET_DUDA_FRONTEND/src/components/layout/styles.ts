@@ -7,7 +7,7 @@ export const Container = styled.div`
 
 export const SidePanel = styled.div`
   width: 200px;
-  background-color: #cf7814;
+  background-color: #000000;
   padding: 20px;
   display: flex;
   flex-direction: column;  
