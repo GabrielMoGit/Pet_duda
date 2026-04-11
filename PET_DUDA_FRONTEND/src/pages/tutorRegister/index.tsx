@@ -7,6 +7,8 @@ export function TutorRegister(){
 
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
+    const [street, setStreet] = useState('')
+    const [neighborhood, setNeighborhood] = useState('')
     const [message, setMessage] = useState('')
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
@@ -22,6 +24,7 @@ export function TutorRegister(){
 
             setHasSuccess(true)
             setMessage(response.data.message)
+            setTimeout(() => {setMessage("")}, 4000)
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
             setPhone('')
@@ -30,14 +33,17 @@ export function TutorRegister(){
             if(error.response){
                 if(error.response.status === 400){
                     setMessage(error.response.data.error)
+                    setTimeout(() => {setMessage("")}, 2000)
                     setHasError(true)
                     setTimeout(() => setHasError(false), 500)
                 }else{
                     setMessage('Erro ao cadastrar tutor')
+                    setTimeout(() => {setMessage("")}, 4000)
                 }
             }   
             else{
                 setMessage("Erro de conexão com o servidor")
+                setTimeout(() => {setMessage("")}, 4000)
             }
         }
     }
@@ -49,42 +55,57 @@ export function TutorRegister(){
             <form onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
                     <GenericStyledInput 
-                placeholder="Nome" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                hasError={hasError}
-                hasSuccess={hasSuccess}
-                />
-                <br />
-                <br />
-                <GenericStyledInput 
-                placeholder="telefone" 
-                value = {phone}
-                onChange={(e) =>{
-                    const onlyNumbers = e.target.value.replace(/\D/g, '')
-                    const limitedNumbers = onlyNumbers.slice(0, 11)
+                        placeholder="Nome" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+                    <GenericStyledInput 
+                        placeholder="telefone" 
+                        value = {phone}
+                        onChange={(e) =>{
+                            const onlyNumbers = e.target.value.replace(/\D/g, '')
+                            const limitedNumbers = onlyNumbers.slice(0, 11)
 
-                    let formatted = limitedNumbers
+                            let formatted = limitedNumbers
 
-                    if(limitedNumbers.length > 0){
-                        formatted = '(' + limitedNumbers
-                    }
+                            if(limitedNumbers.length > 0){
+                                formatted = '(' + limitedNumbers
+                            }
 
-                    if(limitedNumbers.length > 2){
-                        formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2)
-                    }
+                            if(limitedNumbers.length > 2){
+                                formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2)
+                            }
 
-                    if(limitedNumbers.length > 7){
-                        formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
-                    }
-                    setPhone(formatted)
-                }}
-                
-                hasError={hasError}
-                hasSuccess={hasSuccess}
-                />
-                <br />
+                            if(limitedNumbers.length > 7){
+                                formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
+                            }
+                            setPhone(formatted)
+                        }}
+                        
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
                 </div>
+                <br />
+                <div style={{ display: 'flex', gap: '10px'}}>
+                    <GenericStyledInput 
+                        placeholder="Rua" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+                    <GenericStyledInput 
+                        placeholder="Bairro" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+                </div>
+                
                 <p style={{ color: 'red' }}>{message}</p>
                 <div style={{display: 'flex', gap: '10px'}}>
                     <RegisterButton 
