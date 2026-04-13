@@ -24,6 +24,11 @@ export function TutorRegister(){
                 const response = await api.get('/listStreets',{
                     params: {name: text}
                 })
+
+                const filteredStreets = response.data.filter((street: string) => street.toLowerCase().includes(text.toLowerCase()))
+
+                setSuggestions(filteredStreets)
+                setShowSuggestions(true)
             }catch{
 
             }
@@ -41,7 +46,6 @@ export function TutorRegister(){
 
             setHasSuccess(true)
             setMessage(response.data.message)
-            setTimeout(() => {setMessage("")}, 4000)
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
             setPhone('')
@@ -107,13 +111,46 @@ export function TutorRegister(){
                 </div>
                 <br />
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <GenericStyledInput 
+                    <div style={{ position: "relative", flex: 1 }}>
+                        <GenericStyledInput 
                         placeholder="Rua" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={streetTyped}
+                        onChange={handleChange}
                         hasError={hasError}
                         hasSuccess={hasSuccess}
                     />
+                    {showSuggestions && suggestions.length > 0 && (
+                        <ul style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            width: '100%',
+                            background: '#fff',
+                            border: '1px solid #ccc',
+                            listStyle: 'none',
+                            padding: 0,
+                            margin: 0,
+                            zIndex: 10
+                        }}>
+                            {suggestions.map((street, index) => (
+                                <li 
+                                    key={index}
+                                    onClick={() => {
+                                        setStreetTyped(street)
+                                        setShowSuggestions(false)
+                                    }}
+                                    style={{
+                                        padding: '8px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {street}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    </div>
+                    
                     <GenericStyledInput 
                         placeholder="Bairro" 
                         value={name}
