@@ -7,8 +7,6 @@ export function TutorRegister(){
 
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
-    const [street, setStreet] = useState('')
-    const [neighborhood, setNeighborhood] = useState('')
     const [message, setMessage] = useState('')
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
@@ -18,8 +16,22 @@ export function TutorRegister(){
     const [suggestions, setSuggestions] = useState([])
     const [showSuggestions, setShowSuggestions] = useState(false)
 
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
+            const text = e.target.value
+            setStreetTyped(text)
+
+            try{
+                const response = await api.get('/listStreets',{
+                    params: {name: text}
+                })
+            }catch{
+
+            }
+    }
+
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
+
         const cleanPhone = phone.replace(/\D/g, '')
         try{
             const response = await api.post('/tutor',{
@@ -56,42 +68,42 @@ export function TutorRegister(){
     return (
         <div>
             <h1>Cadastrar Tutor</h1>
-            
+
             <form onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <GenericStyledInput 
-                        placeholder="Nome" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        hasError={hasError}
-                        hasSuccess={hasSuccess}
-                    />
-                    <GenericStyledInput 
-                        placeholder="telefone" 
-                        value = {phone}
-                        onChange={(e) =>{
-                            const onlyNumbers = e.target.value.replace(/\D/g, '')
-                            const limitedNumbers = onlyNumbers.slice(0, 11)
+                <GenericStyledInput 
+                placeholder="Nome" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                hasError={hasError}
+                hasSuccess={hasSuccess}
+                />
+                <GenericStyledInput 
+                placeholder="telefone" 
+                value = {phone}
+                onChange={(e) =>{
+                    const onlyNumbers = e.target.value.replace(/\D/g, '')
+                    const limitedNumbers = onlyNumbers.slice(0, 11)
 
-                            let formatted = limitedNumbers
+                    let formatted = limitedNumbers
 
-                            if(limitedNumbers.length > 0){
-                                formatted = '(' + limitedNumbers
-                            }
+                    if(limitedNumbers.length > 0){
+                        formatted = '(' + limitedNumbers
+                    }
 
-                            if(limitedNumbers.length > 2){
-                                formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2)
-                            }
+                    if(limitedNumbers.length > 2){
+                        formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2)
+                    }
 
-                            if(limitedNumbers.length > 7){
-                                formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
-                            }
-                            setPhone(formatted)
-                        }}
-                        
-                        hasError={hasError}
-                        hasSuccess={hasSuccess}
-                    />
+                    if(limitedNumbers.length > 7){
+                        formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
+                    }
+                    setPhone(formatted)
+                }}
+                
+                hasError={hasError}
+                hasSuccess={hasSuccess}
+                />
                 </div>
                 <br />
                 <div style={{ display: 'flex', gap: '10px'}}>
@@ -117,7 +129,6 @@ export function TutorRegister(){
                     type="submit">Cadastrar
                     </RegisterButton>
                 </div>
-                
             </form>
         </div>
     )
