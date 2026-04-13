@@ -2,7 +2,7 @@ import { dataSource } from "../database/dataSource";
 import { streets } from "../models/streets";
 import { Repository } from "typeorm";
 
-class streetRepository {
+class StreetRepository {
 
     private repository: Repository<streets>
 
@@ -14,6 +14,14 @@ class streetRepository {
         const street = this.repository.create({name})
         return this.repository.save(street)
     }
+
+    async checkIfStreetAlreadyExist(name: string){
+        return await this.repository.findOneBy({name})
+    }
+
+    async listExistentStreets(){
+        const streets = this.repository.find()
+    }
 }
 
-export { streetRepository } 
+export { StreetRepository } 
