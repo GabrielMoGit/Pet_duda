@@ -151,6 +151,7 @@ export function TutorRegister(){
                     )}
                     </div>
                     
+
                     <GenericStyledInput 
                         placeholder="Bairro" 
                         value={name}

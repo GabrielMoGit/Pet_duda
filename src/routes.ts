@@ -12,5 +12,6 @@ const StreetController = new streetController()
 router.post("/tutor", TutorController.create)
 router.post("/pet", PetController.create)
 router.post("/street", StreetController.create)
+router.get("/listStreets", StreetController.listStreets)
 
 export {router};

@@ -19,8 +19,11 @@ class StreetRepository {
         return await this.repository.findOneBy({name})
     }
 
-    async listExistentStreets(){
-        const streets = this.repository.find()
+    async listExistentStreetsOnlyStringName(){
+        const streets =  await this.repository.find({
+            select: ["name"]
+        })
+        return streets.map(streets => streets.name)
     }
 }
 
