@@ -11,6 +11,11 @@ export function TutorRegister(){
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
 
+    //variables for interactive input to search streets
+    const [streetTyped, setStreetTyped] = useState("")
+    const [suggestions, setSuggestions] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
+
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
         const cleanPhone = phone.replace(/\D/g, '')
