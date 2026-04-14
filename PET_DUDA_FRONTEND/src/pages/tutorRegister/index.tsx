@@ -1,6 +1,7 @@
 import { GenericStyledInput } from '../../components/inputs/genericInput'
 import { RegisterButton } from '../../components/buttons/registerButton'
-import { useState } from 'react'
+import { SuggestionList } from '../../components/suggestionList'
+import { useState, useRef, useEffect } from 'react'
 import { api } from '../../services/api'
 
 export function TutorRegister(){
@@ -15,6 +16,24 @@ export function TutorRegister(){
     const [streetTyped, setStreetTyped] = useState("")
     const [suggestions, setSuggestions] = useState([])
     const [showSuggestions, setShowSuggestions] = useState(false)
+
+    //Position reference to know where de click happens
+    const positionRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if(positionRef.current && !positionRef.current.contains(event?.target as Node)
+            ){
+                setShowSuggestions(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+
+        return() => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    })
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
             const text = e.target.value
@@ -111,7 +130,7 @@ export function TutorRegister(){
                 </div>
                 <br />
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <div style={{ position: "relative", flex: 1 }}>
+                    <div ref={positionRef} style={{ position: "relative", flex: 1 }}>
                         <GenericStyledInput 
                         placeholder="Rua" 
                         value={streetTyped}
@@ -120,38 +139,15 @@ export function TutorRegister(){
                         hasSuccess={hasSuccess}
                     />
                     {showSuggestions && suggestions.length > 0 && (
-                        <ul style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            width: '100%',
-                            background: '#fff',
-                            border: '1px solid #ccc',
-                            listStyle: 'none',
-                            padding: 0,
-                            margin: 0,
-                            zIndex: 10
-                        }}>
-                            {suggestions.map((street, index) => (
-                                <li 
-                                    key={index}
-                                    onClick={() => {
-                                        setStreetTyped(street)
-                                        setShowSuggestions(false)
-                                    }}
-                                    style={{
-                                        padding: '8px',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    {street}
-                                </li>
-                            ))}
-                        </ul>
+                         <SuggestionList 
+                            suggestions={suggestions}
+                            onSelect={(street) => {
+                            setStreetTyped(street)
+                            setShowSuggestions(false)
+                            }}
+                        />
                     )}
                     </div>
-                    
-
                     <GenericStyledInput 
                         placeholder="Bairro" 
                         value={name}
