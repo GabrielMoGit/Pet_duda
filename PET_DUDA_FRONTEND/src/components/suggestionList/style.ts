@@ -1,5 +1,8 @@
 import styled from "styled-components";
 
+type Props = {
+    isSelected: boolean
+}
 
 export const StyledSuggestionList = styled.ul`
     position: absolute;
@@ -14,9 +17,13 @@ export const StyledSuggestionList = styled.ul`
     zIndex: 10;
 `
 
-export const StyledSuggestionItem = styled.li`
+export const StyledSuggestionItem = styled.li<Props>`
     padding: 8px;
+    list-style: none;
     cursor: pointer;
+
+    background-color: ${({ isSelected }) =>
+        isSelected ? '#eee' : '#fff'};
 
     &:hover {
         background: #eee;

@@ -20,6 +20,36 @@ export function TutorRegister(){
     //Position reference to know where de click happens
     const positionRef = useRef<HTMLDivElement>(null)
 
+    //Initial state to know wich item is been selected, "-1" = none selected
+    const [selectedIndex, setSelectedIndex] = useState(-1)
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if(!showSuggestions) {
+            return
+        }
+        if(e.key === 'ArrowDown'){
+            setSelectedIndex(prev => prev <suggestions.length - 1 ? prev + 1 : prev)
+        }
+        if (e.key === 'ArrowUp') {
+            e.preventDefault()
+
+            setSelectedIndex(prev => {
+            if (prev === -1) return suggestions.length - 1 
+            if (prev > 0) return prev - 1 
+            return 0 
+        })
+}
+        if(e.key === 'Enter'){
+            e.preventDefault()
+            if(selectedIndex >= 0){
+                const selectedStreet = suggestions[selectedIndex]
+                setStreetTyped(selectedStreet)
+                setShowSuggestions(false)
+            }
+        }
+    }
+
+    //function do identify where the click mouse happens
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if(positionRef.current && !positionRef.current.contains(event?.target as Node)
@@ -39,6 +69,8 @@ export function TutorRegister(){
             const text = e.target.value
             setStreetTyped(text)
 
+            setSelectedIndex(-1)
+
             try{
                 const response = await api.get('/listStreets',{
                     params: {name: text}
@@ -48,9 +80,16 @@ export function TutorRegister(){
 
                 setSuggestions(filteredStreets)
                 setShowSuggestions(true)
+                if (text.trim() === "") {
+                    setSuggestions([])
+                    setShowSuggestions(false)
+                    return
+                }
+                
             }catch{
 
             }
+            
     }
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -130,7 +169,7 @@ export function TutorRegister(){
                 </div>
                 <br />
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <div ref={positionRef} style={{ position: "relative", flex: 1 }}>
+                    <div onKeyDown={handleKeyDown} ref={positionRef} style={{ position: "relative", flex: 1 }}>
                         <GenericStyledInput 
                         placeholder="Rua" 
                         value={streetTyped}
@@ -141,6 +180,7 @@ export function TutorRegister(){
                     {showSuggestions && suggestions.length > 0 && (
                          <SuggestionList 
                             suggestions={suggestions}
+                            selectedIndex={selectedIndex}
                             onSelect={(street) => {
                             setStreetTyped(street)
                             setShowSuggestions(false)
