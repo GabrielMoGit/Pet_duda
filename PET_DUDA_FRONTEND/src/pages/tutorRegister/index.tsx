@@ -66,17 +66,15 @@ export function TutorRegister(){
     })
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
-            const text = e.target.value
-            setStreetTyped(text)
+        const text = e.target.value
+        setStreetTyped(text)
+        setSelectedIndex(-1)
+        try{
+            const response = await api.get('/listStreets',{
+                params: {name: text}
+            })
 
-            setSelectedIndex(-1)
-
-            try{
-                const response = await api.get('/listStreets',{
-                    params: {name: text}
-                })
-
-                const filteredStreets = response.data.filter((street: string) => street.toLowerCase().includes(text.toLowerCase()))
+            const filteredStreets = response.data.filter((street: string) => street.toLowerCase().includes(text.toLowerCase()))
 
                 setSuggestions(filteredStreets)
                 setShowSuggestions(true)
@@ -86,10 +84,7 @@ export function TutorRegister(){
                     return
                 }
                 
-            }catch{
-
-            }
-            
+            }catch{ } 
     }
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -196,7 +191,7 @@ export function TutorRegister(){
                         hasSuccess={hasSuccess}
                     />
                 </div>
-                
+
                 <p style={{ color: 'red' }}>{message}</p>
                 <div style={{display: 'flex', gap: '10px'}}>
                     <RegisterButton 

@@ -23,9 +23,9 @@ export const StyledSuggestionItem = styled.li<Props>`
     cursor: pointer;
 
     background-color: ${({ isSelected }) =>
-        isSelected ? '#eee' : '#fff'};
+        isSelected ? '#a2a2a2' : '#fff'};
 
     &:hover {
-        background: #eee;
+        background: #a2a2a2;
     }
 `
