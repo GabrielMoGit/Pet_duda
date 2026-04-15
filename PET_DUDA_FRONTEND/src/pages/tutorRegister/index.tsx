@@ -91,6 +91,18 @@ export function TutorRegister(){
         e.preventDefault()
 
         const cleanPhone = phone.replace(/\D/g, '')
+
+        //submit street from user
+        try{
+            const response = await api.post('/street', {
+                name: streetTyped
+            })
+        }catch{
+
+        }
+
+
+        //submit name and phone from user
         try{
             const response = await api.post('/tutor',{
                 name,
