@@ -8,16 +8,21 @@ export const StyledSuggestionList = styled.ul`
     position: absolute;
     top: 100%;
     left: 0;
-    width: 100%;
+
+    width: 100%
+
     background: #fff;
     border: 1px solid #ccc;
-    listStyle: none;
+
+    list-style: none;
     padding: 0;
     margin: 0;
-    zIndex: 10;
+
+    z-index: 10;
 `
 
 export const StyledSuggestionItem = styled.li<Props>`
+
     padding: 8px;
     list-style: none;
     cursor: pointer;

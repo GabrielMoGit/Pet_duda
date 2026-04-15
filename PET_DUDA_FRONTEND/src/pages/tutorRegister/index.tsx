@@ -164,32 +164,42 @@ export function TutorRegister(){
                 </div>
                 <br />
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <div onKeyDown={handleKeyDown} ref={positionRef} style={{ position: "relative", flex: 1 }}>
+                    <div 
+                        style={{ position: "relative", flex: 1, width: '100%' }} 
+                        onKeyDown={handleKeyDown}
+                        ref={positionRef}
+                    >
                         <GenericStyledInput 
-                        placeholder="Rua" 
-                        value={streetTyped}
-                        onChange={handleChange}
-                        hasError={hasError}
-                        hasSuccess={hasSuccess}
-                    />
-                    {showSuggestions && suggestions.length > 0 && (
-                         <SuggestionList 
-                            suggestions={suggestions}
-                            selectedIndex={selectedIndex}
-                            onSelect={(street) => {
-                            setStreetTyped(street)
-                            setShowSuggestions(false)
-                            }}
+                            placeholder="Rua" 
+                            value={streetTyped}
+                            onChange={handleChange}
+                            hasError={hasError}
+                            hasSuccess={hasSuccess}
                         />
-                    )}
+
+                        {showSuggestions && suggestions.length > 0 && (
+                            <SuggestionList  
+                                suggestions={suggestions}
+                                selectedIndex={selectedIndex}
+                                onSelect={(street) => {
+                                    setStreetTyped(street)
+                                    setShowSuggestions(false)
+                                }}
+                            />
+                        )}
                     </div>
-                    <GenericStyledInput 
-                        placeholder="Bairro" 
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        hasError={hasError}
-                        hasSuccess={hasSuccess}
-                    />
+
+                    {/* BAIRRO 👇 AGORA FORA */}
+                    <div style={{ flex: 1, width: '100%' }}>
+                        <GenericStyledInput 
+                            placeholder="Bairro" 
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            hasError={hasError}
+                            hasSuccess={hasSuccess}
+                        />
+                    </div>
+
                 </div>
 
                 <p style={{ color: 'red' }}>{message}</p>
