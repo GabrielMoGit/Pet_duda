@@ -10,7 +10,10 @@ class streetController{
         const streetReposiroty = new StreetRepository()
 
         try{
-            const street = await streetReposiroty.createAndSave(name)
+            const street = await streetReposiroty.checkIfStreetAlreadyExist(name)
+            if(!street){
+                await streetReposiroty.createAndSave(name)
+            }
             return response.json(street)
         }catch(error){
             return response.status(500).json({
