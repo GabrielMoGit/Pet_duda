@@ -3,9 +3,8 @@ import { NeighborhoodRepository } from "../repositories/neighborhoodRepository";
 
 class NeighborhoodController{
 
-    async create(response: Response, request: Request){
+    async create(request: Request, response: Response){
         const { name } = request.body
-
         const neighborhoodRepository = new NeighborhoodRepository()
 
         try{
@@ -13,7 +12,7 @@ class NeighborhoodController{
             if(!neighborhood){
                 await neighborhoodRepository.createAndSave(name)
             }
-            return response.json(neighborhood)
+            return response.json(name)
         }catch(error){
             return response.status(500).json({
                 message: "Erro ao cadastrar bairro"
@@ -21,7 +20,7 @@ class NeighborhoodController{
         }
     }
 
-    async listNeighborhoods(response: Response, request: Request){
+    async listNeighborhoods(request: Request, response: Response){
         const neighborhoodRepository = new NeighborhoodRepository()
 
         try{

@@ -19,6 +19,6 @@ router.post("/street", StreetController.create)
 router.get("/listStreets", StreetController.listStreets)
 
 router.post("/neighborhood", neighberhoodController.create)
-router.get("listNeighborhood", neighberhoodController.listNeighborhoods)
+router.get("/listNeighborhood", neighberhoodController.listNeighborhoods)
 
 export {router};
