@@ -73,24 +73,45 @@ export function TutorRegister(){
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         const text = e.target.value
 
-        
+        let route = ''
 
-        setStreetTyped(text)
+        if(e.target.name === "street"){
+            setStreetTyped(text)
+            route = 'listStreets'
+        }
+        if(e.target.name === "neighborhood"){
+            setNeighborhoodTyped(text)
+            route = 'listNeighborhood'
+        }
+
         setSelectedIndex(-1)
+
         try{
-            const response = await api.get('/listStreets',{
+            const response = await api.get(route,{
                 params: {name: text}
             })
 
-            const filteredStreets = response.data.filter((street: string) => street.toLowerCase().includes(text.toLowerCase()))
+            const dataBaseResponse = response.data.filter((content: string) => content.toLowerCase().includes(text.toLowerCase()))
 
-                setStreetSuggestions(filteredStreets)
-                setStreetShowSuggestions(true)
-                if (text.trim() === "") {
+            if(e.target.name === "street"){
+            setStreetSuggestions(dataBaseResponse)
+            setStreetShowSuggestions(true)
+                if(text.trim() === "") {
                     setStreetSuggestions([])
                     setStreetShowSuggestions(false)
                     return
                 }
+            }
+            if(e.target.name === "neighborhood"){
+                setNeighborhoodSuggestions(dataBaseResponse)
+                setShowNeighborhoodSuggestions(true)
+                if(text.trim() === ""){
+                    setNeighborhoodSuggestions([])
+                    setShowNeighborhoodSuggestions(false)
+                    return
+                }
+            }
+            
                 
         }catch{ } 
     }
@@ -143,6 +164,7 @@ export function TutorRegister(){
             <form onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
                 <GenericStyledInput 
+                name="name"
                 placeholder="Nome" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -150,6 +172,7 @@ export function TutorRegister(){
                 hasSuccess={hasSuccess}
                 />
                 <GenericStyledInput 
+                name="phone"
                 placeholder="telefone" 
                 value = {phone}
                 onChange={(e) =>{
@@ -184,6 +207,7 @@ export function TutorRegister(){
                         ref={positionRef}
                     >
                         <GenericStyledInput 
+                            name="street"
                             placeholder="Rua" 
                             value={streetTyped}
                             onChange={handleChange}
@@ -210,6 +234,7 @@ export function TutorRegister(){
                     >
                         <div style={{ flex: 1, width: '100%' }}>
                         <GenericStyledInput 
+                            name="neighborhood"
                             placeholder="Bairro" 
                             value={neighborhoodTyped}
                             onChange={handleChange}
