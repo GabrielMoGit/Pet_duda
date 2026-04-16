@@ -144,6 +144,9 @@ export function TutorRegister(){
         const cleanPhone = phone.replace(/\D/g, '')
 
         try{
+            const neighborhoodResponse = await api.post('/neighborhood', {
+                name: neighborhoodTyped
+            })
 
             const streetResponse = await api.post('/street', {
                 name: streetTyped
@@ -152,7 +155,7 @@ export function TutorRegister(){
             const tutorResponse = await api.post('/tutor',{
                 name,
                 phone: cleanPhone
-            })
+            })  
 
             setHasSuccess(true)
             setMessage(tutorResponse.data.message)
@@ -238,7 +241,7 @@ export function TutorRegister(){
                             hasSuccess={hasSuccess}
                         />
 
-                        {showStreetSuggestions && streetSuggestions.length > 0 && (
+                        {showStreetSuggestions && streetSuggestions.length > 0 && streetTyped.length > 2 &&(
                             <SuggestionList  
                                 suggestions={streetSuggestions}
                                 selectedIndex={selectedIndex}
@@ -266,7 +269,7 @@ export function TutorRegister(){
                             hasSuccess={hasSuccess}
                         />
 
-                            {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && (
+                            {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && neighborhoodTyped.length > 2 &&(
                                 <SuggestionList  
                                     suggestions={neighborhoodSuggestions}
                                     selectedIndex={selectedIndex}
