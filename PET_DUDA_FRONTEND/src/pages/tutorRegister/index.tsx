@@ -29,27 +29,48 @@ export function TutorRegister(){
     const [selectedIndex, setSelectedIndex] = useState(-1)
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if(!showStreetSuggestions) {
+       
+        let selectedList: string[] = []
+        let selection = ""
+        
+        if((e.currentTarget as HTMLDivElement).dataset.type === "neighborhood"){
+            selectedList = neighborhoodSuggestions
+            selection = "neighborhood"
+            
+        }
+        if((e.currentTarget as HTMLDivElement).dataset.type === "street"){
+            selectedList = streetSuggestions
+            selection = "street"
+        }
+
+        if(!showStreetSuggestions && !showNeighborhoodSuggestions) {
             return
         }
         if(e.key === 'ArrowDown'){
-            setSelectedIndex(prev => prev <streetSuggestions.length - 1 ? prev + 1 : prev)
+            setSelectedIndex(prev => prev <selectedList.length - 1 ? prev + 1 : prev)
         }
         if (e.key === 'ArrowUp') {
             e.preventDefault()
 
             setSelectedIndex(prev => {
-            if (prev === -1) return streetSuggestions.length - 1 
-            if (prev > 0) return prev - 1 
-            return 0 
-        })
-}
+                if (prev === -1) return selectedList.length - 1 
+                if (prev > 0) return prev - 1 
+                return 0 
+            })
+        }
         if(e.key === 'Enter'){
             e.preventDefault()
+                
             if(selectedIndex >= 0){
-                const selectedStreet = streetSuggestions[selectedIndex]
-                setStreetTyped(selectedStreet)
-                setStreetShowSuggestions(false)
+                const selected = selectedList[selectedIndex]
+                if(selection === "street"){
+                    setStreetTyped(selected)
+                    setStreetShowSuggestions(false)
+                }
+                else if(selection === "neighborhood"){
+                    setNeighborhoodTyped(selected)
+                    setShowNeighborhoodSuggestions(false)
+                }             
             }
         }
     }
@@ -60,6 +81,7 @@ export function TutorRegister(){
             if(positionRef.current && !positionRef.current.contains(event?.target as Node)
             ){
                 setStreetShowSuggestions(false)
+                setShowNeighborhoodSuggestions(false)
             }
         }
 
@@ -202,6 +224,7 @@ export function TutorRegister(){
                 <br />
                 <div style={{ display: 'flex', gap: '10px'}}>
                     <div 
+                        data-type="street"
                         style={{ position: "relative", flex: 1, width: '100%' }} 
                         onKeyDown={handleKeyDown}
                         ref={positionRef}
@@ -228,6 +251,7 @@ export function TutorRegister(){
                     </div>
 
                     <div
+                        data-type="neighborhood"
                         style={{ position: "relative", flex: 1, width: '100%' }} 
                         onKeyDown={handleKeyDown}
                         ref={positionRef}
