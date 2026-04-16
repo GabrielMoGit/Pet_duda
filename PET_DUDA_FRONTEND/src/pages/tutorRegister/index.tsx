@@ -14,8 +14,13 @@ export function TutorRegister(){
 
     //variables for interactive input to search streets
     const [streetTyped, setStreetTyped] = useState("")
-    const [suggestions, setSuggestions] = useState([])
-    const [showSuggestions, setShowSuggestions] = useState(false)
+    const [streetSuggestions, setStreetSuggestions] = useState([])
+    const [showStreetSuggestions, setStreetShowSuggestions] = useState(false)
+
+    //variables for interactive input to search neighborhoods
+    const [neighborhoodTyped, setNeighborhoodTyped] = useState("")
+    const [neighborhoodSuggestions, setNeighborhoodSuggestions] = useState([])
+    const [showNeighborhoodSuggestions, setShowNeighborhoodSuggestions] = useState(false)
 
     //Position reference to know where de click happens
     const positionRef = useRef<HTMLDivElement>(null)
@@ -24,17 +29,17 @@ export function TutorRegister(){
     const [selectedIndex, setSelectedIndex] = useState(-1)
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if(!showSuggestions) {
+        if(!showStreetSuggestions) {
             return
         }
         if(e.key === 'ArrowDown'){
-            setSelectedIndex(prev => prev <suggestions.length - 1 ? prev + 1 : prev)
+            setSelectedIndex(prev => prev <streetSuggestions.length - 1 ? prev + 1 : prev)
         }
         if (e.key === 'ArrowUp') {
             e.preventDefault()
 
             setSelectedIndex(prev => {
-            if (prev === -1) return suggestions.length - 1 
+            if (prev === -1) return streetSuggestions.length - 1 
             if (prev > 0) return prev - 1 
             return 0 
         })
@@ -42,9 +47,9 @@ export function TutorRegister(){
         if(e.key === 'Enter'){
             e.preventDefault()
             if(selectedIndex >= 0){
-                const selectedStreet = suggestions[selectedIndex]
+                const selectedStreet = streetSuggestions[selectedIndex]
                 setStreetTyped(selectedStreet)
-                setShowSuggestions(false)
+                setStreetShowSuggestions(false)
             }
         }
     }
@@ -54,7 +59,7 @@ export function TutorRegister(){
         const handleClickOutside = (event: MouseEvent) => {
             if(positionRef.current && !positionRef.current.contains(event?.target as Node)
             ){
-                setShowSuggestions(false)
+                setStreetShowSuggestions(false)
             }
         }
 
@@ -67,24 +72,48 @@ export function TutorRegister(){
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         const text = e.target.value
-        setStreetTyped(text)
+
+        let route = ''
+
+        if(e.target.name === "street"){
+            setStreetTyped(text)
+            route = 'listStreets'
+        }
+        if(e.target.name === "neighborhood"){
+            setNeighborhoodTyped(text)
+            route = 'listNeighborhood'
+        }
+
         setSelectedIndex(-1)
+
         try{
-            const response = await api.get('/listStreets',{
+            const response = await api.get(route,{
                 params: {name: text}
             })
 
-            const filteredStreets = response.data.filter((street: string) => street.toLowerCase().includes(text.toLowerCase()))
+            const dataBaseResponse = response.data.filter((content: string) => content.toLowerCase().includes(text.toLowerCase()))
 
-                setSuggestions(filteredStreets)
-                setShowSuggestions(true)
-                if (text.trim() === "") {
-                    setSuggestions([])
-                    setShowSuggestions(false)
+            if(e.target.name === "street"){
+            setStreetSuggestions(dataBaseResponse)
+            setStreetShowSuggestions(true)
+                if(text.trim() === "") {
+                    setStreetSuggestions([])
+                    setStreetShowSuggestions(false)
                     return
                 }
+            }
+            if(e.target.name === "neighborhood"){
+                setNeighborhoodSuggestions(dataBaseResponse)
+                setShowNeighborhoodSuggestions(true)
+                if(text.trim() === ""){
+                    setNeighborhoodSuggestions([])
+                    setShowNeighborhoodSuggestions(false)
+                    return
+                }
+            }
+            
                 
-            }catch{ } 
+        }catch{ } 
     }
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -92,25 +121,19 @@ export function TutorRegister(){
 
         const cleanPhone = phone.replace(/\D/g, '')
 
-        //submit street from user
         try{
-            const response = await api.post('/street', {
+
+            const streetResponse = await api.post('/street', {
                 name: streetTyped
             })
-        }catch{
 
-        }
-
-
-        //submit name and phone from user
-        try{
-            const response = await api.post('/tutor',{
+            const tutorResponse = await api.post('/tutor',{
                 name,
                 phone: cleanPhone
             })
 
             setHasSuccess(true)
-            setMessage(response.data.message)
+            setMessage(tutorResponse.data.message)
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
             setPhone('')
@@ -141,6 +164,7 @@ export function TutorRegister(){
             <form onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
                 <GenericStyledInput 
+                name="name"
                 placeholder="Nome" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -148,6 +172,7 @@ export function TutorRegister(){
                 hasSuccess={hasSuccess}
                 />
                 <GenericStyledInput 
+                name="phone"
                 placeholder="telefone" 
                 value = {phone}
                 onChange={(e) =>{
@@ -182,6 +207,7 @@ export function TutorRegister(){
                         ref={positionRef}
                     >
                         <GenericStyledInput 
+                            name="street"
                             placeholder="Rua" 
                             value={streetTyped}
                             onChange={handleChange}
@@ -189,28 +215,46 @@ export function TutorRegister(){
                             hasSuccess={hasSuccess}
                         />
 
-                        {showSuggestions && suggestions.length > 0 && (
+                        {showStreetSuggestions && streetSuggestions.length > 0 && (
                             <SuggestionList  
-                                suggestions={suggestions}
+                                suggestions={streetSuggestions}
                                 selectedIndex={selectedIndex}
                                 onSelect={(street) => {
                                     setStreetTyped(street)
-                                    setShowSuggestions(false)
+                                    setStreetShowSuggestions(false)
                                 }}
                             />
                         )}
                     </div>
 
-                    {/* BAIRRO 👇 AGORA FORA */}
-                    <div style={{ flex: 1, width: '100%' }}>
+                    <div
+                        style={{ position: "relative", flex: 1, width: '100%' }} 
+                        onKeyDown={handleKeyDown}
+                        ref={positionRef}
+                    >
+                        <div style={{ flex: 1, width: '100%' }}>
                         <GenericStyledInput 
+                            name="neighborhood"
                             placeholder="Bairro" 
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={neighborhoodTyped}
+                            onChange={handleChange}
                             hasError={hasError}
                             hasSuccess={hasSuccess}
                         />
+
+                            {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && (
+                                <SuggestionList  
+                                    suggestions={neighborhoodSuggestions}
+                                    selectedIndex={selectedIndex}
+                                    onSelect={(neighborhood) => {
+                                        setNeighborhoodTyped(neighborhood)
+                                        setShowNeighborhoodSuggestions(false)
+                                    }}
+                                />
+                            )}
+                        </div>
                     </div>
+                    
 
                 </div>
 
