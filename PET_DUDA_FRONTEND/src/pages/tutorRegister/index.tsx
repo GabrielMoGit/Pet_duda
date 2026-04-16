@@ -143,6 +143,23 @@ export function TutorRegister(){
 
         const cleanPhone = phone.replace(/\D/g, '')
 
+        if(name === ""){
+            setMessage("Nome não informado")
+            return
+        }
+        else if(phone === ""){
+            setMessage("Telefone não informado")
+            return
+        }
+        else if(streetTyped === ""){
+            setMessage("Rua não informada")
+            return
+        }
+        else if(neighborhoodTyped === ""){
+            setMessage("Bairro não informado")
+            return
+        }
+
         try{
             const neighborhoodResponse = await api.post('/neighborhood', {
                 name: neighborhoodTyped
@@ -162,6 +179,8 @@ export function TutorRegister(){
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
             setPhone('')
+            setNeighborhoodTyped('')
+            setStreetTyped('')
         }
         catch(error: any){
             if(error.response){
