@@ -8,7 +8,7 @@ class AddressController{
         const addressRepository = new AddressRepository()
 
         try{
-            const address = addressRepository.createAndSave(tutor_id, neighborhood_id, street_id, number)
+            const address = await addressRepository.createAndSave(tutor_id, neighborhood_id, street_id, number)
             return response.json(address)
         }catch(error){
             return response.status(500).json({
