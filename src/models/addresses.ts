@@ -12,7 +12,7 @@ class addresses{
     tutor_id!: string
 
     @Column()
-    neighbothood_id!: string
+    neighborhood_id!: string
 
     @Column()
     street_id!: string
