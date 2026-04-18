@@ -22,6 +22,8 @@ export function TutorRegister(){
     const [neighborhoodSuggestions, setNeighborhoodSuggestions] = useState([])
     const [showNeighborhoodSuggestions, setShowNeighborhoodSuggestions] = useState(false)
 
+    const [number, setNumber] = useState('')
+
     //Position reference to know where de click happens
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -299,6 +301,19 @@ export function TutorRegister(){
                                 />
                             )}
                         </div>
+                    </div>
+                    <div>
+                        <GenericStyledInput 
+                        name="number"
+                        placeholder="Número" 
+                        value={number}
+                        onChange={(e) => {
+                            const onlyNumbers = e.target.value.replace(/\D/g, '')
+                            setNumber(onlyNumbers)
+                        }}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                        />
                     </div>
                     
 
