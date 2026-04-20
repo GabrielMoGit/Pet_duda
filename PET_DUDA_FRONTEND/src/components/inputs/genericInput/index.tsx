@@ -1,6 +1,7 @@
 import { GenericInputStyled } from './styles'
 
 type Props = {
+    name: string
     placeholder: string
     value: string
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -8,9 +9,10 @@ type Props = {
     hasSuccess: boolean
 }
 
-export function GenericStyledInput({placeholder, value, onChange, hasError, hasSuccess}: Props){
+export function GenericStyledInput({name, placeholder, value, onChange, hasError, hasSuccess}: Props){
     return(
         <GenericInputStyled
+        name={name}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

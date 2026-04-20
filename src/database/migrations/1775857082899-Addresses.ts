@@ -18,7 +18,7 @@ export class Addresses1775857082899 implements MigrationInterface {
                         type: "uuid"
                     },
                     {
-                        name: "neighbothood_id",
+                        name: "neighborhood_id",
                         type: "uuid"
                     },
                     {
