@@ -11,7 +11,7 @@ class TutorRepository{
     }
 
     async findByPhone(phone: string){
-        return this.repository.findOneBy({phone})
+        return await this.repository.findOneBy({phone})
     }
 
     async createAndSave(name: string, phone: string){

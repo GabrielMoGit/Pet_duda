@@ -19,8 +19,7 @@ class AddressController{
             const street = await streetReposiroty.checkIfStreetAlreadyExist(streetName)
             const neighborhood = await neighborhoodRepository.checkIfNeighborhoodAlreadyExist(neighborhoodName)
             const tutor = await tutorRepository.findByPhone(tutorPhone)
-
-
+            
             const addressAlreadyExist = await addressRepository.checkIfAddressAlreadyExist(tutor!.id, neighborhood!.id, street!.id, number)
 
             if(!addressAlreadyExist){

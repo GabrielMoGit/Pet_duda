@@ -167,8 +167,6 @@ export function TutorRegister(){
 
         try{
 
-            
-
             const neighborhoodResponse = await api.post('/neighborhood', {
                 name: neighborhoodTyped
             })
@@ -181,6 +179,15 @@ export function TutorRegister(){
                 name,
                 phone: cleanPhone
             })  
+
+            const addressResponse = await api.post('/address', {
+                tutorPhone: cleanPhone,
+                streetName: streetTyped,
+                neighborhoodName: neighborhoodTyped,
+                number: number
+            })
+
+            
 
             setHasSuccess(true)
             setMessage(tutorResponse.data.message)
