@@ -3,6 +3,7 @@ import { RegisterButton } from '../../components/buttons/registerButton'
 import { SuggestionList } from '../../components/suggestionList'
 import { useState, useRef, useEffect } from 'react'
 import { api } from '../../services/api'
+import { useResolvedPath } from 'react-router-dom'
 
 export function TutorRegister(){
 
@@ -29,6 +30,8 @@ export function TutorRegister(){
 
     //Initial state to know wich item is been selected, "-1" = none selected
     const [selectedIndex, setSelectedIndex] = useState(-1)
+
+    const [houseNumber, setHouseNumber] = useState("")
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
        
@@ -163,6 +166,9 @@ export function TutorRegister(){
         }
 
         try{
+
+            
+
             const neighborhoodResponse = await api.post('/neighborhood', {
                 name: neighborhoodTyped
             })
