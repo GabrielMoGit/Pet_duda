@@ -15,6 +15,9 @@ class AddressRepository{
         return this.repository.save(address)
     }
 
+    async checkIfAddressAlreadyExist(tutor_id: string, neighborhood_id: string, street_id: string, number: string){
+        return this.repository.findOneBy({tutor_id, neighborhood_id, street_id, number})
+    }
 }
 
 export { AddressRepository }
