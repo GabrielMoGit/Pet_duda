@@ -9,6 +9,11 @@ class ServiceRepository{
     constructor(){
         this.repository = dataSource.getRepository(services)
     }
+
+    async createAndSave(service_package_id: string){
+        const service = this.repository.create({service_package_id})
+        return this.repository.save(service)
+    }
 }
 
 export { ServiceRepository  }
