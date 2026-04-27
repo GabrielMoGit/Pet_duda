@@ -17,7 +17,7 @@ class NeighborhoodController{
             return response.status(500).json({
                 message: "Erro ao cadastrar bairro"
             })
-        }
+        }   
     }
 
     async listNeighborhoods(request: Request, response: Response){

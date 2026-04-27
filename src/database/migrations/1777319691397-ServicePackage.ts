@@ -31,6 +31,7 @@ export class ServicePackage1777319691397 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.dropTable("service_package")
     }
 
 }
