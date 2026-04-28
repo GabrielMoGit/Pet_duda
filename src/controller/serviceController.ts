@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServiePackageRepository } from "../repositories/servicePackageRepository";
-import { INTERNAL } from "sqlite3";
 
 class ServiceController{
 
@@ -33,12 +32,35 @@ class ServiceController{
         
     }
 
-    async createBiweekly(request: Request, response: Response){
+    async createBiweekly(service_package_id: number, service_date: Date){
+
+        const serviceRepository = new ServiceRepository()
+
+        const dates = this.createBiweeklyDates(service_date)
+
+        try{
+
+            const results = []
+
+            for(let i = 0; i < dates.length; i ++){
+                const services = await serviceRepository.createAndSave(service_package_id, dates[i], false)
+                results.push(services)
+            }
+            
+
+        }catch(error){
+            return 
+        }
+
+        
+    }
+
+    async createWeekly(request: Request, response: Response){
         const {service_package_id, service_date} = request.body
 
         const serviceRepository = new ServiceRepository()
 
-        const dates = this.createBiweeklyDates(new Date(service_date))
+        const dates = this.createWeeklyDates(new Date(service_date))
 
         try{
 
@@ -54,12 +76,6 @@ class ServiceController{
         }catch(error){
             return response.status(500).json({ error: "Erro ao criar serviços" })
         }
-
-        
-    }
-
-    async createWeekly(request: Request, response: Response){
-
     }
 
 }
