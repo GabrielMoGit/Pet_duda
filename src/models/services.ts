@@ -8,7 +8,7 @@ class services{
     id!: number
     
     @Column()
-    service_package_id!: string
+    service_package_id!: number
 
     @CreateDateColumn()
     created_at!: Date

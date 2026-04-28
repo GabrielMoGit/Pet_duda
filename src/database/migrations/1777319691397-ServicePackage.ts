@@ -10,7 +10,7 @@ export class ServicePackage1777319691397 implements MigrationInterface {
                 columns:[
                     {
                         name: "id",
-                        type: "int",
+                        type: "integer",
                         isPrimary: true,
                         isGenerated: true,
                         generationStrategy: "increment"
