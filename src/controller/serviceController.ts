@@ -47,9 +47,12 @@ class ServiceController{
                 results.push(services)
             }
             
+            return results
+        }
 
-        }catch(error){
-            return 
+        catch(error){
+            console.error(error)
+            throw error
         }
 
         

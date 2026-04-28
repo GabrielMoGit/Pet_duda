@@ -18,16 +18,17 @@ class ServicePackageController{
         try{
 
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, false) 
-
-            if(package_type == "quinzenal"){
-                serviceController.createBiweekly(createdPackage.id, service_date)
+            if(package_type === "quinzenal"){
+                await serviceController.createBiweekly(createdPackage.id, new Date(service_date))
             }
             if(package_type == "semanal"){
 
             }
 
-        }catch{
+            return response.json('pacote criado')
 
+        }catch(error){
+            return response.json(error)
         }
         
 

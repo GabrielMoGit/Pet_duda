@@ -1,6 +1,6 @@
 import { Column, Entity, IntegerType, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("servicePackage")
+@Entity("service_package")
 
 class servicePackage{
 
