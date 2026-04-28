@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, IntegerType, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("services")
 
@@ -10,8 +10,8 @@ class services{
     @Column()
     service_package_id!: number
 
-    @CreateDateColumn()
-    created_at!: Date
+    @Column()
+    service_date!: Date
 
     @Column()
     service_done!: boolean
