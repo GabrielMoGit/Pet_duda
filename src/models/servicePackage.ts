@@ -1,5 +1,4 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
-import { v4 } from "uuid"
 
 @Entity("servicePackage")
 
@@ -16,13 +15,6 @@ class servicePackage{
 
     @Column()
     paid!: boolean
-
-    constructor(){
-        if(!this.id){
-            this.id = v4()
-        }
-    }
-
 }
 
 export { servicePackage }

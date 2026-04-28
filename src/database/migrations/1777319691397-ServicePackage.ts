@@ -10,8 +10,10 @@ export class ServicePackage1777319691397 implements MigrationInterface {
                 columns:[
                     {
                         name: "id",
-                        type: "uuid",
-                        isPrimary: true
+                        type: "int",
+                        isPrimary: true,
+                        isGenerated: true,
+                        generationStrategy: "increment"
                     },
                     {
                         name: "pet_id",

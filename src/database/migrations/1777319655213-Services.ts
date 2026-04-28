@@ -10,12 +10,14 @@ export class Services1777319655213 implements MigrationInterface {
                 columns:[
                     {
                         name: "id",
-                        type: "uuid",
-                        isPrimary: true
+                        type: "int",
+                        isPrimary: true,
+                        isGenerated: true,
+                        generationStrategy: "increment"
                     },
                     {
                         name: "service_package_id",
-                        type: "uuid"
+                        type: "id"
                     },
                     {
                         name: "created_at",
