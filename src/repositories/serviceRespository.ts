@@ -10,8 +10,8 @@ class ServiceRepository{
         this.repository = dataSource.getRepository(services)
     }
 
-    async createAndSave(service_package_id: number, service_done: boolean){
-        const service = this.repository.create({service_package_id, service_done})
+    async createAndSave(service_package_id: number, service_date: Date, service_done: boolean){
+        const service = this.repository.create({service_package_id, service_date, service_done})
         return this.repository.save(service)
     }
 }
