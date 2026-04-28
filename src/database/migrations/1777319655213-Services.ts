@@ -20,9 +20,8 @@ export class Services1777319655213 implements MigrationInterface {
                         type: "integer"
                     },
                     {
-                        name: "created_at",
-                        type: "timestamp",
-                        default: "now()"
+                        name: "service_date",
+                        type: "timestamp"
                     },
                     {
                         name: "service_done",
