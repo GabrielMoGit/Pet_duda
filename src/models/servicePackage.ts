@@ -1,11 +1,11 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, IntegerType, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("servicePackage")
 
 class servicePackage{
 
-    @PrimaryColumn()
-    readonly id!: string
+    @PrimaryGeneratedColumn()
+    id!: number
 
     @Column()
     pet_id!: string
