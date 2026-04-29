@@ -24,8 +24,12 @@ export class ServicePackage1777319691397 implements MigrationInterface {
                         type: "varchar"
                     },
                     {
+                        name: "package_done",
+                        type: "integer"
+                    },
+                    {
                         name: "paid",
-                        type: "boolean"
+                        type: "integer"
                     }
                 ]
             })

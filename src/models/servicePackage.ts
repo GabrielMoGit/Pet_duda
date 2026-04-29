@@ -14,7 +14,10 @@ class servicePackage{
     package_type!: string
 
     @Column()
-    paid!: boolean
+    package_done!: number
+
+    @Column()
+    paid!: number
 }
 
 export { servicePackage }
