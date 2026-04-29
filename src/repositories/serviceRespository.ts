@@ -14,6 +14,10 @@ class ServiceRepository{
         const service = this.repository.create({service_package_id, service_date, service_done})
         return this.repository.save(service)
     }
+
+    async listAllServices(){
+        return await this.repository.find()
+    }
 }
 
 export { ServiceRepository  }

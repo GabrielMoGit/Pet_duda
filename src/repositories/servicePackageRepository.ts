@@ -18,6 +18,10 @@ class ServicePackageRepository {
     async findOneById(id: number){
         return this.repository.findOne({ where: {id}})
     }
+
+    async listAllPackages(){
+        return await this.repository.find()
+    }
 }
 
 export { ServicePackageRepository }
