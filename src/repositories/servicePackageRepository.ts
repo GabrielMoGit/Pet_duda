@@ -2,7 +2,7 @@ import { dataSource } from "../database/dataSource";
 import { servicePackage } from "../models/servicePackage";
 import { Repository } from "typeorm";
 
-class ServiePackageRepository {
+class ServicePackageRepository {
 
     private repository : Repository<servicePackage>
 
@@ -20,4 +20,4 @@ class ServiePackageRepository {
     }
 }
 
-export { ServiePackageRepository }
+export { ServicePackageRepository }

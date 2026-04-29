@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/serviceRespository";
-import { ServiePackageRepository } from "../repositories/servicePackageRepository";
+import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 
 class ServiceController{
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/serviceRespository";
-import { ServiePackageRepository } from "../repositories/servicePackageRepository";
+import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 import { PetRepository } from "../repositories/petRepository";
 import { ServiceController } from "./serviceController";
 
@@ -10,7 +10,7 @@ class ServicePackageController{
         const {pet_id, package_type, service_date} = request.body
 
         const serviceRepository = new ServiceRepository()
-        const servicePackageRepository = new ServiePackageRepository()
+        const servicePackageRepository = new ServicePackageRepository()
         const petRepository = new PetRepository()
         const serviceController = new ServiceController()
 
