@@ -14,6 +14,10 @@ class ServiePackageRepository {
         const servicePackage = this.repository.create({pet_id, package_type, paid})
         return this.repository.save(servicePackage)
     }
+
+    async findOneById(id: number){
+        return this.repository.findOne({ where: {id}})
+    }
 }
 
 export { ServiePackageRepository }
