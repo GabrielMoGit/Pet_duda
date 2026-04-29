@@ -54,7 +54,7 @@ class ServiceController{
             }
 
             for(let i = 0; i < dates.length; i ++){
-                const services = await serviceRepository.createAndSave(service_package_id, dates[i], false)
+                const services = await serviceRepository.createAndSave(service_package_id, dates[i], 0)
                 results.push(services)
             }
             
@@ -65,33 +65,7 @@ class ServiceController{
             console.error(error)
             throw error
         }
-
-        
     }
-
-    async createWeekly(request: Request, response: Response){
-        const {service_package_id, service_date} = request.body
-
-        const serviceRepository = new ServiceRepository()
-
-        const dates = this.createWeeklyDates(new Date(service_date))
-
-        try{
-
-            const results = []
-
-            for(let i = 0; i < dates.length; i ++){
-                const services = await serviceRepository.createAndSave(service_package_id, dates[i], false)
-                results.push(services)
-            }
-            
-            return response.json(results)
-
-        }catch(error){
-            return response.status(500).json({ error: "Erro ao criar serviços" })
-        }
-    }
-
 }
 
 export { ServiceController }

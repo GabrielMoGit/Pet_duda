@@ -14,7 +14,7 @@ class services{
     service_date!: Date
 
     @Column()
-    service_done!: boolean
+    service_done!: number
 }
 
 export { services }

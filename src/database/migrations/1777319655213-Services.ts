@@ -25,7 +25,7 @@ export class Services1777319655213 implements MigrationInterface {
                     },
                     {
                         name: "service_done",
-                        type: "boolean"
+                        type: "integer"
                     }
                 ]
             })
