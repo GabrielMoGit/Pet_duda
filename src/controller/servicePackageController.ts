@@ -15,7 +15,7 @@ class ServicePackageController{
 
         try{
 
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0) 
                 await serviceController.create(createdPackage.id, new Date(service_date))
 
             return response.json('pacote criado')
