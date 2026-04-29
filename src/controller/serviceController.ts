@@ -24,7 +24,7 @@ class ServiceController{
 
         for(let i = 0; i < 3; i ++){
             const newDate = new Date(initialDate)
-            newDate.setDate(initialDate.getDate() + (((i + 1) * 7)) - 1)
+            newDate.setDate(initialDate.getDate() + ((i + 1) * 7))
             dates.push(newDate)
         }
 
@@ -32,18 +32,26 @@ class ServiceController{
         
     }
 
-    async createBiweekly(service_package_id: number, service_date: Date){
+    async create(service_package_id: number, service_date: Date){
 
         const serviceRepository = new ServiceRepository()
-
+        const servicePackageRepository = new ServicePackageRepository()
         
-        const dates = this.createBiweeklyDates(service_date)
+        let dates: Date [] = []
 
         try{
 
             const results = []
 
-            
+            const response = await servicePackageRepository.findOneById(service_package_id)
+
+            if(response?.package_type === "Quinzenal"){
+                dates = this.createBiweeklyDates(service_date)
+            }
+
+            if(response?.package_type === "Semanal"){
+                dates = this.createWeeklyDates(service_date)
+            }
 
             for(let i = 0; i < dates.length; i ++){
                 const services = await serviceRepository.createAndSave(service_package_id, dates[i], false)
