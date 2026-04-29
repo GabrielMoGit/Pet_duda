@@ -1,0 +1,71 @@
+import { Request, Response } from "express";
+import { ServiceRepository } from "../repositories/serviceRespository";
+import { ServicePackageRepository } from "../repositories/servicePackageRepository";
+
+class ServiceController{
+
+    private createBiweeklyDates(initialDate: Date): Date[]{
+        const dates: Date[] = []
+
+        dates.push(new Date(initialDate))
+
+        const secondDate = new Date(initialDate)
+        secondDate.setDate(initialDate.getDate() + 14)
+        
+        dates.push(secondDate)
+
+        return dates
+    }
+
+    private createWeeklyDates(initialDate: Date): Date[]{
+        const dates: Date [] = []
+
+        dates.push(new Date(initialDate))
+
+        for(let i = 0; i < 3; i ++){
+            const newDate = new Date(initialDate)
+            newDate.setDate(initialDate.getDate() + ((i + 1) * 7))
+            dates.push(newDate)
+        }
+
+        return dates
+        
+    }
+
+    async create(service_package_id: number, service_date: Date){
+
+        const serviceRepository = new ServiceRepository()
+        const servicePackageRepository = new ServicePackageRepository()
+        
+        let dates: Date [] = []
+
+        try{
+
+            const results = []
+
+            const response = await servicePackageRepository.findOneById(service_package_id)
+
+            if(response?.package_type === "Quinzenal"){
+                dates = this.createBiweeklyDates(service_date)
+            }
+
+            if(response?.package_type === "Semanal"){
+                dates = this.createWeeklyDates(service_date)
+            }
+
+            for(let i = 0; i < dates.length; i ++){
+                const services = await serviceRepository.createAndSave(service_package_id, dates[i], 0)
+                results.push(services)
+            }
+            
+            return results
+        }
+
+        catch(error){
+            console.error(error)
+            throw error
+        }
+    }
+}
+
+export { ServiceController }
