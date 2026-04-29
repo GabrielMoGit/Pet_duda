@@ -10,7 +10,7 @@ class ServiceController{
         dates.push(new Date(initialDate))
 
         const secondDate = new Date(initialDate)
-        secondDate.setDate(initialDate.getDate() + 15)
+        secondDate.setDate(initialDate.getDate() + 14)
         
         dates.push(secondDate)
 
@@ -24,7 +24,7 @@ class ServiceController{
 
         for(let i = 0; i < 3; i ++){
             const newDate = new Date(initialDate)
-            newDate.setDate(initialDate.getDate() + ((i + 1) * 7))
+            newDate.setDate(initialDate.getDate() + (((i + 1) * 7)) - 1)
             dates.push(newDate)
         }
 
@@ -36,11 +36,14 @@ class ServiceController{
 
         const serviceRepository = new ServiceRepository()
 
+        
         const dates = this.createBiweeklyDates(service_date)
 
         try{
 
             const results = []
+
+            
 
             for(let i = 0; i < dates.length; i ++){
                 const services = await serviceRepository.createAndSave(service_package_id, dates[i], false)
