@@ -3,7 +3,6 @@ import { RegisterButton } from '../../components/buttons/registerButton'
 import { SuggestionList } from '../../components/suggestionList'
 import { useState, useRef, useEffect } from 'react'
 import { api } from '../../services/api'
-import { useResolvedPath } from 'react-router-dom'
 
 export function TutorRegister(){
 
