@@ -49,12 +49,12 @@ class ServicePackageController{
                 tutor_id: string,
                 pet_name: string,
                 pet_id: string,
-                services: Service[],
                 street: string,
                 neighborhood: string,
                 house_number: string,
                 package_done: number,
-                package_paid: number
+                package_paid: number,
+                services: Service[]
         }
 
         let finalPackages : CompletePackage[] = []
@@ -116,12 +116,12 @@ class ServicePackageController{
                 tutor_id: tutor_id,
                 pet_name: pet_name,
                 pet_id: pet_id,
-                services: services,
                 street: street,
                 neighborhood: neighborhood,
                 house_number: house_number,
                 package_done: package_done,
-                package_paid: package_paid
+                package_paid: package_paid,
+                services: services,
             })
 
             services = []
