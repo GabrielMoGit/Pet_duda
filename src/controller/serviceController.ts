@@ -29,7 +29,20 @@ class ServiceController{
         }
 
         return dates
-        
+    }
+    
+    async listAllServicesForPackageId(package_id: number[]){
+
+        const serviceRepository = new ServiceRepository()
+
+        let service_packages = []
+        for(const item of package_id){
+            const response = await serviceRepository.findById(item)
+            service_packages.push(response)
+        }
+
+        return service_packages
+
     }
 
     async create(service_package_id: number, service_date: Date){

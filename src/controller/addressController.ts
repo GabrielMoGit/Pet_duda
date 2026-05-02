@@ -62,11 +62,6 @@ class AddressController{
         const streets = await streetController.filterStreetForId(streetsId)
         const neighborhoods = await neighberhoodController.filterNeighborhoodFromId(neighborhoodId)
 
-        console.log(neighborhoods)
-        console.log(streets)
-        console.log(numbers)
-
-
         return addresses.map((addr, index) => ({
             streetName: streets[index]?.name,
             neighborhoodName: neighborhoods[index]?.name,
