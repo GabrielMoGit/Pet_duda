@@ -19,7 +19,6 @@ class AddressController{
             const street = await streetReposiroty.checkIfStreetAlreadyExist(streetName)
             const neighborhood = await neighborhoodRepository.checkIfNeighborhoodAlreadyExist(neighborhoodName)
             const tutor = await tutorRepository.findByPhone(tutorPhone)
-            
             const addressAlreadyExist = await addressRepository.checkIfAddressAlreadyExist(tutor!.id, neighborhood!.id, street!.id, number)
 
             if(!addressAlreadyExist){
@@ -33,6 +32,21 @@ class AddressController{
                 message: "Erro ao cadastrar endereço"
             })
         }
+    }
+
+    async listAddresses(tutorId: string[]){
+
+        const addressRepository = new AddressRepository()
+        const streetReposiroty = new StreetRepository()
+
+        const allAddresses = await addressRepository.ListAllAddresses()
+
+        let streetsId = []
+        for(const item of allAddresses){
+            streetsId.push(item.street_id)
+        }
+
+
     }
 
 }

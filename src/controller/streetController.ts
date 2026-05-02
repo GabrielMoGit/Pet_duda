@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { StreetRepository } from "../repositories/streetReposiroty";
 import { OneToOneInverseSideSubjectBuilder } from "typeorm/browser/persistence/subject-builder/OneToOneInverseSideSubjectBuilder.js";
 
-class streetController{
+class StreetController{
 
     async create(request: Request, response: Response){
         const { name } = request.body
@@ -35,6 +35,22 @@ class streetController{
             })
         }
     }
+
+    async filterStreetForId(id: string[]){
+        const streetReposiroty = new StreetRepository()
+
+        type Street = {
+            name: string
+        }
+
+        let streets: Street[] = []
+
+        for(const item of id){
+            const response = await streetReposiroty.returnStreetNameFromId(item)
+        }
+
+        return streets
+    }
 }
 
-export { streetController }
+export { StreetController }

@@ -28,7 +28,16 @@ class StreetRepository {
 
     async returnStreetNameFromId(id: string){
         const streets = await this.repository.findOneBy({id})
-        return(streets?.name)
+
+        if(!streets){
+            throw new Error("Rua não encontrada")
+        }
+
+        return{
+            street:{
+                name: streets.name
+            }
+        }
     }
 }
 
