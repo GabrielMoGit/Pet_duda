@@ -18,6 +18,7 @@ class ServicePackageController{
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0) 
                 await serviceController.create(createdPackage.id, new Date(service_date))
 
+
             return response.json(createdPackage)
 
         }catch(error){
@@ -27,10 +28,30 @@ class ServicePackageController{
 
     async listPackages(request: Request, response: Response){
 
+        const petRepository = new PetRepository()
         const servicePackageRepository = new ServicePackageRepository()
 
         const allPackages = await servicePackageRepository.listAllPackages()
-        return response.json(allPackages)
+        
+        type Pets = {
+            petName: string;
+            idTutor: string
+        }
+
+        let pets: Pets[] = []
+        let petIds: string[] = []
+        
+        allPackages.forEach((item) =>{
+            const petId = item.pet_id
+            petIds.push(petId)
+        })
+
+        for(const item of petIds){
+            const response = await petRepository.returnTutorAndPetNameFromPetId(item)
+
+            pets.push(response.pet)
+        }
+        return response.json({allPackages, pets})
     }
 
 }
