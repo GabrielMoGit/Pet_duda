@@ -3,6 +3,7 @@ import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 import { PetRepository } from "../repositories/petRepository";
 import { ServiceController } from "./serviceController";
+import { TutorRepository } from "../repositories/tutorRepository";
 
 class ServicePackageController{
 
@@ -30,6 +31,7 @@ class ServicePackageController{
 
         const petRepository = new PetRepository()
         const servicePackageRepository = new ServicePackageRepository()
+        const tutorRepository = new TutorRepository()
 
         const allPackages = await servicePackageRepository.listAllPackages()
         
@@ -46,11 +48,20 @@ class ServicePackageController{
             pets.push(response.pet)
         }
 
+        type Tutors = {
+            tutorName: string;
+            tutorPhone: string
+        }
 
+        let tutors: Tutors[] = []
 
+        for(const item of pets){
+            const response = await tutorRepository.findById(item.idTutor)
 
-        
-        return response.json({allPackages, pets})
+            tutors.push(response.tutor)
+        }
+
+        return response.json({allPackages, pets, tutors})
     }
 
 }
