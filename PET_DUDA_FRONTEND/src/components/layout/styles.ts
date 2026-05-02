@@ -25,11 +25,13 @@ export const SidePanelHeader = styled.div`
 export const Content = styled.div`
   flex: 1;
   padding: 20px;
-  min-height: 0;
+
+  overflow-y: auto;
+
   background-image: url("/LightBackground.jpg");
-  background-size: cover;    
-  background-position: center; 
-  background-repeat: no-repeat; 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 type PageContentProps = {
