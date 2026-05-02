@@ -14,6 +14,20 @@ class TutorRepository{
         return await this.repository.findOneBy({phone})
     }
 
+    async findById(id: string){
+        const tutor = await this.repository.findOneBy({id})
+
+        if(!tutor){
+            throw new Error('Tutor não encontrado')
+        }
+        return{
+            tutor:{
+                tutorName: tutor.name,
+                tutorPhone: tutor.phone
+            }
+        }
+    }
+
     async createAndSave(name: string, phone: string){
         const tutor = this.repository.create({name, phone})
         return await this.repository.save(tutor)

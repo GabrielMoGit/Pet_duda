@@ -39,18 +39,17 @@ class ServicePackageController{
         }
 
         let pets: Pets[] = []
-        let petIds: string[] = []
-        
-        allPackages.forEach((item) =>{
-            const petId = item.pet_id
-            petIds.push(petId)
-        })
 
-        for(const item of petIds){
-            const response = await petRepository.returnTutorAndPetNameFromPetId(item)
+        for(const item of allPackages){
+            const response = await petRepository.returnTutorAndPetNameFromPetId(item.pet_id)
 
             pets.push(response.pet)
         }
+
+
+
+
+        
         return response.json({allPackages, pets})
     }
 
