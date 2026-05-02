@@ -18,6 +18,10 @@ class AddressRepository{
     async checkIfAddressAlreadyExist(tutor_id: string, neighborhood_id: string, street_id: string, number: string){
         return this.repository.findOneBy({tutor_id, neighborhood_id, street_id, number})
     }
+
+    async ListAllAddresses(){
+    return await this.repository.find()
+    }
 }
 
 export { AddressRepository }
