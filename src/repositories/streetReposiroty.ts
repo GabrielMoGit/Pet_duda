@@ -34,9 +34,9 @@ class StreetRepository {
         }
 
         return{
-            street:{
+            
                 name: streets.name
-            }
+            
         }
     }
 }

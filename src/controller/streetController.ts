@@ -47,6 +47,7 @@ class StreetController{
 
         for(const item of id){
             const response = await streetReposiroty.returnStreetNameFromId(item)
+            streets.push(response)
         }
 
         return streets

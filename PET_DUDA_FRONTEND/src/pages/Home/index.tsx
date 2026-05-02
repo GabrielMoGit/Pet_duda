@@ -2,8 +2,8 @@ import { useState, useEffect } from "react"
 import { api } from "../../services/api"
 
 export function Home(){
-
-    type ServicePackage = {
+/*
+    /type ServicePackage = {
         id: number;
         pet_id: number;
         package_type: string;
@@ -27,6 +27,7 @@ export function Home(){
     }, [])
 
     return (
+
         <>
             {servicePackage.map(servicePackage => (
             <div key={servicePackage.id}>
@@ -37,5 +38,6 @@ export function Home(){
             ))}
         </>
         )
+        */
 }
 

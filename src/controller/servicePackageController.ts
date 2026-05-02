@@ -4,6 +4,7 @@ import { ServicePackageRepository } from "../repositories/servicePackageReposito
 import { ServiceController } from "./serviceController";
 import { PetController } from "./petController";
 import { TutorController } from "./tutorController";
+import { AddressController } from "./addressController";
 
 class ServicePackageController{
 
@@ -30,26 +31,25 @@ class ServicePackageController{
         const servicePackageRepository = new ServicePackageRepository()
         const tutorController = new TutorController()
         const petController = new PetController()
+        const addressesController = new AddressController()
 
         const allPackages = await servicePackageRepository.listAllPackages()
         
         let petsId = []
-
         for(const item of allPackages){
             petsId.push(item.pet_id)
         }
-
         const pets = await petController.filterPetForId(petsId)
 
         let tutorsId = []
-
         for(const item of pets){
             tutorsId.push(item.idTutor)
         }
-
         const tutors = await tutorController.filterTutorForId(tutorsId)
 
-        return response.json({allPackages, pets, tutors})
+        const addresses = await addressesController.listAddresses(tutorsId)
+
+        return response.json({allPackages, pets, tutors, addresses})
     }
 
 }

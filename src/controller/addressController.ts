@@ -3,6 +3,9 @@ import { AddressRepository } from "../repositories/addressRepository";
 import { StreetRepository } from "../repositories/streetReposiroty";
 import { NeighborhoodRepository } from "../repositories/neighborhoodRepository";
 import { TutorRepository } from "../repositories/tutorRepository";
+import { StreetController } from "./streetController";
+import { NeighborhoodController } from "./neighberhoodController";
+import { neighborhoods } from "../models/neighborhoods";
 
 class AddressController{
 
@@ -37,16 +40,38 @@ class AddressController{
     async listAddresses(tutorId: string[]){
 
         const addressRepository = new AddressRepository()
-        const streetReposiroty = new StreetRepository()
-
-        const allAddresses = await addressRepository.ListAllAddresses()
+        const streetController = new StreetController()
+        const neighberhoodController = new NeighborhoodController()
+        
+        let addresses = []
+        for(const item of tutorId){
+            const response = await addressRepository.ListAllAddressesFromTutorId(item)
+            addresses.push(response)
+        }
+        
 
         let streetsId = []
-        for(const item of allAddresses){
+        let neighborhoodId = [] 
+        let numbers = []
+        for(const item of addresses){
             streetsId.push(item.street_id)
+            neighborhoodId.push(item.neighborhood_id)
+            numbers.push(item.number)
         }
 
+        const streets = await streetController.filterStreetForId(streetsId)
+        const neighborhoods = await neighberhoodController.filterNeighborhoodFromId(neighborhoodId)
 
+        console.log(neighborhoods)
+        console.log(streets)
+        console.log(numbers)
+
+
+        return addresses.map((addr, index) => ({
+            streetName: streets[index]?.name,
+            neighborhoodName: neighborhoods[index]?.name,
+            number: addr.number
+        }))
     }
 
 }
