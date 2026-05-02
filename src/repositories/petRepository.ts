@@ -20,6 +20,11 @@ class PetRepository{
         return this.repository.findOneBy({name, id_tutor})
     }
 
+    async returnTutorAndPetNameFromPetId(id: string){
+        const pet = await this.repository.findOneBy({id})
+        return (pet?.name, pet?.id_tutor)
+    }
+
 }
 
 export {PetRepository}
