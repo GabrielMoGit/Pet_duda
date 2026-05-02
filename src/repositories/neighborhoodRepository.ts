@@ -25,6 +25,20 @@ class NeighborhoodRepository{
         })
         return neighborhood.map(neighborhood => neighborhood.name)
     }
+
+    async returnNeighborhoodNameFromId(id: string){
+        const neighborhood = await this.repository.findOneBy({id})
+
+        if(!neighborhood){
+            throw new Error("bairro não encontrado")
+        }
+
+        return{
+            
+            name: neighborhood.name
+            
+        }
+    }
 }
 
 export { NeighborhoodRepository }

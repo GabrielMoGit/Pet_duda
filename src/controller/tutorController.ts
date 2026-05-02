@@ -1,7 +1,7 @@
 import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
 
-class tutorController{
+class TutorController{
     async create(request: Request, response: Response){
         const {name, phone} = request.body
         const tutorRepository = new TutorRepository()
@@ -21,6 +21,26 @@ class tutorController{
         })
         
     }
+
+    async filterTutorForId(id: string[]){
+
+        const tutorRepository = new TutorRepository()
+
+        type Tutors = {
+            tutorName: string;
+            tutorPhone: string
+        }
+
+        let tutors: Tutors[] = []
+
+        for(const item of id){
+            const response = await tutorRepository.findById(item)
+
+            tutors.push(response.tutor)
+        }
+
+        return tutors
+    }
 }
 
-export {tutorController};
+export {TutorController};

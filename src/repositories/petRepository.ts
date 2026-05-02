@@ -1,4 +1,3 @@
-import { stringify } from "node:querystring";
 import { dataSource } from "../database/dataSource";
 import { pets } from "../models/pets";
 import { Repository } from "typeorm";
@@ -18,6 +17,20 @@ class PetRepository{
 
     async checkIfPetAlreadyExistForTutor(name: string, id_tutor: string){
         return this.repository.findOneBy({name, id_tutor})
+    }
+
+    async returnTutorAndPetNameFromPetId(id: string){
+        const pet = await this.repository.findOneBy({id})
+
+        if (!pet) {
+        throw new Error("Pet não encontrado")
+        }
+        return {
+            pet:{
+                petName: pet?.name,
+                idTutor: pet?.id_tutor
+            }
+        }
     }
 
 }

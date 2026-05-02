@@ -32,6 +32,23 @@ class NeighborhoodController{
             })
         }
     }
+
+    async filterNeighborhoodFromId(id: string[]){
+        const neighborhoodRepository = new NeighborhoodRepository()
+
+        type Neighborhood = {
+            name: string
+        }
+
+        let neighborhoods: Neighborhood[] = []
+
+        for(const item of id){
+            const response = await neighborhoodRepository.returnNeighborhoodNameFromId(item)
+            neighborhoods.push(response)
+        }
+
+        return neighborhoods
+    }
 }
 
 export { NeighborhoodController }
