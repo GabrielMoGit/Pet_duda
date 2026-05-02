@@ -18,14 +18,19 @@ class ServicePackageController{
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0) 
                 await serviceController.create(createdPackage.id, new Date(service_date))
 
-            return response.json('pacote criado')
+            return response.json(createdPackage)
 
         }catch(error){
             return response.json(error)
         }
-        
+    }
 
+    async listPackages(request: Request, response: Response){
 
+        const servicePackageRepository = new ServicePackageRepository()
+
+        const allPackages = await servicePackageRepository.listAllPackages()
+        return response.json(allPackages)
     }
 
 }

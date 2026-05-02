@@ -28,6 +28,7 @@ router.get("/listNeighborhood", neighberhoodController.listNeighborhoods)
 router.post("/address", addressController.create)
 
 router.post("/servicePackage", servicePackageController.create)
+router.get("/ListPackages", servicePackageController.listPackages)
 
 
 
