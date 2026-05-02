@@ -2,7 +2,7 @@ import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
 import { PetRepository } from "../repositories/petRepository";
 
-class petController{
+class PetController{
 
     async create(request: Request, response: Response){
         const {name, phone} = request.body
@@ -30,9 +30,27 @@ class petController{
         return response.status(200).json({
             message: "Pet cadastrado!"
         })
+    }
 
+    async filterPetForId(id: string[]){
 
+        const petRepository = new PetRepository()
+
+        type Pets = {
+            petName: string;
+            idTutor: string
+        }
+
+        let pets: Pets[] = []
+
+        for(const item of id){
+            const response = await petRepository.returnTutorAndPetNameFromPetId(item)
+
+            pets.push(response.pet)
+        }
+
+        return pets
     }
 }
 
-export { petController }
+export { PetController }

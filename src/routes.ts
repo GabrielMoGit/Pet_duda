@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { tutorController} from "./controller/tutorController";
-import { petController } from "./controller/petController";
+import { TutorController} from "./controller/tutorController";
+import { PetController } from "./controller/petController";
 import { streetController } from "./controller/streetController";
 import { NeighborhoodController } from "./controller/neighberhoodController";
 import { AddressController } from "./controller/addressController";
@@ -8,16 +8,16 @@ import { ServicePackageController } from "./controller/servicePackageController"
 
 const router = Router();
 
-const TutorController = new tutorController()
-const PetController = new petController()
+const tutorController = new TutorController()
+const petController = new PetController()
 const StreetController = new streetController()
 const neighberhoodController = new NeighborhoodController()
 const addressController = new AddressController()
 const servicePackageController = new ServicePackageController()
 
-router.post("/tutor", TutorController.create)
+router.post("/tutor", tutorController.create)
 
-router.post("/pet", PetController.create)
+router.post("/pet", petController.create)
 
 router.post("/street", StreetController.create)
 router.get("/listStreets", StreetController.listStreets)

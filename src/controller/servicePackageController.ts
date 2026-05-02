@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServicePackageRepository } from "../repositories/servicePackageRepository";
-import { PetRepository } from "../repositories/petRepository";
 import { ServiceController } from "./serviceController";
-import { TutorRepository } from "../repositories/tutorRepository";
+import { PetController } from "./petController";
+import { TutorController } from "./tutorController";
 
 class ServicePackageController{
 
     async create(request: Request, response: Response){
         const {pet_id, package_type, service_date} = request.body
-        const serviceRepository = new ServiceRepository()
         const servicePackageRepository = new ServicePackageRepository()
-        const petRepository = new PetRepository()
         const serviceController = new ServiceController()
 
         try{
@@ -29,37 +27,27 @@ class ServicePackageController{
 
     async listPackages(request: Request, response: Response){
 
-        const petRepository = new PetRepository()
         const servicePackageRepository = new ServicePackageRepository()
-        const tutorRepository = new TutorRepository()
+        const tutorController = new TutorController()
+        const petController = new PetController()
 
         const allPackages = await servicePackageRepository.listAllPackages()
         
-        type Pets = {
-            petName: string;
-            idTutor: string
-        }
-
-        let pets: Pets[] = []
+        let petsId = []
 
         for(const item of allPackages){
-            const response = await petRepository.returnTutorAndPetNameFromPetId(item.pet_id)
-
-            pets.push(response.pet)
+            petsId.push(item.pet_id)
         }
 
-        type Tutors = {
-            tutorName: string;
-            tutorPhone: string
-        }
+        const pets = await petController.filterPetForId(petsId)
 
-        let tutors: Tutors[] = []
+        let tutorsId = []
 
         for(const item of pets){
-            const response = await tutorRepository.findById(item.idTutor)
-
-            tutors.push(response.tutor)
+            tutorsId.push(item.idTutor)
         }
+
+        const tutors = await tutorController.filterTutorForId(tutorsId)
 
         return response.json({allPackages, pets, tutors})
     }
