@@ -31,17 +31,15 @@ class ServiceController{
         return dates
     }
     
-    async listAllServicesForPackageId(package_id: number[]){
+    async listAllServicesForPackageId(package_id: number){
 
         const serviceRepository = new ServiceRepository()
 
-        let service_packages = []
-        for(const item of package_id){
-            const response = await serviceRepository.findById(item)
-            service_packages.push(response)
-        }
+        
+        const response = await serviceRepository.findById(package_id)
 
-        return service_packages
+
+        return response
 
     }
 
