@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { api } from "../../services/api"
+import { StyledBox } from "../../components/packageBox"
 
 type Service = {
             service_id: number,
@@ -54,9 +55,29 @@ export function Home(){
 return (
     
     <div>
-      <h1>Pacotes de Serviço</h1>
+        <h1>Pacotes de Serviço</h1>
 
-      
+        {servicePackages.length === 0 && <p>Nenhum pacote encontrado</p>}
+
+        <div style={{ display: "flex",flexWrap: "wrap", gap: "20px"}}>
+            {servicePackages.map(pkg => (
+            <StyledBox
+            package_id={pkg.package_id}
+            package_type={pkg.package_type}
+            tutor_name={pkg.tutor_name} 
+            tutor_phone={pkg.tutor_phone}
+            pet_name={pkg.pet_name}
+            street={pkg.street}
+            neighborhood={pkg.neighborhood}
+            house_number={pkg.house_number}
+            package_done={pkg.package_done}
+            package_paid={pkg.package_paid}
+            services={pkg.services}
+            />
+            ))}
+        </div>
+        
+        
     </div>
     
   )
