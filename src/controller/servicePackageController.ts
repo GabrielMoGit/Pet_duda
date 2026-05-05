@@ -54,7 +54,8 @@ class ServicePackageController{
             house_number: string,
             package_done: number,
             package_paid: number,
-            services: Service[]
+            services: Service[],
+            value: string
         }
 
         let finalPackages : CompletePackage[] = []
@@ -107,6 +108,7 @@ class ServicePackageController{
             const house_number = addresses[i].number
             const package_done = allPackages[i].package_done
             const package_paid = allPackages[i].paid
+            const value = allPackages[i].value
 
             finalPackages.push({
                 package_id: packageId,
@@ -122,6 +124,7 @@ class ServicePackageController{
                 package_done: package_done,
                 package_paid: package_paid,
                 services: services,
+                value: value
             })
 
             services = []
