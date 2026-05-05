@@ -21,7 +21,8 @@ type Service = {
         house_number: string,
         package_done: number,
         package_paid: number,
-        services: Service[]
+        services: Service[],
+        value: string
     }
 
 export function Home(){
@@ -73,6 +74,7 @@ return (
             package_done={pkg.package_done}
             package_paid={pkg.package_paid}
             services={pkg.services}
+            value={pkg.value}
             />
             ))}
         </div>

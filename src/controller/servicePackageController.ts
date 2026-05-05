@@ -9,13 +9,13 @@ import { AddressController } from "./addressController";
 class ServicePackageController{
 
     async create(request: Request, response: Response){
-        const {pet_id, package_type, service_date, service_value} = request.body
+        const {pet_id, package_type, service_date, value} = request.body
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
-
+        console.log(value)
         try{
 
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, service_value) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
                 await serviceController.create(createdPackage.id, new Date(service_date))
                 
             return response.json(createdPackage)

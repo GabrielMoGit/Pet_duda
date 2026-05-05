@@ -18,7 +18,8 @@ type Props = {
     house_number: string,
     package_done: number,
     package_paid: number,
-    services: Service[]
+    services: Service[],
+    value: string
 }
     // código da cor dos icones #0045FF
 
@@ -31,7 +32,7 @@ export function StyledBox(props: Props){
         <Box>
             <div style={{fontSize: '20px'}}>
                 <p><img src='id.png' width={20} style={{ marginRight: "8px" }} />
-                    ID do pacote: <span style={{ color: '#0045FF', fontWeight: "bold", fontSize: '23px'  }} >{props.package_id}</span></p>
+                    ID do pacote: <span style={{ color: '#0045FF', fontWeight: "bold", fontSize: '23px  '  }} >{props.package_id}</span></p>
 
                     <p><img src='user.png' width={20} style={{ marginRight: "8px" }} />
                         Tutor: <span style={{fontWeight: 'bold', fontSize: '23px'}}>{props.tutor_name}</span></p>
@@ -108,6 +109,7 @@ export function StyledBox(props: Props){
                             <p style={{fontSize: '22', fontWeight: 'bold', color: '#00c22d'}}>{props.package_paid ? "Sim" : "Não"}</p>
                         </div>
                     </div>
+                    <p>valor: {props.value}</p>
                 </div>
             </div>
         </Box>
