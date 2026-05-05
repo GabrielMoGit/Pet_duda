@@ -27,13 +27,11 @@ class AddressRepository{
         }
 
         return{
-            
-                tutor_id: addresses.tutor_id,
-                neighborhood_id: addresses.neighborhood_id,
-                street_id: addresses.street_id,
-                number: addresses.number
+            tutor_id: addresses.tutor_id,
+            neighborhood_id: addresses.neighborhood_id,
+            street_id: addresses.street_id,
+            number: addresses.number
         }
-
     }
 }
 
