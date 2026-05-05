@@ -9,13 +9,13 @@ import { AddressController } from "./addressController";
 class ServicePackageController{
 
     async create(request: Request, response: Response){
-        const {pet_id, package_type, service_date} = request.body
+        const {pet_id, package_type, service_date, service_value} = request.body
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
         try{
 
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, service_value) 
                 await serviceController.create(createdPackage.id, new Date(service_date))
                 
             return response.json(createdPackage)
@@ -42,19 +42,19 @@ class ServicePackageController{
         let services: Service[] = []
 
         type CompletePackage ={
-                package_id: number,
-                package_type: string,
-                tutor_name: string,
-                tutor_phone: string,
-                tutor_id: string,
-                pet_name: string,
-                pet_id: string,
-                street: string,
-                neighborhood: string,
-                house_number: string,
-                package_done: number,
-                package_paid: number,
-                services: Service[]
+            package_id: number,
+            package_type: string,
+            tutor_name: string,
+            tutor_phone: string,
+            tutor_id: string,
+            pet_name: string,
+            pet_id: string,
+            street: string,
+            neighborhood: string,
+            house_number: string,
+            package_done: number,
+            package_paid: number,
+            services: Service[]
         }
 
         let finalPackages : CompletePackage[] = []
