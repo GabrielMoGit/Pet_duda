@@ -34,9 +34,7 @@ class NeighborhoodRepository{
         }
 
         return{
-            
             name: neighborhood.name
-            
         }
     }
 }
