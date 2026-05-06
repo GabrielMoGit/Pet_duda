@@ -63,17 +63,15 @@ class ServicePackageController{
 
         let packageRepositoryResponse = []
 
-        if(kind === "done"){
-            packageRepositoryResponse = await servicePackageRepository.listAllPaidPackages()
+        if(kind === "undone"){
+            packageRepositoryResponse = await servicePackageRepository.listAllUndonePackages()
         }else{
             packageRepositoryResponse = await servicePackageRepository.listAllPackages()
         }
-
-        const allPackages = packageRepositoryResponse
         
         let package_id = []
         let petsId = []
-        for(const item of allPackages){
+        for(const item of packageRepositoryResponse){
             petsId.push(item.pet_id)
             package_id.push(item.id)
         }
@@ -90,9 +88,9 @@ class ServicePackageController{
 
         
 
-        for(let i = 0; i < allPackages.length; i++ ){
+        for(let i = 0; i < packageRepositoryResponse.length; i++ ){
             const packageId = package_id[i]
-            const package_type = allPackages[i].package_type
+            const package_type = packageRepositoryResponse[i].package_type
             const tutor_name = tutors[i].tutorName
             const tutor_phone = tutors[i].tutorPhone
             const tutor_id = tutorsId[i]
@@ -115,9 +113,9 @@ class ServicePackageController{
             const street = addresses[i].streetName
             const neighborhood = addresses[i].neighborhoodName
             const house_number = addresses[i].number
-            const package_done = allPackages[i].package_done
-            const package_paid = allPackages[i].paid
-            const value = allPackages[i].value
+            const package_done = packageRepositoryResponse[i].package_done
+            const package_paid = packageRepositoryResponse[i].paid
+            const value = packageRepositoryResponse[i].value
 
             finalPackages.push({
                 package_id: packageId,
@@ -141,6 +139,10 @@ class ServicePackageController{
         }
         
         return response.json({finalPackages})
+    }
+
+    async turnPackagesToDoneStatus(response: Response, request: Request){
+
     }
 
 }

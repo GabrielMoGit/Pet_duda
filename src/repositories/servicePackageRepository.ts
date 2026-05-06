@@ -23,10 +23,18 @@ class ServicePackageRepository {
         return await this.repository.find() 
     }
 
-    async listAllPaidPackages(){
+    async listAllUnpaidPackages(){
         return await this.repository.find({
             where: {
-                paid: 1
+                paid: 0
+            }
+        })
+    }
+
+    async listAllUndonePackages(){
+        return await this.repository.find({
+            where: {
+                package_done: 0
             }
         })
     }
