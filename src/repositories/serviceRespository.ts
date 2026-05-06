@@ -1,6 +1,6 @@
 import { dataSource } from "../database/dataSource";
 import { services } from "../models/services";
-import { Repository, In } from "typeorm";
+import { Repository, LessThan } from "typeorm";
 
 class ServiceRepository{
 
@@ -22,6 +22,18 @@ class ServiceRepository{
     async listAllServices(){
         return await this.repository.find()
     }
+
+    async checkIfServiceIsDone(service_date: Date){
+        const today = new Date()
+        const services = this.repository.find({
+            where: {
+                service_date: LessThan(today),
+                service_done: 0
+            }
+        })
+
+        return services
+    }
 }
 
-export { ServiceRepository  }
+export { ServiceRepository  }  
