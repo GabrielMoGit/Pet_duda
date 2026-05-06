@@ -20,7 +20,7 @@ class ServicePackageRepository {
     }
 
     async listAllPackages(){
-        return await this.repository.find()
+        return await this.repository.find() 
     }
 
     async listAllPaidPackages(){
@@ -29,6 +29,18 @@ class ServicePackageRepository {
                 paid: 1
             }
         })
+    }
+
+    async turnDoneToCompletedPackages(id: number){
+        const pkg = await this.repository.findOneBy({id})
+
+        if(!pkg){
+            return
+        }
+
+        pkg.package_done = 1
+        
+        await this.repository.save(pkg)
     }
 }
 
