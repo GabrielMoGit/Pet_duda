@@ -31,7 +31,7 @@ class ServicePackageRepository {
         })
     }
 
-    async turnDoneToCompletedPackages(id: number){
+    async turnDoneCompletedPackage(id: number){
         const pkg = await this.repository.findOneBy({id})
 
         if(!pkg){
@@ -39,6 +39,18 @@ class ServicePackageRepository {
         }
 
         pkg.package_done = 1
+        
+        await this.repository.save(pkg)
+    }
+
+    async payPackage(id: number){
+        const pkg = await this.repository.findOneBy({id})
+
+        if(!pkg){
+            return
+        }
+
+        pkg.paid = 1
         
         await this.repository.save(pkg)
     }
