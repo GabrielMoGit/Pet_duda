@@ -22,6 +22,14 @@ class ServicePackageRepository {
     async listAllPackages(){
         return await this.repository.find()
     }
+
+    async listAllPaidPackages(){
+        return await this.repository.find({
+            where: {
+                paid: 1
+            }
+        })
+    }
 }
 
 export { ServicePackageRepository }

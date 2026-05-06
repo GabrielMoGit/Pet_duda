@@ -37,7 +37,11 @@ export function Home(){
         async function listOnload(){
 
             try{
-                const {data} = await api.get('/ListPackages')
+                const {data} = await api.get('/ListPackages', {
+                  params:{
+                    kindOfPackage: ''
+                  }
+                })
                 setServicePackages(data.finalPackages)
             }catch(err){
                 console.error("Erro ao carregar pacotes", err)

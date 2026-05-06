@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 import { ServiceController } from "./serviceController";
 import { PetController } from "./petController";
@@ -12,7 +11,6 @@ class ServicePackageController{
         const {pet_id, package_type, service_date, value} = request.body
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
-        console.log(value)
         try{
 
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
@@ -26,12 +24,15 @@ class ServicePackageController{
     }
 
     async listPackages(request: Request, response: Response){
+        const kind = request.query.kindOfPackage
+
 
         const servicePackageRepository = new ServicePackageRepository()
         const tutorController = new TutorController()
         const petController = new PetController()
         const addressesController = new AddressController()
         const serviceController = new ServiceController()
+
 
         type Service = {
             service_id: number,
@@ -60,7 +61,15 @@ class ServicePackageController{
 
         let finalPackages : CompletePackage[] = []
 
-        const allPackages = await servicePackageRepository.listAllPackages()
+        let packageRepositoryResponse = []
+
+        if(kind === "done"){
+            packageRepositoryResponse = await servicePackageRepository.listAllPaidPackages()
+        }else{
+            packageRepositoryResponse = await servicePackageRepository.listAllPackages()
+        }
+
+        const allPackages = packageRepositoryResponse
         
         let package_id = []
         let petsId = []
@@ -130,7 +139,7 @@ class ServicePackageController{
             services = []
           
         }
-
+        
         return response.json({finalPackages})
     }
 

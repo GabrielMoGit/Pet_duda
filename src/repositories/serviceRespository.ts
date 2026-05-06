@@ -23,14 +23,21 @@ class ServiceRepository{
         return await this.repository.find()
     }
 
-    async checkIfServiceIsDone(service_date: Date){
+    async turnDonethepPassedServices(){
         const today = new Date()
-        const services = this.repository.find({
+        today.setHours(0, 0, 0, 0);
+        const services = await this.repository.find({
             where: {
                 service_date: LessThan(today),
                 service_done: 0
             }
         })
+
+        for(const item of services){
+            item.service_done = 1
+        }
+
+        await this.repository.save(services)
 
         return services
     }

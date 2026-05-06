@@ -38,7 +38,6 @@ class ServiceController{
         
         const response = await serviceRepository.findById(package_id)
 
-
         return response
 
     }
