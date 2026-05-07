@@ -166,6 +166,10 @@ class ServicePackageController{
 
         await servicePackageRepository.payPackage(package_id)
 
+        return response.json({
+            message: "Pacote pago"
+        })
+
     }
 
 
