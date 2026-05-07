@@ -36,7 +36,7 @@ class ServiceController{
         const serviceRepository = new ServiceRepository()
 
         
-        const response = await serviceRepository.findById(package_id)
+        const response = await serviceRepository.listByservicePackageId(package_id)
 
         return response
 
@@ -75,6 +75,16 @@ class ServiceController{
             console.error(error)
             throw error
         }
+    }
+
+    async checkIfAllPackagesServicesIsDone(service_package_id: number){
+
+        const serviceRepository = new ServiceRepository()
+
+        const services = await serviceRepository.listByservicePackageId(service_package_id)
+
+        return services
+
     }
 }
 

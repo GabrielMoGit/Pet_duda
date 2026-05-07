@@ -5,6 +5,7 @@ import { StreetController } from "./controller/streetController";
 import { NeighborhoodController } from "./controller/neighberhoodController";
 import { AddressController } from "./controller/addressController";
 import { ServicePackageController } from "./controller/servicePackageController";
+import { ServiceController } from "./controller/serviceController";
 
 const router = Router();
 
@@ -14,6 +15,7 @@ const streetController = new StreetController()
 const neighberhoodController = new NeighborhoodController()
 const addressController = new AddressController()
 const servicePackageController = new ServicePackageController()
+const serviceController = new ServiceController()
 
 router.post("/tutor", tutorController.create)
 
@@ -29,6 +31,12 @@ router.post("/address", addressController.create)
 
 router.post("/servicePackage", servicePackageController.create)
 router.get("/listPackages", servicePackageController.listPackages)
+
+
+
+
+//test route
+router.get('/test', servicePackageController.turnPackagesToDoneStatus)
 
 
 

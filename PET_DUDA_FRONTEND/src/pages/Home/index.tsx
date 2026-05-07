@@ -39,7 +39,7 @@ export function Home(){
             try{
                 const {data} = await api.get('/ListPackages', {
                   params:{
-                    kindOfPackage: 'undone'
+                    kindOfPackage: 'unpaid'
                   }
                 })
                 setServicePackages(data.finalPackages)

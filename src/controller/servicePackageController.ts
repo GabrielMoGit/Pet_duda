@@ -63,7 +63,7 @@ class ServicePackageController{
 
         let packageRepositoryResponse = []
 
-        if(kind === "undone"){
+        if(kind === "unpaid"){
             packageRepositoryResponse = await servicePackageRepository.listAllUndonePackages()
         }else{
             packageRepositoryResponse = await servicePackageRepository.listAllPackages()
@@ -141,7 +141,27 @@ class ServicePackageController{
         return response.json({finalPackages})
     }
 
-    async turnPackagesToDoneStatus(response: Response, request: Request){
+    async turnPackagesToDoneStatus(){
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+
+        const undonePackages = await servicePackageRepository.listAllUndonePackages()
+
+        if (undonePackages.length === 0) {
+            return;
+        }
+
+        for(const item of undonePackages){
+            let response = await serviceController.listAllServicesForPackageId(item.id)
+            
+            const isDone = response.every(
+                service => service.service_done
+            )
+
+            if(isDone){
+                await servicePackageRepository.turnDoneCompletedPackage(item.id)
+            }
+        }
 
     }
 

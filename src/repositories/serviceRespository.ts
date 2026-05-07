@@ -15,7 +15,7 @@ class ServiceRepository{
         return this.repository.save(service)
     }
 
-    async findById(service_package_id: number){
+    async listByservicePackageId(service_package_id: number){
         return this.repository.findBy({service_package_id})
     }
 
@@ -38,8 +38,10 @@ class ServiceRepository{
         }
 
         await this.repository.save(services)
+    }
 
-        return services
+    async checkIfServiceIsDone(){
+
     }
 }
 
