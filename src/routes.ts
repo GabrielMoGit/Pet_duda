@@ -31,6 +31,7 @@ router.post("/address", addressController.create)
 
 router.post("/servicePackage", servicePackageController.create)
 router.get("/listPackages", servicePackageController.listPackages)
+router.post("payPackage", servicePackageController.turnPackagesToPaidStatus)
 
 
 

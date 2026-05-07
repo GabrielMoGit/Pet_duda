@@ -25,14 +25,11 @@ class ServicePackageController{
 
     async listPackages(request: Request, response: Response){
         const kind = request.query.kindOfPackage
-
-
         const servicePackageRepository = new ServicePackageRepository()
         const tutorController = new TutorController()
         const petController = new PetController()
         const addressesController = new AddressController()
         const serviceController = new ServiceController()
-
 
         type Service = {
             service_id: number,
@@ -85,8 +82,6 @@ class ServicePackageController{
         const tutors = await tutorController.filterTutorForId(tutorsId)
 
         const addresses = await addressesController.listAddresses(tutorsId)
-
-        
 
         for(let i = 0; i < packageRepositoryResponse.length; i++ ){
             const packageId = package_id[i]
@@ -162,8 +157,17 @@ class ServicePackageController{
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
             }
         }
+    }
+
+    async turnPackagesToPaidStatus(request: Request, response: Response){
+        const {package_id} = request.body
+
+        const servicePackageRepository = new ServicePackageRepository()
+
+        await servicePackageRepository.payPackage(package_id)
 
     }
+
 
 }
 
