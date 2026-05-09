@@ -136,7 +136,7 @@ class ServicePackageController{
         return response.json({finalPackages})
     }
 
-    async turnPackagesToDoneStatus(){
+    async turnPackagesToDoneStatusAndCreateNewPackage(){
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
@@ -147,16 +147,29 @@ class ServicePackageController{
         }
 
         for(const item of undonePackages){
-            let response = await serviceController.listAllServicesForPackageId(item.id)
+            const response = await serviceController.listAllServicesForPackageId(item.id)
             
+            const lastService = response[response.length - 1]
+            const date = lastService?.service_date ?? null
+            if(item.package_type === "Quinzenal"){
+                date.setDate(date.getDate() + 14)
+            }else{
+                date.setDate(date.getDate() + 7)
+            }
             const isDone = response.every(
                 service => service.service_done
             )
 
+            if(!date){
+                continue
+            }
+
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
+                await this.localCreate(item.pet_id, item.package_type, date, item.value)
             }
         }
+
     }
 
     async turnPackagesToPaidStatus(request: Request, response: Response){
@@ -165,7 +178,7 @@ class ServicePackageController{
         const servicePackageRepository = new ServicePackageRepository()
 
         await servicePackageRepository.payPackage(package_id)
-
+       
         return response.json({
             message: "Pacote pago"
         })
@@ -173,6 +186,22 @@ class ServicePackageController{
     }
 
 
+    async localCreate(pet_id: string, package_type: string, service_date: Date, value: string){
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+        try{
+
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
+                await serviceController.create(createdPackage.id, new Date(service_date))
+                
+            return (createdPackage)
+
+        }catch(error){
+            return console.log(error)
+        }
+    }
+
 }
 
 export { ServicePackageController }
+

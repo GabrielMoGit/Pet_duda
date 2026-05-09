@@ -18,7 +18,7 @@ app.listen(3000, ()=> console.log("Server is running!"))
 
 cron.schedule('0 0 * * *', async () => {
     await serviceRepository.turnDonethepPassedServices()
-    await servicePackageController.turnPackagesToDoneStatus()
+    await servicePackageController.turnPackagesToDoneStatusAndCreateNewPackage()
     console.log("set services done");
 }, {
     timezone: "America/Sao_Paulo"
