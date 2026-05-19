@@ -20,6 +20,7 @@ const serviceController = new ServiceController()
 router.post("/tutor", tutorController.create)
 
 router.post("/pet", petController.create)
+router.get("/listPetsAndRespectiveTutors", petController.listAllPetsAndRespectiveTutors)
 
 router.post("/street", streetController.create)
 router.get("/listStreets", streetController.listStreets)
