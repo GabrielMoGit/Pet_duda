@@ -7,11 +7,11 @@ import { AddressController } from "./addressController";
 
 class ServicePackageController{
 
-    async create(request: Request, response: Response){
+    async userResponse(request: Request, response: Response){
         const {pet_id, package_type, service_date, value} = request.body
 
         try{
-            const createdPackage = await this.localCreate(pet_id, package_type, service_date, value)
+            const createdPackage = await this.create(pet_id, package_type, service_date, value)
                 
             return response.json(createdPackage)
 
@@ -20,7 +20,7 @@ class ServicePackageController{
         }
     }
 
-    async localCreate(pet_id: string, package_type: string, service_date: Date, value: string){
+    async create(pet_id: string, package_type: string, service_date: Date, value: string){
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
         try{
@@ -178,7 +178,7 @@ class ServicePackageController{
 
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
-                await this.localCreate(item.pet_id, item.package_type, date, item.value)
+                await this.create(item.pet_id, item.package_type, date, item.value)
             }
         }
 

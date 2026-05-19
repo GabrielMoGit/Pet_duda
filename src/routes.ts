@@ -29,7 +29,7 @@ router.get("/listNeighborhood", neighberhoodController.listNeighborhoods)
 
 router.post("/address", addressController.create)
 
-router.post("/servicePackage", servicePackageController.create)
+router.post("/servicePackage", servicePackageController.userResponse)
 router.get("/listPackages", servicePackageController.listPackages)
 router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
 
