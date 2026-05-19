@@ -33,6 +33,16 @@ class PetRepository{
         }
     }
 
+    async listAllExistentPets(){
+        const pets = await this.repository.find()
+
+        if(!pets){
+            return
+        }
+
+        return pets
+    }
+
 }
 
 export {PetRepository}
