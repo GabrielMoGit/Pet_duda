@@ -37,9 +37,7 @@ router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
 
 
 //test route
-router.patch('/test', servicePackageController
-      .turnPackagesToDoneStatusAndCreateNewPackage
-      .bind(servicePackageController))
+router.get('/test', petController.listAllPetsAndRespectiveTutors)
 
 
 
