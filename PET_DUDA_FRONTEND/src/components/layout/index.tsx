@@ -23,6 +23,10 @@ export function Layout() {
           navigate("/petRegister")
           setHasContent(false)
           }}>Cadastrar Pet</MenuButton>
+          <MenuButton onClick={() => {
+            navigate("/packageRegister")
+            setHasContent(false)
+          }}>Cadastrar Pacote</MenuButton>
       </SidePanel>
 
       <Content>
