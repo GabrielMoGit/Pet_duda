@@ -53,6 +53,7 @@ export function PetRegister(){
 
             <form onSubmit={handleSubmit}>
                 <GenericStyledInput 
+                name="tutorPhone"
                 placeholder="telefone do Tutor" 
                 value = {phone}
                 onChange={(e) =>{
@@ -81,6 +82,7 @@ export function PetRegister(){
                 <br />
                 <br />
                 <GenericStyledInput 
+                name="name"
                 placeholder="Nome" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
