@@ -19,6 +19,8 @@ class ServiceRepository{
         return this.repository.findBy({service_package_id})
     }
 
+    
+
     async listAllServices(){
         return await this.repository.find()
     }

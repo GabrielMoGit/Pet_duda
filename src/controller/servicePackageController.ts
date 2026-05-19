@@ -9,6 +9,18 @@ class ServicePackageController{
 
     async create(request: Request, response: Response){
         const {pet_id, package_type, service_date, value} = request.body
+
+        try{
+            const createdPackage = await this.localCreate(pet_id, package_type, service_date, value)
+                
+            return response.json(createdPackage)
+
+        }catch(error){
+            return response.json(error)
+        }
+    }
+
+    async localCreate(pet_id: string, package_type: string, service_date: Date, value: string){
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
         try{
@@ -16,10 +28,10 @@ class ServicePackageController{
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
                 await serviceController.create(createdPackage.id, new Date(service_date))
                 
-            return response.json(createdPackage)
+            return (createdPackage)
 
         }catch(error){
-            return response.json(error)
+            return console.log(error)
         }
     }
 
@@ -186,20 +198,7 @@ class ServicePackageController{
     }
 
 
-    async localCreate(pet_id: string, package_type: string, service_date: Date, value: string){
-        const servicePackageRepository = new ServicePackageRepository()
-        const serviceController = new ServiceController()
-        try{
-
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
-                await serviceController.create(createdPackage.id, new Date(service_date))
-                
-            return (createdPackage)
-
-        }catch(error){
-            return console.log(error)
-        }
-    }
+    
 
 }
 
