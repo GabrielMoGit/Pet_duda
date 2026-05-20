@@ -2,7 +2,7 @@ import { GenericStyledInput } from '../../components/inputs/genericInput'
 import { RegisterButton } from '../../components/buttons/registerButton'
 import { SuggestionList } from '../../components/suggestionList'
 import { useState, useRef, useEffect } from 'react'
-import { api } from '../../services/api'
+import { api } from '../../services/api'   
 
 export function TutorRegister(){
 
@@ -25,10 +25,10 @@ export function TutorRegister(){
     const [number, setNumber] = useState('')
 
     //Position reference to know where de click happens
-    const positionRef = useRef<HTMLDivElement>(null)
+    const   positionRef = useRef<HTMLDivElement>(null)
 
     //Initial state to know wich item is been selected, "-1" = none selected
-    const [selectedIndex, setSelectedIndex] = useState(-1)
+    const [ selectedIndex, setSelectedIndex] = useState(-1)
 
     const [houseNumber, setHouseNumber] = useState("")
 
@@ -81,8 +81,8 @@ export function TutorRegister(){
 
     //function do identify where the click mouse happens
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if(positionRef.current && !positionRef.current.contains(event?.target as Node)
+        const handleClickOutside = (e: MouseEvent) => {
+            if(positionRef.current && !positionRef.current.contains(e?.target as Node)
             ){
                 setStreetShowSuggestions(false)
                 setShowNeighborhoodSuggestions(false)
@@ -113,14 +113,12 @@ export function TutorRegister(){
         setSelectedIndex(-1)
 
         try{
-            const response = await api.get(route,{
-                params: {name: text}
-            })
+            const response = await api.get(route)
 
-            const dataBaseResponse = response.data.filter((content: string) => content.toLowerCase().includes(text.toLowerCase()))
+            const onlyTypedByUserResponse = response.data.filter((content: string) => content.toLowerCase().includes(text.toLowerCase()))
 
             if(e.target.name === "street"){
-            setStreetSuggestions(dataBaseResponse)
+            setStreetSuggestions(onlyTypedByUserResponse)
             setStreetShowSuggestions(true)
                 if(text.trim() === "") {
                     setStreetSuggestions([])
@@ -129,7 +127,7 @@ export function TutorRegister(){
                 }
             }
             if(e.target.name === "neighborhood"){
-                setNeighborhoodSuggestions(dataBaseResponse)
+                setNeighborhoodSuggestions(onlyTypedByUserResponse)
                 setShowNeighborhoodSuggestions(true)
                 if(text.trim() === ""){
                     setNeighborhoodSuggestions([])
@@ -219,7 +217,7 @@ export function TutorRegister(){
         <div>
             <h1>Cadastrar Tutor</h1>
 
-            <form onSubmit={handleSubmit}>
+            <form autoComplete="off" onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
                 <GenericStyledInput 
                 name="name"
