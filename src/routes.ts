@@ -5,6 +5,7 @@ import { StreetController } from "./controller/streetController";
 import { NeighborhoodController } from "./controller/neighberhoodController";
 import { AddressController } from "./controller/addressController";
 import { ServicePackageController } from "./controller/servicePackageController";
+import { ServiceController } from "./controller/serviceController";
 
 const router = Router();
 
@@ -14,6 +15,7 @@ const streetController = new StreetController()
 const neighberhoodController = new NeighborhoodController()
 const addressController = new AddressController()
 const servicePackageController = new ServicePackageController()
+const serviceController = new ServiceController()
 
 router.post("/tutor", tutorController.create)
 
@@ -27,8 +29,17 @@ router.get("/listNeighborhood", neighberhoodController.listNeighborhoods)
 
 router.post("/address", addressController.create)
 
-router.post("/servicePackage", servicePackageController.create)
+router.post("/servicePackage", servicePackageController.userResponse)
 router.get("/listPackages", servicePackageController.listPackages)
+router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
+
+
+
+
+//test route
+router.patch('/test', servicePackageController
+      .turnPackagesToDoneStatusAndCreateNewPackage
+      .bind(servicePackageController))
 
 
 

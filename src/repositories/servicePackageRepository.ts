@@ -10,8 +10,8 @@ class ServicePackageRepository {
         this.repository = dataSource.getRepository(servicePackage)
     }
 
-    async createAndSave(pet_id: string, package_type: string,package_done: number, paid: number){
-        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid})
+    async createAndSave(pet_id: string, package_type: string,package_done: number, paid: number, value: string){
+        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid, value})
         return this.repository.save(servicePackage)
     }
 
@@ -20,7 +20,47 @@ class ServicePackageRepository {
     }
 
     async listAllPackages(){
-        return await this.repository.find()
+        return await this.repository.find() 
+    }
+
+    async listAllUnpaidPackages(){
+        return await this.repository.find({
+            where: {
+                paid: 0
+            }
+        })
+    }
+
+    async listAllUndonePackages(){
+        return await this.repository.find({
+            where: {
+                package_done: 0
+            }
+        })
+    }
+
+    async turnDoneCompletedPackage(id: number){
+        const pkg = await this.repository.findOneBy({id})
+
+        if(!pkg){
+            return
+        }
+
+        pkg.package_done = 1
+        
+        await this.repository.save(pkg)
+    }
+
+    async payPackage(id: number){
+        const pkg = await this.repository.findOneBy({id})
+
+        if(!pkg){
+            return
+        }
+
+        pkg.paid = 1
+        
+        await this.repository.save(pkg)
     }
 }
 

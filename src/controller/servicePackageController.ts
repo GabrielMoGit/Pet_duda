@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 import { ServiceController } from "./serviceController";
 import { PetController } from "./petController";
@@ -8,15 +7,11 @@ import { AddressController } from "./addressController";
 
 class ServicePackageController{
 
-    async create(request: Request, response: Response){
-        const {pet_id, package_type, service_date} = request.body
-        const servicePackageRepository = new ServicePackageRepository()
-        const serviceController = new ServiceController()
+    async userResponse(request: Request, response: Response){
+        const {pet_id, package_type, service_date, value} = request.body
 
         try{
-
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0) 
-                await serviceController.create(createdPackage.id, new Date(service_date))
+            const createdPackage = await this.create(pet_id, package_type, service_date, value)
                 
             return response.json(createdPackage)
 
@@ -25,8 +20,23 @@ class ServicePackageController{
         }
     }
 
-    async listPackages(request: Request, response: Response){
+    async create(pet_id: string, package_type: string, service_date: Date, value: string){
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+        try{
 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
+                await serviceController.create(createdPackage.id, new Date(service_date))
+                
+            return (createdPackage)
+
+        }catch(error){
+            return console.log(error)
+        }
+    }
+
+    async listPackages(request: Request, response: Response){
+        const kind = request.query.kindOfPackage
         const servicePackageRepository = new ServicePackageRepository()
         const tutorController = new TutorController()
         const petController = new PetController()
@@ -42,28 +52,35 @@ class ServicePackageController{
         let services: Service[] = []
 
         type CompletePackage ={
-                package_id: number,
-                package_type: string,
-                tutor_name: string,
-                tutor_phone: string,
-                tutor_id: string,
-                pet_name: string,
-                pet_id: string,
-                street: string,
-                neighborhood: string,
-                house_number: string,
-                package_done: number,
-                package_paid: number,
-                services: Service[]
+            package_id: number,
+            package_type: string,
+            tutor_name: string,
+            tutor_phone: string,
+            tutor_id: string,
+            pet_name: string,
+            pet_id: string,
+            street: string,
+            neighborhood: string,
+            house_number: string,
+            package_done: number,
+            package_paid: number,
+            services: Service[],
+            value: string
         }
 
         let finalPackages : CompletePackage[] = []
 
-        const allPackages = await servicePackageRepository.listAllPackages()
+        let packageRepositoryResponse = []
+
+        if(kind === "unpaid"){
+            packageRepositoryResponse = await servicePackageRepository.listAllUndonePackages()
+        }else{
+            packageRepositoryResponse = await servicePackageRepository.listAllPackages()
+        }
         
         let package_id = []
         let petsId = []
-        for(const item of allPackages){
+        for(const item of packageRepositoryResponse){
             petsId.push(item.pet_id)
             package_id.push(item.id)
         }
@@ -78,11 +95,9 @@ class ServicePackageController{
 
         const addresses = await addressesController.listAddresses(tutorsId)
 
-        
-
-        for(let i = 0; i < allPackages.length; i++ ){
+        for(let i = 0; i < packageRepositoryResponse.length; i++ ){
             const packageId = package_id[i]
-            const package_type = allPackages[i].package_type
+            const package_type = packageRepositoryResponse[i].package_type
             const tutor_name = tutors[i].tutorName
             const tutor_phone = tutors[i].tutorPhone
             const tutor_id = tutorsId[i]
@@ -105,8 +120,9 @@ class ServicePackageController{
             const street = addresses[i].streetName
             const neighborhood = addresses[i].neighborhoodName
             const house_number = addresses[i].number
-            const package_done = allPackages[i].package_done
-            const package_paid = allPackages[i].paid
+            const package_done = packageRepositoryResponse[i].package_done
+            const package_paid = packageRepositoryResponse[i].paid
+            const value = packageRepositoryResponse[i].value
 
             finalPackages.push({
                 package_id: packageId,
@@ -122,15 +138,69 @@ class ServicePackageController{
                 package_done: package_done,
                 package_paid: package_paid,
                 services: services,
+                value: value
             })
 
             services = []
           
         }
-
+        
         return response.json({finalPackages})
     }
+
+    async turnPackagesToDoneStatusAndCreateNewPackage(){
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+
+        const undonePackages = await servicePackageRepository.listAllUndonePackages()
+
+        if (undonePackages.length === 0) {
+            return;
+        }
+
+        for(const item of undonePackages){
+            const response = await serviceController.listAllServicesForPackageId(item.id)
+            
+            const lastService = response[response.length - 1]
+            const date = lastService?.service_date ?? null
+            if(item.package_type === "Quinzenal"){
+                date.setDate(date.getDate() + 14)
+            }else{
+                date.setDate(date.getDate() + 7)
+            }
+            const isDone = response.every(
+                service => service.service_done
+            )
+
+            if(!date){
+                continue
+            }
+
+            if(isDone){
+                await servicePackageRepository.turnDoneCompletedPackage(item.id)
+                await this.create(item.pet_id, item.package_type, date, item.value)
+            }
+        }
+
+    }
+
+    async turnPackagesToPaidStatus(request: Request, response: Response){
+        const {package_id} = request.body
+
+        const servicePackageRepository = new ServicePackageRepository()
+
+        await servicePackageRepository.payPackage(package_id)
+       
+        return response.json({
+            message: "Pacote pago"
+        })
+
+    }
+
+
+    
 
 }
 
 export { ServicePackageController }
+

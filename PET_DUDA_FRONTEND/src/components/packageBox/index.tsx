@@ -18,7 +18,8 @@ type Props = {
     house_number: string,
     package_done: number,
     package_paid: number,
-    services: Service[]
+    services: Service[],
+    value: string
 }
     // código da cor dos icones #0045FF
 
@@ -30,8 +31,19 @@ export function StyledBox(props: Props){
     return(
         <Box>
             <div style={{fontSize: '20px'}}>
-                <p><img src='id.png' width={20} style={{ marginRight: "8px" }} />
-                    ID do pacote: <span style={{ color: '#0045FF', fontWeight: "bold", fontSize: '23px'  }} >{props.package_id}</span></p>
+                <div style={{marginTop: '10px', display: 'flex', justifyContent: 'space-between'}}>
+                    <p style={{ display: 'flex', alignItems: 'center', margin: 0 }}>
+                        <img src='id.png' width={20} style={{ marginRight: "8px" }} />
+                        ID do pacote: 
+                        <span style={{ color: '#0045FF', fontWeight: "bold", fontSize: '23px', marginLeft: '5px'}} >{props.package_id}</span>
+                    </p>
+
+                    <div style={{marginRight: '30px'}}>   
+                        <p>valor: {props.value}</p>
+                    </div>
+                    
+                </div>
+                
 
                     <p><img src='user.png' width={20} style={{ marginRight: "8px" }} />
                         Tutor: <span style={{fontWeight: 'bold', fontSize: '23px'}}>{props.tutor_name}</span></p>
@@ -53,7 +65,7 @@ export function StyledBox(props: Props){
                     </p>
 
                     <p><img src='address.png' width={20} style={{ marginRight: "8px" }} />
-                        endereço: 
+                        Endereço: 
                         <span style={{fontWeight: 'bold', fontSize: '23px'}}>
                             {props.street}, {props.house_number} - {props.neighborhood}
                         </span>

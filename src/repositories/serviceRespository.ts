@@ -1,6 +1,6 @@
 import { dataSource } from "../database/dataSource";
 import { services } from "../models/services";
-import { Repository, In } from "typeorm";
+import { Repository, LessThan } from "typeorm";
 
 class ServiceRepository{
 
@@ -15,13 +15,36 @@ class ServiceRepository{
         return this.repository.save(service)
     }
 
-    async findById(service_package_id: number){
+    async listByservicePackageId(service_package_id: number){
         return this.repository.findBy({service_package_id})
     }
+
+    
 
     async listAllServices(){
         return await this.repository.find()
     }
+
+    async turnDonethepPassedServices(){
+        const today = new Date()
+        today.setHours(0, 0, 0, 0);
+        const services = await this.repository.find({
+            where: {
+                service_date: LessThan(today),
+                service_done: 0
+            }
+        })
+
+        for(const item of services){
+            item.service_done = 1
+        }
+
+        await this.repository.save(services)
+    }
+
+    async checkIfServiceIsDone(){
+
+    }
 }
 
-export { ServiceRepository  }
+export { ServiceRepository  }  

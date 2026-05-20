@@ -18,6 +18,9 @@ class servicePackage{
 
     @Column()
     paid!: number
+
+    @Column()
+    value!: string
 }
 
 export { servicePackage }
