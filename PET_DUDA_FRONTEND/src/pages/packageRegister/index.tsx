@@ -15,6 +15,7 @@ export function PackageRegister(){
 }
 
     const [petName, setPetName] = useState('')  
+    const [petId, setPetId] = useState('')
     const [packageType, setPackageType] = useState('')
     const [serviceDate, setServiceDate] = useState('')
     const [value, setValue] = useState('')
@@ -27,6 +28,28 @@ export function PackageRegister(){
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
     const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')
 
+
+    async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
+        e.preventDefault()
+        
+        let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2))
+        const onlyValue = value.replace("R$", "").trim()
+
+        try{
+
+            const servicePackage = await api.post('/servicePackage', {
+                pet_id: petId,
+                package_type: packageType,
+                service_date: databaseDateForm,
+                value: onlyValue
+            })
+
+        }catch{
+
+        }
+    
+    }
+
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const text = e.target.value
 
@@ -37,9 +60,6 @@ export function PackageRegister(){
         const response = await api.get("/listPetsAndRespectiveTutors")
  
         const filteredPets = response.data.petAndTutorData.filter((item: Pet) => item.pet_name.toLocaleLowerCase().includes(text.toLocaleLowerCase()))
-
-
-
         setSuggestions(filteredPets)
         setShowSuggestions(true)
         return
@@ -67,6 +87,7 @@ export function PackageRegister(){
             e.preventDefault()
             const selected = suggestions[selectedIndex]
 
+            setPetId(selected.pet_Id)
             setPetName(selected.pet_name)
             setShowSuggestions(false)
         }
@@ -91,7 +112,7 @@ export function PackageRegister(){
         <div>
             <h1>Cadastrar Pacote</h1>
             
-            <form autoComplete="off">
+            <form autoComplete="off" onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
                     <div 
                         style={{ position: "relative", flex: 1, width: '62%' }} 
@@ -158,7 +179,6 @@ export function PackageRegister(){
                                 }
                                 
                                 setServiceDate(formatted)
-                                let databaseDateForm = (formatted.slice(6,10)+ '-' + formatted.slice(3,5) + '-' + formatted.slice(0,2))
                             }}
                             hasError={hasError}
                             hasSuccess={hasSuccess}
@@ -185,7 +205,7 @@ export function PackageRegister(){
                 </div>
                 <br/>
                 <RegisterButton
-                    type='submit'>Cadastrar
+                    type='submit' >Cadastrar
                 </RegisterButton>
             </form>
         </div>
