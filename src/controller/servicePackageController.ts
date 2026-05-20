@@ -10,17 +10,24 @@ class ServicePackageController{
     async userResponse(request: Request, response: Response){
         const {pet_id, package_type, service_date, value} = request.body
 
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+
         try{
-            const createdPackage = await this.create(pet_id, package_type, service_date, value)
-                
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
+                await serviceController.create(createdPackage.id, new Date(service_date))
             return response.json(createdPackage)
 
         }catch(error){
-            return response.json(error)
+            console.log(error)
+            return response.status(500).json({
+                error,
+                message: "Erro ao criar pacote"
+            })
         }
     }
 
-    async create(pet_id: string, package_type: string, service_date: Date, value: string){
+    async create(pet_id: string, package_type: string, service_date: string, value: string){
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
         try{
@@ -31,8 +38,14 @@ class ServicePackageController{
             return (createdPackage)
 
         }catch(error){
-            return console.log(error)
+            console.log(error)
+            throw error
         }
+    }
+
+    async listPetsAndTutor(request: Request, response: Response){
+        
+
     }
 
     async listPackages(request: Request, response: Response){
@@ -178,7 +191,7 @@ class ServicePackageController{
 
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
-                await this.create(item.pet_id, item.package_type, date, item.value)
+                await this.create(item.pet_id, item.package_type, date.toString(), item.value)
             }
         }
 
