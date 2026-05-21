@@ -24,6 +24,8 @@ export function PackageRegister(){
     const [selectedIndex, setSelectedIndex] = useState(-1)  
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
+    const [message, setMessage] = useState('')
+
     const positionRef = useRef<HTMLDivElement>(null)
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
     const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')
@@ -35,17 +37,37 @@ export function PackageRegister(){
         let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2))
         const onlyValue = value.replace("R$", "").trim()
 
-        try{
+        if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
+            setMessage("Todos os campos precisam ser preenchidos")
+            setTimeout(() => {setMessage("")}, 2000)
+            return
+        }
 
-            const servicePackage = await api.post('/servicePackage', {
+        try{
+            await api.post('/servicePackage', {
                 pet_id: petId,
                 package_type: packageType,
                 service_date: databaseDateForm,
                 value: onlyValue
             })
 
-        }catch{
-
+        }catch(error: any){
+            if(error.response){
+                if(error.response.status === 400){
+                    setMessage(error.response.data.error)
+                    setTimeout(() => {setMessage("")}, 2000)
+                    setHasError(true)
+                }
+                if(error.response.status === 404){
+                    setMessage(error.response.data.error)
+                    setTimeout(() => {setMessage("")}, 2000)
+                }
+                if(error.response.status === 409){
+                    setMessage(error.response.data.error)
+                    setTimeout(() => {setMessage("")}, 2000)
+                    setHasError(true)
+                }
+            }
         }
     
     }
@@ -207,6 +229,7 @@ export function PackageRegister(){
                 <RegisterButton
                     type='submit' >Cadastrar
                 </RegisterButton>
+                <p style={{ color: 'red' }}>{message}</p>
             </form>
         </div>
     )
