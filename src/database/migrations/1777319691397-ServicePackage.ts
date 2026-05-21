@@ -34,6 +34,10 @@ export class ServicePackage1777319691397 implements MigrationInterface {
                     {
                         name: "value",
                         type: "varchar"
+                    },
+                    {
+                        name: "active_package",
+                        type: "integer"
                     }
                 ]
             })
