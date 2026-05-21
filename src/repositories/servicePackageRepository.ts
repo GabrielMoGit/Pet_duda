@@ -62,6 +62,10 @@ class ServicePackageRepository {
         
         await this.repository.save(pkg)
     }
+
+    async checkIfPetAlreadyHavePackage(pet_id: string){
+        return await this.repository.findOneBy({pet_id})
+    }
 }
 
 export { ServicePackageRepository }
