@@ -115,7 +115,7 @@ class ServicePackageController{
         let packageRepositoryResponse = []
 
         if(kind === "unpaid"){
-            packageRepositoryResponse = await servicePackageRepository.listAllUndonePackages()
+            packageRepositoryResponse = await servicePackageRepository.listAllUndoneActivePackages()
         }else{
             packageRepositoryResponse = await servicePackageRepository.listAllPackages()
         }
@@ -194,7 +194,7 @@ class ServicePackageController{
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
-        const undonePackages = await servicePackageRepository.listAllUndonePackages()
+        const undonePackages = await servicePackageRepository.listAllUndoneActivePackages()
 
         if (undonePackages.length === 0) {
             return;
