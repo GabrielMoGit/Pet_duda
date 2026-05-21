@@ -4,6 +4,7 @@ import { ServiceController } from "./serviceController";
 import { PetController } from "./petController";
 import { TutorController } from "./tutorController";
 import { AddressController } from "./addressController";
+import { PetRepository } from "../repositories/petRepository";
 
 class ServicePackageController{
 
@@ -12,17 +13,35 @@ class ServicePackageController{
 
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
+        const petRepository = new PetRepository()
 
         try{
+            const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+            const today = new Date
+            if(today.getDate < service_date.getDate){
+                return response.status(400).json({
+                    error: "Impossível criar em data passada"
+                })
+            }
+
+            if(!petAlreadyExist){
+                return response.status(404).json({
+                    error: "Pet não encontrado"
+                })
+                
+            }
+
+            
+
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
-                await serviceController.create(createdPackage.id, new Date(service_date))
-            return response.json(createdPackage)
+            const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
+            return response.json({createdPackage, createdServices})
 
         }catch(error){
             console.log(error)
             return response.status(500).json({
-                error,
-                message: "Erro ao criar pacote"
+                error: "Erro ao criar pacote"
             })
         }
     }
@@ -30,22 +49,24 @@ class ServicePackageController{
     async create(pet_id: string, package_type: string, service_date: string, value: string){
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
+        const petRepository = new PetRepository()
         try{
+            const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
 
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
-                await serviceController.create(createdPackage.id, new Date(service_date))
+            if(!petAlreadyExist){
+                    console.log("Pet não encontrado")
+                    return
+            }
                 
-            return (createdPackage)
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
+            const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
+                
+            return ({createdPackage, createdServices})
 
         }catch(error){
             console.log(error)
             throw error
         }
-    }
-
-    async listPetsAndTutor(request: Request, response: Response){
-        
-
     }
 
     async listPackages(request: Request, response: Response){
@@ -194,7 +215,6 @@ class ServicePackageController{
                 await this.create(item.pet_id, item.package_type, date.toString(), item.value)
             }
         }
-
     }
 
     async turnPackagesToPaidStatus(request: Request, response: Response){
@@ -207,12 +227,7 @@ class ServicePackageController{
         return response.json({
             message: "Pacote pago"
         })
-
     }
-
-
-    
-
 }
 
 export { ServicePackageController }
