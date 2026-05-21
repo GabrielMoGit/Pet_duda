@@ -15,26 +15,33 @@ class ServicePackageController{
         const serviceController = new ServiceController()
         const petRepository = new PetRepository()
 
+        const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+        if(!petAlreadyExist){
+            return response.status(404).json({
+                error: "Pet não encontrado"
+            })
+        }
+
+        const today = new Date()
+        const serviceDate = new Date(service_date)
+
+        if(today > serviceDate){
+            return response.status(400).json({
+                error: "Impossível criar em data passada"
+            })
+        }
+
+        const petAlreadyHavePackage = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+
+        if(petAlreadyHavePackage){
+            return response.status(409).json({
+                error: "Pacote já criado para esse pet"
+            })
+        }
+
         try{
-            const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
-
-            const today = new Date
-            if(today.getDate < service_date.getDate){
-                return response.status(400).json({
-                    error: "Impossível criar em data passada"
-                })
-            }
-
-            if(!petAlreadyExist){
-                return response.status(404).json({
-                    error: "Pet não encontrado"
-                })
-                
-            }
-
-            
-
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
             const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
             return response.json({createdPackage, createdServices})
 
@@ -50,15 +57,16 @@ class ServicePackageController{
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
         const petRepository = new PetRepository()
-        try{
-            const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+        const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
 
             if(!petAlreadyExist){
                     console.log("Pet não encontrado")
                     return
             }
-                
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
+
+        try{    
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
             const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
                 
             return ({createdPackage, createdServices})

@@ -11,7 +11,7 @@ class ServicePackageRepository {
     }
 
     async createAndSave(pet_id: string, package_type: string,package_done: number, paid: number, value: string, active_package: number){
-        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid, active_package})
+        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid, value, active_package})
         return this.repository.save(servicePackage)
     }
 
@@ -64,7 +64,10 @@ class ServicePackageRepository {
     }
 
     async checkIfPetAlreadyHavePackage(pet_id: string){
-        return await this.repository.findOneBy({pet_id})
+        return await this.repository.findOneBy({
+            pet_id,
+            active_package: 1
+        })
     }
 }
 
