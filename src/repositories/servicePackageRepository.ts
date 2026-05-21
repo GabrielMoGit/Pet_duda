@@ -31,10 +31,11 @@ class ServicePackageRepository {
         })
     }
 
-    async listAllUndonePackages(){
+    async listAllUndoneActivePackages(){
         return await this.repository.find({
             where: {
-                package_done: 0
+                package_done: 0,
+                active_package: 1
             }
         })
     }
