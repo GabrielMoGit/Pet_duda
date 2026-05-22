@@ -44,27 +44,42 @@ export function PackageRegister(){
         }
 
         try{
-            await api.post('/servicePackage', {
+            const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
                 package_type: packageType,
                 service_date: databaseDateForm,
                 value: onlyValue
             })
 
+            setHasError(false)
+            setHasSuccess(true)
+            setMessage(packageResponse.data.message)
+            setTimeout(() => {setHasSuccess(false)}, 500  )
+            setPetName("")
+            setPackageType("")
+            setWeeklyButtonColor('grey')
+            setBiWeeklyButtonColor('grey')
+            setServiceDate('')
+            setValue("")
+
         }catch(error: any){
             if(error.response){
                 if(error.response.status === 400){
                     setMessage(error.response.data.error)
                     setTimeout(() => {setMessage("")}, 2000)
+                    setHasSuccess(false)
                     setHasError(true)
                 }
                 if(error.response.status === 404){
                     setMessage(error.response.data.error)
                     setTimeout(() => {setMessage("")}, 2000)
+                    setHasSuccess(false)
+                    setHasError(true)
                 }
                 if(error.response.status === 409){
                     setMessage(error.response.data.error)
                     setTimeout(() => {setMessage("")}, 2000)
+                    setHasSuccess(false)
                     setHasError(true)
                 }
             }
@@ -164,16 +179,15 @@ export function PackageRegister(){
                         
                     </div>
                 </div>
-                
                 <br/>
                 Tipo do Pacote
                 <br/>
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <AlterColorButton type="button" color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('blue'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal')}}>
+                    <AlterColorButton type="button" color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal')}}>
                         Semanal
                     </AlterColorButton>
-                    <AlterColorButton type="button" color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('blue'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal')}}>
+                    <AlterColorButton type="button" color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal')}}>
                         Quinzenal
                     </AlterColorButton>
                 </div>

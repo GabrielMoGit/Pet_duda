@@ -329,7 +329,7 @@ export function TutorRegister(){
 
                 </div>
 
-                <p style={{ color: 'red' }}>{message}</p>
+                    
                 <div style={{display: 'flex', gap: '10px'}}>
                     <RegisterButton 
                     type="submit">Cadastrar
