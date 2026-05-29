@@ -83,7 +83,14 @@ export function StyledBox(props: Props){
                             <React.Fragment key={service.service_id}>
                                 <div>
                                     <img src='orangeCalendar.png' width={25} style={{ marginRight: "8px", marginLeft: '22px' }}/> 
-                                    <span style={{ fontSize: '20px' }}>{new Date(service.service_date).toLocaleDateString()}</span>
+                                    <span style={{ fontSize: '20px' }}>{new Date(service.service_date).toLocaleString('pt-BR',{
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }
+                                    )}</span>
                                 </div>
                                 <div>
                                     <span style={{ fontSize: 'px' }}>Status: </span>
