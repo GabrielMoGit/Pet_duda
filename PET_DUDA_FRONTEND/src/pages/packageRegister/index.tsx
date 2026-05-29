@@ -25,6 +25,7 @@ export function PackageRegister(){
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
     const [message, setMessage] = useState('')
+    const [hour, setHour] = useState('')
 
     const positionRef = useRef<HTMLDivElement>(null)
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
@@ -33,8 +34,18 @@ export function PackageRegister(){
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
+
+        const hourToOnlyHour = Number(hour.slice(0,2))
+        const hourToOnlyMinute = Number(hour.slice(3,5))
+
+        if(hourToOnlyHour > 23 || hourToOnlyHour < 0 || hourToOnlyMinute < 0 || hourToOnlyMinute > 59){
+            setMessage("Horário inválido")
+            setTimeout(() => {setMessage("")}, 2000)
+            return
+        }
         
-        let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2))
+
+        let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
         const onlyValue = value.replace("R$", "").trim()
 
         if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
@@ -61,6 +72,7 @@ export function PackageRegister(){
             setBiWeeklyButtonColor('grey')
             setServiceDate('')
             setValue("")
+            setHour("")
 
         }catch(error: any){
             if(error.response){
@@ -218,6 +230,28 @@ export function PackageRegister(){
                             }}
                             hasError={hasError}
                             hasSuccess={hasSuccess}
+                        />
+                    </div>
+                    <div style={{width: '20%'}}>
+                        <GenericInputStyled
+                        name="hour"
+                        placeholder="Hora"
+                        value={hour}
+                        onChange={(e) => {
+                            const onlyNumbers = e.target.value.replace(/\D/g, '')
+                            const limitedNumbers = onlyNumbers.slice(0, 4)
+
+
+                            let formatted = limitedNumbers
+
+                            if(limitedNumbers.length > 2){
+                                formatted = limitedNumbers.slice(0,2) + ':' + limitedNumbers.slice(2,4)
+                            }
+
+                            setHour(formatted)
+                        }}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
                         />
                     </div>
                     <div style={{width: '20%'}}>
