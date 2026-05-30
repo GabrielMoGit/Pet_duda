@@ -19,6 +19,7 @@ export function SuggestionPetList({ suggestions, onSelect, selectedIndex} : Prop
             {suggestions.map((item, index) => (
                 <StyledSuggestionItem
                 key={index}
+                onTouchEnd={() => onSelect(item)}
                 onClick={() => onSelect(item)}
                 isSelected={index === selectedIndex}
                 >

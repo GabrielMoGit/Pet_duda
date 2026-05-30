@@ -9,7 +9,7 @@ export const StyledSuggestionList = styled.ul`
     top: 100%;
     left: 0;
 
-    width: 100%
+    width: 100%;
 
     background: #fff;
     border: 1px solid #ccc;

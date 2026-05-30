@@ -82,18 +82,17 @@ export function TutorRegister(){
 
     //function do identify where the click mouse happens
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if(positionRef.current && !positionRef.current.contains(e?.target as Node)
-            ){
+        const handleClickOutside = (e: TouchEvent) => {
+            if(positionRef.current && !positionRef.current.contains(e?.target as Node)){
                 setStreetShowSuggestions(false)
                 setShowNeighborhoodSuggestions(false)
             }
         }
 
-        document.addEventListener('mousedown', handleClickOutside)
+        document.addEventListener('touchend', handleClickOutside)
 
         return() => {
-            document.removeEventListener('mousedown', handleClickOutside)
+            document.removeEventListener('touchend', handleClickOutside)
         }
     })
 
@@ -313,7 +312,7 @@ export function TutorRegister(){
                     </div>
                 </div>
                 <br/>
-                <div>
+                <div style={{width: '40%'}}>
                     <GenericStyledInput 
                     name="number"
                     placeholder="Número" 
