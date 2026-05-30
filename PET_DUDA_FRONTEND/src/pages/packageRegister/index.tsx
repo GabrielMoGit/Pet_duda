@@ -207,7 +207,7 @@ export function PackageRegister(){
                 
                 <br/>
                 <div style={{ display: 'flex', gap: '25px'}}>
-                    <div style={{width: '20%'}}>
+                    <div style={{width: '30%'}}>
                         <GenericInputStyled
                             name="serviceDate"
                             placeholder="Data inicial do pacote"
