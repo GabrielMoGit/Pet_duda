@@ -64,7 +64,7 @@ return (
 
         {servicePackages.length === 0 && <p>Nenhum pacote encontrado</p>}
 
-        <div style={{ display: "flex",flexWrap: "wrap", gap: "20px"}}>
+        <div style={{ width: "100%"}}>
             {servicePackages.map(pkg => (
             <StyledBox
             package_id={pkg.package_id}
