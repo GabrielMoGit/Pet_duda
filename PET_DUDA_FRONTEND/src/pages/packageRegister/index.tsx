@@ -143,17 +143,17 @@ export function PackageRegister(){
     }
     
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if(positionRef.current && !positionRef.current.contains(e?.target as Node)
-                ){
-                    setShowSuggestions(false)
-                }
+        const handleClickOutside = (e: TouchEvent) => {
+
+            if(positionRef.current && !positionRef.current.contains(e?.target as Node)){
+                setShowSuggestions(false)
             }
+        }
 
-            document.addEventListener('mousedown', handleClickOutside)
+        document.addEventListener('touchend', handleClickOutside)
 
-            return() => {
-                document.removeEventListener('mousedown', handleClickOutside)
+        return() => {
+            document.removeEventListener('touchend', handleClickOutside)
         }
     })
 
@@ -183,7 +183,7 @@ export function PackageRegister(){
                                 selectedIndex={selectedIndex}
                                 onSelect={(pet) => {
 
-                                    setPetName(petName)
+                                    setPetName(pet.pet_name)
                                     setShowSuggestions(false)
                                 }}
                             />
