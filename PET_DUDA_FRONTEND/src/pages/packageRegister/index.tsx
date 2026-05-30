@@ -206,8 +206,7 @@ export function PackageRegister(){
                 </div>
                 
                 <br/>
-                <div style={{ display: 'flex', gap: '25px'}}>
-                    <div style={{width: '30%'}}>
+                <div style={{width: '60%'}}>
                         <GenericInputStyled
                             name="serviceDate"
                             placeholder="Data inicial do pacote"
@@ -233,7 +232,10 @@ export function PackageRegister(){
                             hasSuccess={hasSuccess}
                         />
                     </div>
-                    <div style={{width: '20%'}}>
+                    <br/>
+                <div style={{ display: 'flex', gap: '25px'}}>
+                    
+                    <div style={{width: '30%'}}>
                         <GenericInputStyled
                         name="hour"
                         placeholder="Hora"
@@ -255,7 +257,7 @@ export function PackageRegister(){
                         hasSuccess={hasSuccess}
                         />
                     </div>
-                    <div style={{width: '20%'}}>
+                    <div style={{width: '30%'}}>
                         <GenericInputStyled
                             name="value"
                             placeholder="Valor"

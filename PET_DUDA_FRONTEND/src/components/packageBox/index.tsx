@@ -114,7 +114,7 @@ export function StyledBox(props: Props){
                         <div style={{ backgroundColor: '#abc1ff9a', borderRadius: '10px', padding: '5px', display: 'flex'}}>
                             <img src='flag.png' width={30}/>   
                         </div>
-                        <p style={{fontSize: '20px', marginLeft: '10px'}}>Status do pacote: </p> 
+                        <p style={{fontSize: '20px', marginLeft: '10px'}}>Pacote: </p> 
                         <p style={{marginLeft: '10px', fontSize: '22px', fontWeight: 'bold', color: '#0045FF'}}>{props.package_done ? "Finalizado" : "Não finalizado"}</p>
                     </div>
                 </div>
