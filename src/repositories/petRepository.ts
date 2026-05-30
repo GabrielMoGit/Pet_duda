@@ -23,7 +23,7 @@ class PetRepository{
         const pet = await this.repository.findOneBy({id})
 
         if (!pet) {
-        throw new Error("Pet não encontrado")
+        throw new Error("Pet não encontrado no banco de dados")
         }
         return {
             pet:{
@@ -35,7 +35,7 @@ class PetRepository{
 
     async listAllExistentPets(){
         const pets = await this.repository.find()
-
+        
         return pets
     }
 

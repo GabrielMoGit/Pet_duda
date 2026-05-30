@@ -27,6 +27,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.4.0",
     "@types/qrcode-terminal": "^0.12.2",
+    "concurrently": "^10.0.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"

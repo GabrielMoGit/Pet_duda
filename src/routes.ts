@@ -33,6 +33,7 @@ router.post("/address", addressController.create)
 router.post("/servicePackage", servicePackageController.userResponse)
 router.get("/listPackages", servicePackageController.listPackages)
 router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
+router.get("/returnPackage", servicePackageController.returnExistentPackageForPetid)
 
 
 
