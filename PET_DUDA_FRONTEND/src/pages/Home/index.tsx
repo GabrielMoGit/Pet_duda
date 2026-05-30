@@ -67,6 +67,7 @@ return (
         <div style={{ width: "100%"}}>
             {servicePackages.map(pkg => (
             <StyledBox
+            key={pkg.package_id}
             package_id={pkg.package_id}
             package_type={pkg.package_type}
             tutor_name={pkg.tutor_name} 
