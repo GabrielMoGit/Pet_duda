@@ -19,8 +19,6 @@ class ServiceRepository{
         return this.repository.findBy({service_package_id})
     }
 
-    
-
     async listAllServices(){
         return await this.repository.find()
     }
@@ -42,9 +40,13 @@ class ServiceRepository{
         await this.repository.save(services)
     }
 
-    async checkIfServiceIsDone(){
-
+    async returnFirstDateFromPackage(service_package_id: number){
+        return await this.repository.findOne({
+            where: { service_package_id},
+            order: { id: 'ASC'}
+        })
     }
+    
 }
 
 export { ServiceRepository  }  
