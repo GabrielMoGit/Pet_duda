@@ -116,7 +116,7 @@ export const PageContent = styled.div<PageContentProps>`
   border-radius: 10px;
 
   @media (max-width: 768px) {
-    width: 100%;
+    width: 95%;
     margin: 0;
     padding: 10px;
     height: auto;
