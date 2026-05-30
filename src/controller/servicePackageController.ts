@@ -243,6 +243,7 @@ class ServicePackageController{
         const pet_id = request.query.pet_id as string
 
         const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
 
 
         const packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
@@ -251,7 +252,9 @@ class ServicePackageController{
             return response.status(404)
         }
 
-        return response.json(packageFound)
+        const firstService = await serviceController.returnDateForPackageId(packageFound.id)
+
+        return response.json({packageFound, firstService})
     }
 }
 
