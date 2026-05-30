@@ -28,7 +28,8 @@ export function PackageRegister(){
     const [message, setMessage] = useState('')
     const [hour, setHour] = useState('')
     const [submitType, setSubmiteType] = useState('register')
-    const [submitButtonName, setSubmiteButtonName] = useState('cadastrar')
+    const [submitButtonName, setSubmiteButtonName] = useState('Cadastrar')
+    const [cancelButtonOpacity, setCancelButtonOpacity] = useState(0)
 
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -165,7 +166,20 @@ export function PackageRegister(){
         }
     })
 
-    
+    const handleResetPageInfo = () => {
+        setHasError(false)
+        setHasSuccess(false)
+        setMessage("")
+        setPetName("")
+        setPackageType("")
+        setWeeklyButtonColor('grey')
+        setBiWeeklyButtonColor('grey')
+        setServiceDate('')
+        setValue("")
+        setHour("")
+        setCancelButtonOpacity(0)
+        setSubmiteButtonName("Cadastrar")
+    }
 
     return(
         <div>
@@ -198,27 +212,40 @@ export function PackageRegister(){
                                     setShowSuggestions(false)
 
                                     const fetchData = async () => {
-                                        const response = await api.get('/returnPackage', {
-                                            params:{
-                                                pet_id: pet.pet_id
+                                        try{
+                                            const response = await api.get('/returnPackage', {
+                                                params:{
+                                                    pet_id: pet.pet_id
+                                                }
+                                            })
+                                            if(response){
+                                                setValue(`R$ ${response.data.packageFound.value}`)
+                                                if(response.data.packageFound.package_type === 'Quinzenal'){
+                                                    setWeeklyButtonColor('grey')
+                                                    setBiWeeklyButtonColor('green')
+                                                    setPackageType('Quinzenal')
+                                                }
+                                                
+                                                let formattedDate = new Date(response.data.firstService.service_date)
+                                                setServiceDate(formattedDate.toLocaleDateString())
+                                                setHour(formattedDate.toLocaleTimeString('pt-BR', {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                }))
+                                                setSubmiteButtonName("Alterar dados do pacote")
+                                                setCancelButtonOpacity(1)
                                             }
-                                        })
-                                        if(response){
-                                            setValue(`R$ ${response.data.packageFound.value}`)
-                                            if(response.data.packageFound.package_type === 'Quinzenal'){
-                                                setWeeklyButtonColor('grey')
-                                                setBiWeeklyButtonColor('green')
-                                                setPackageType('Quinzenal')
-                                            }
-                                            
-                                            let formattedDate = new Date(response.data.firstService.service_date)
-                                            setServiceDate(formattedDate.toLocaleDateString())
-                                            setHour(formattedDate.toLocaleTimeString('pt-BR', {
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            }))
-                                            setSubmiteButtonName("Alterar dados do pacote")
+                                        }catch{
+                                            setPackageType("")
+                                            setWeeklyButtonColor('grey')
+                                            setBiWeeklyButtonColor('grey')
+                                            setServiceDate('')
+                                            setValue("")
+                                            setHour("")
+                                            setCancelButtonOpacity(0)
+                                            setSubmiteButtonName("Cadastrar")
                                         }
+                                        
                                     }
                                     fetchData()
                                 }}
@@ -232,10 +259,10 @@ export function PackageRegister(){
                 <br/>
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <AlterColorButton type="button" color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal')}}>
+                    <AlterColorButton color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal')}}>
                         Semanal
                     </AlterColorButton>
-                    <AlterColorButton type="button" color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal')}}>
+                    <AlterColorButton color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal')}}>
                         Quinzenal
                     </AlterColorButton>
                 </div>
@@ -319,7 +346,12 @@ export function PackageRegister(){
                         {submitButtonName}
                     </RegisterButton>
                     <CancelButton
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleResetPageInfo()
+                        }}
                         type="button"    
+                        style={{opacity: cancelButtonOpacity, pointerEvents: cancelButtonOpacity === 0 ? 'none' : 'auto'}}
                     >
                         Cancelar
                     </CancelButton>
