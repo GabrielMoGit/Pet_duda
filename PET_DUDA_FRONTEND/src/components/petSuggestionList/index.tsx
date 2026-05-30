@@ -1,7 +1,7 @@
 import { StyledSuggestionList, StyledSuggestionItem } from "./style";
 
 type Pet = {
-    pet_Id: string
+    pet_id: string
     pet_name: string
     tutor_name: string
     tutor_phone: string

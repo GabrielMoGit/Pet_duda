@@ -1,4 +1,5 @@
 import { AlterColorButtonStyled } from "./style";
+import { forwardRef } from 'react'
 
 type AlterColorButtonProps = {
     onClick: () => void,
@@ -7,11 +8,12 @@ type AlterColorButtonProps = {
     type?: 'button' 
 }
 
-export function AlterColorButton({children, onClick, color, type}: AlterColorButtonProps){
-    return(
-        <AlterColorButtonStyled onClick={onClick} color={color} type='button'>
-            {children}
-        </AlterColorButtonStyled>
-    )
-
-}
+export const AlterColorButton = forwardRef<HTMLButtonElement, AlterColorButtonProps>(
+    ({children, onClick, color, type}, ref) => {
+        return(
+            <AlterColorButtonStyled ref={ref} onClick={onClick} color={color} type='button'>
+                {children}
+            </AlterColorButtonStyled>
+        )
+    }
+)

@@ -240,11 +240,12 @@ class ServicePackageController{
     }
 
     async returnExistentPackageForPetid(request: Request, response: Response){
-        const {pet_id} = request.body
+        const pet_id = request.query.pet_id as string
 
         const servicePackageRepository = new ServicePackageRepository()
 
-        const packageFound = servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+
+        const packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
 
         if(!packageFound){
             return response.status(404)

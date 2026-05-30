@@ -8,7 +8,7 @@ import { api } from '../../services/api'
 export function PackageRegister(){
 
     type Pet = {
-    pet_Id: string
+    pet_id: string
     pet_name: string
     tutor_name: string
     tutor_phone: string
@@ -28,6 +28,7 @@ export function PackageRegister(){
     const [hour, setHour] = useState('')
 
     const positionRef = useRef<HTMLDivElement>(null)
+
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
     const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')
 
@@ -112,7 +113,6 @@ export function PackageRegister(){
         setSuggestions(filteredPets)
         setShowSuggestions(true)
         return
-
     }
     
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,7 +136,7 @@ export function PackageRegister(){
             e.preventDefault()
             const selected = suggestions[selectedIndex]
 
-            setPetId(selected.pet_Id)
+            setPetId(selected.pet_id)
             setPetName(selected.pet_name)
             setShowSuggestions(false)
         }
@@ -156,6 +156,8 @@ export function PackageRegister(){
             document.removeEventListener('touchend', handleClickOutside)
         }
     })
+
+    
 
     return(
         <div>
@@ -184,13 +186,31 @@ export function PackageRegister(){
                                 onSelect={(pet) => {
 
                                     setPetName(pet.pet_name)
-                                    setPetId(pet.pet_Id)
+                                    setPetId(pet.pet_id)
                                     setShowSuggestions(false)
+
+                                    const fetchData = async () => {
+                                        const response = await api.get('/returnPackage', {
+                                            params:{
+                                                pet_id: pet.pet_id
+                                            }
+                                        })
+                                        console.log(response)
+                                        if(response){
+                                            setValue(`R$ ${response.data.value}`)
+                                            if(response.data.package_type === 'Quinzenal'){
+                                                setWeeklyButtonColor('grey')
+                                                setBiWeeklyButtonColor('green')
+                                                setPackageType('Quinzenal')
+                                            }
+                                        }
+                                    }
+                                    fetchData()
                                 }}
                             />
                         )}
                         
-                    </div>
+                    </div>  
                 </div>
                 <br/>
                 Tipo do Pacote
