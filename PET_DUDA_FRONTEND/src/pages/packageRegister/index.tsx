@@ -184,6 +184,7 @@ export function PackageRegister(){
                                 onSelect={(pet) => {
 
                                     setPetName(pet.pet_name)
+                                    setPetId(pet.pet_Id)
                                     setShowSuggestions(false)
                                 }}
                             />
