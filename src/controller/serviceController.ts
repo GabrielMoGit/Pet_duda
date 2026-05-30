@@ -86,6 +86,14 @@ class ServiceController{
         return services
 
     }
+
+    private returnDateForPackageId(servicePackageId: number){
+        const serviceRepository = new ServiceRepository()
+
+        const date = serviceRepository.returnFirstDateFromPackage(servicePackageId)
+
+        return date
+    }   
 }
 
 export { ServiceController }
