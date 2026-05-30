@@ -329,8 +329,7 @@ export function TutorRegister(){
                 <br/>
                 <RegisterButton 
                     type="submit">Cadastrar
-                    </RegisterButton>
-
+                </RegisterButton>
             </form>
         </div>
     )
