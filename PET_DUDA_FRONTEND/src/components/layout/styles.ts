@@ -9,7 +9,33 @@ export const Container = styled.div`
   }
 `;
 
-export const SidePanel = styled.div`
+export const HamburgerButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+export const Overlay = styled.div<{ isOpen: boolean }>`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
+`;
+
+export const SidePanel = styled.div<{ isOpen: boolean }>`
   width: 200px;
   background-color: #000000;
   padding: 10px;
@@ -18,12 +44,13 @@ export const SidePanel = styled.div`
   gap: 10px;               
 
   @media (max-width: 768px) {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 10px;
-    gap: 5px;
+    position: fixed;
+    top: 0;
+    left: ${({ isOpen }) => (isOpen ? "0" : "-250px")};
+    height: 100vh;
+    z-index: 100;
+    transition: left 0.3s ease;
+    width: 220px;
   }
 `;
 
@@ -33,11 +60,19 @@ export const SidePanelHeader = styled.div`
   margin-bottom: 20px;    
   color: #fff;
   text-align: center;
+`;
+
+export const MobileTopBar = styled.div`
+  display: none;
 
   @media (max-width: 768px) {
-    font-size: 30px;
-    margin-bottom: 0;
-    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: #000;
+    padding: 5px 10px;
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
   }
 `;
 
