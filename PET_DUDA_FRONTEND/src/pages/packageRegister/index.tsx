@@ -4,6 +4,7 @@ import { RegisterButton } from "../../components/buttons/registerButton"
 import { SuggestionPetList } from "../../components/petSuggestionList"
 import { AlterColorButton } from "../../components/buttons/alterColorButton"
 import { api } from '../../services/api'   
+import { CancelButton } from "../../components/buttons/cancelButton"
 
 export function PackageRegister(){
 
@@ -26,6 +27,8 @@ export function PackageRegister(){
     const [hasSuccess, setHasSuccess] = useState(false)
     const [message, setMessage] = useState('')
     const [hour, setHour] = useState('')
+    const [submitType, setSubmiteType] = useState('register')
+    const [submitButtonName, setSubmiteButtonName] = useState('cadastrar')
 
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -56,7 +59,8 @@ export function PackageRegister(){
         }
 
         try{
-            const packageResponse = await api.post('/servicePackage', {
+            if(submitType === "register"){
+                 const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
                 package_type: packageType,
                 service_date: databaseDateForm,
@@ -74,6 +78,10 @@ export function PackageRegister(){
             setServiceDate('')
             setValue("")
             setHour("")
+            }
+            if(submitType === "update"){
+
+            }
 
         }catch(error: any){
             if(error.response){
@@ -195,7 +203,6 @@ export function PackageRegister(){
                                                 pet_id: pet.pet_id
                                             }
                                         })
-                                        console.log(response)
                                         if(response){
                                             setValue(`R$ ${response.data.packageFound.value}`)
                                             if(response.data.packageFound.package_type === 'Quinzenal'){
@@ -210,7 +217,7 @@ export function PackageRegister(){
                                                 hour: '2-digit',
                                                 minute: '2-digit'
                                             }))
-                                            
+                                            setSubmiteButtonName("Alterar dados do pacote")
                                         }
                                     }
                                     fetchData()
@@ -305,9 +312,19 @@ export function PackageRegister(){
                     </div>
                 </div>
                 <br/>
-                <RegisterButton
-                    type='submit' >Cadastrar
-                </RegisterButton>
+                <div style={{display: 'flex', gap: '25px'}}>
+                    <RegisterButton
+                        type='submit' 
+                    >
+                        {submitButtonName}
+                    </RegisterButton>
+                    <CancelButton
+                        type="button"    
+                    >
+                        Cancelar
+                    </CancelButton>
+                </div>
+                
                 <p style={{ color: 'red' }}>{message}</p>
             </form>
         </div>

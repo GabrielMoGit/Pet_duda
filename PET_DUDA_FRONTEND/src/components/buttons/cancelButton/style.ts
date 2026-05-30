@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 
 export const CancelButtonStyled = styled.button`
-    width: 10%;
+    width: fit-content;
+    whiteSpace: nowrap;
     padding: 12px;
     border-radius: 8px;
     border: none;

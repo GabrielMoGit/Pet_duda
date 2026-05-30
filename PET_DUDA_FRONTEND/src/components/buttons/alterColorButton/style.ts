@@ -5,7 +5,8 @@ type Props= {
 }
 
 export const AlterColorButtonStyled = styled.button<Props>`
-    width: 30%;
+    width: fit-content;
+    whiteSpace: nowrap;
     padding: 12px;
     border-radius: 8px;
     border: none;
