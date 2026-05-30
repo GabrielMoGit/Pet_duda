@@ -6,6 +6,7 @@ import { api } from '../../services/api'
 
 export function TutorRegister(){
 
+
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [message, setMessage] = useState('')
@@ -218,7 +219,7 @@ export function TutorRegister(){
             <h1>Cadastrar Tutor</h1>
 
             <form autoComplete="off" onSubmit={handleSubmit}>
-                <div style={{ display: 'flex', gap: '10px'}}>
+
                 <GenericStyledInput 
                 name="name"
                 placeholder="Nome" 
@@ -227,6 +228,7 @@ export function TutorRegister(){
                 hasError={hasError}
                 hasSuccess={hasSuccess}
                 />
+                <br/>
                 <GenericStyledInput 
                 name="phone"
                 placeholder="telefone" 
@@ -254,87 +256,81 @@ export function TutorRegister(){
                 hasError={hasError}
                 hasSuccess={hasSuccess}
                 />
-                </div>
                 <br />
-                <div style={{ display: 'flex', gap: '10px'}}>
-                    <div 
-                        data-type="street"
-                        style={{ position: "relative", flex: 1, width: '100%' }} 
-                        onKeyDown={handleKeyDown}
-                        ref={positionRef}
-                    >
-                        <GenericStyledInput 
-                            name="street"
-                            placeholder="Rua" 
-                            value={streetTyped}
-                            onChange={handleChange}
-                            hasError={hasError}
-                            hasSuccess={hasSuccess}
-                        />
+                <div 
+                    data-type="street"
+                    style={{ position: "relative", flex: 1, width: '100%' }} 
+                    onKeyDown={handleKeyDown}
+                    ref={positionRef}
+                >
+                    <GenericStyledInput 
+                        name="street"
+                        placeholder="Rua" 
+                        value={streetTyped}
+                        onChange={handleChange}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
 
-                        {showStreetSuggestions && streetSuggestions.length > 0 && streetTyped.length > 2 &&(
+                    {showStreetSuggestions && streetSuggestions.length > 0 && streetTyped.length > 2 &&(
+                        <SuggestionList  
+                            suggestions={streetSuggestions}
+                            selectedIndex={selectedIndex}
+                            onSelect={(street) => {
+                                setStreetTyped(street)
+                                setStreetShowSuggestions(false)
+                            }}
+                        />
+                    )}
+                </div>
+                <br/>
+                <div
+                    data-type="neighborhood"
+                    style={{ position: "relative", flex: 1, width: '100%' }} 
+                    onKeyDown={handleKeyDown}
+                    ref={positionRef}
+                >
+                    <div style={{ flex: 1, width: '100%' }}>
+                    <GenericStyledInput 
+                        name="neighborhood"
+                        placeholder="Bairro" 
+                        value={neighborhoodTyped}
+                        onChange={handleChange}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+
+                        {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && neighborhoodTyped.length > 2 &&(
                             <SuggestionList  
-                                suggestions={streetSuggestions}
+                                suggestions={neighborhoodSuggestions}
                                 selectedIndex={selectedIndex}
-                                onSelect={(street) => {
-                                    setStreetTyped(street)
-                                    setStreetShowSuggestions(false)
+                                onSelect={(neighborhood) => {
+                                    setNeighborhoodTyped(neighborhood)
+                                    setShowNeighborhoodSuggestions(false)
                                 }}
                             />
                         )}
                     </div>
-
-                    <div
-                        data-type="neighborhood"
-                        style={{ position: "relative", flex: 1, width: '100%' }} 
-                        onKeyDown={handleKeyDown}
-                        ref={positionRef}
-                    >
-                        <div style={{ flex: 1, width: '100%' }}>
-                        <GenericStyledInput 
-                            name="neighborhood"
-                            placeholder="Bairro" 
-                            value={neighborhoodTyped}
-                            onChange={handleChange}
-                            hasError={hasError}
-                            hasSuccess={hasSuccess}
-                        />
-
-                            {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && neighborhoodTyped.length > 2 &&(
-                                <SuggestionList  
-                                    suggestions={neighborhoodSuggestions}
-                                    selectedIndex={selectedIndex}
-                                    onSelect={(neighborhood) => {
-                                        setNeighborhoodTyped(neighborhood)
-                                        setShowNeighborhoodSuggestions(false)
-                                    }}
-                                />
-                            )}
-                        </div>
-                    </div>
-                    <div>
-                        <GenericStyledInput 
-                        name="number"
-                        placeholder="Número" 
-                        value={number}
-                        onChange={(e) => {
-                            const onlyNumbers = e.target.value.replace(/\D/g, '')
-                            setNumber(onlyNumbers)
-                        }}
-                        hasError={hasError}
-                        hasSuccess={hasSuccess}
-                        />
-                    </div>
-                    
-
                 </div>
-
-                    
-                <div style={{display: 'flex', gap: '10px'}}>
-                    <RegisterButton 
+                <br/>
+                <div>
+                    <GenericStyledInput 
+                    name="number"
+                    placeholder="Número" 
+                    value={number}
+                    onChange={(e) => {
+                        const onlyNumbers = e.target.value.replace(/\D/g, '')
+                        setNumber(onlyNumbers)
+                    }}
+                    hasError={hasError}
+                    hasSuccess={hasSuccess}
+                    />
+                </div>
+                <br/>
+                <RegisterButton 
                     type="submit">Cadastrar
                     </RegisterButton>
-                </div>
+
             </form>
         </div>
     )
