@@ -197,12 +197,20 @@ export function PackageRegister(){
                                         })
                                         console.log(response)
                                         if(response){
-                                            setValue(`R$ ${response.data.value}`)
-                                            if(response.data.package_type === 'Quinzenal'){
+                                            setValue(`R$ ${response.data.packageFound.value}`)
+                                            if(response.data.packageFound.package_type === 'Quinzenal'){
                                                 setWeeklyButtonColor('grey')
                                                 setBiWeeklyButtonColor('green')
                                                 setPackageType('Quinzenal')
                                             }
+                                            
+                                            let formattedDate = new Date(response.data.firstService.service_date)
+                                            setServiceDate(formattedDate.toLocaleDateString())
+                                            setHour(formattedDate.toLocaleTimeString('pt-BR', {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }))
+                                            
                                         }
                                     }
                                     fetchData()
