@@ -268,10 +268,31 @@ export function PackageRegister(){
                 </div>
                 
                 <br/>
-                <div style={{width: '60%'}}>
+                <div style={{width: '30%'}}>
+                    <GenericInputStyled
+                        name="value"
+                        placeholder="Valor"
+                        value={value}
+                        onChange={(e) => { 
+                            const onlyNumbers = e.target.value.replace(/\D/g, '')
+                            const value = Number(onlyNumbers) / 100
+                            const formatted = value.toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL'
+                            })
+
+                            setValue(formatted)}}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+                </div>
+                    <br/>
+                <div style={{ display: 'flex', gap: '25px'}}>
+
+                    <div style={{width: '40%'}}>
                         <GenericInputStyled
                             name="serviceDate"
-                            placeholder="Data inicial do pacote"
+                            placeholder="Data de início"
                             value={serviceDate}
                             onChange={(e) => {
                                 const onlyNumbers = e.target.value.replace(/\D/g, '')
@@ -294,8 +315,6 @@ export function PackageRegister(){
                             hasSuccess={hasSuccess}
                         />
                     </div>
-                    <br/>
-                <div style={{ display: 'flex', gap: '25px'}}>
                     
                     <div style={{width: '30%'}}>
                         <GenericInputStyled
@@ -319,24 +338,7 @@ export function PackageRegister(){
                         hasSuccess={hasSuccess}
                         />
                     </div>
-                    <div style={{width: '30%'}}>
-                        <GenericInputStyled
-                            name="value"
-                            placeholder="Valor"
-                            value={value}
-                            onChange={(e) => { 
-                                const onlyNumbers = e.target.value.replace(/\D/g, '')
-                                const value = Number(onlyNumbers) / 100
-                                const formatted = value.toLocaleString('pt-BR', {
-                                        style: 'currency',
-                                        currency: 'BRL'
-                                })
-
-                                setValue(formatted)}}
-                            hasError={hasError}
-                            hasSuccess={hasSuccess}
-                        />
-                    </div>
+                    
                 </div>
                 <br/>
                 <div style={{display: 'flex', gap: '25px'}}>
