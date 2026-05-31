@@ -5,6 +5,7 @@ import { SuggestionPetList } from "../../components/petSuggestionList"
 import { AlterColorButton } from "../../components/buttons/alterColorButton"
 import { api } from '../../services/api'   
 import { CancelButton } from "../../components/buttons/cancelButton"
+import { HiddenStyledInput } from "../../components/inputs/hiddenInput"
 
 export function PackageRegister(){
 
@@ -29,7 +30,7 @@ export function PackageRegister(){
     const [hour, setHour] = useState('')
     const [submitType, setSubmiteType] = useState('register')
     const [submitButtonName, setSubmiteButtonName] = useState('Cadastrar')
-    const [cancelButtonOpacity, setCancelButtonOpacity] = useState(0)
+    const [hiddenElementsOpacity, setHiddenElementsOpacity] = useState(0)
 
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -177,7 +178,7 @@ export function PackageRegister(){
         setServiceDate('')
         setValue("")
         setHour("")
-        setCancelButtonOpacity(0)
+        setHiddenElementsOpacity(0)
         setSubmiteButtonName("Cadastrar")
     }
 
@@ -233,7 +234,7 @@ export function PackageRegister(){
                                                     minute: '2-digit'
                                                 }))
                                                 setSubmiteButtonName("Alterar dados do pacote")
-                                                setCancelButtonOpacity(1)
+                                                setHiddenElementsOpacity(1)
                                             }
                                         }catch{
                                             setPackageType("")
@@ -242,7 +243,7 @@ export function PackageRegister(){
                                             setServiceDate('')
                                             setValue("")
                                             setHour("")
-                                            setCancelButtonOpacity(0)
+                                            setHiddenElementsOpacity(0)
                                             setSubmiteButtonName("Cadastrar")
                                         }
                                         
@@ -269,6 +270,7 @@ export function PackageRegister(){
                 
                 <br/>
                 <div style={{width: '30%'}}>
+                    <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '20px', opacity: hiddenElementsOpacity, display: hiddenElementsOpacity === 0 ? 'none' : 'auto'}}>Valor</div>
                     <GenericInputStyled
                         name="value"
                         placeholder="Valor"
@@ -353,12 +355,11 @@ export function PackageRegister(){
                             handleResetPageInfo()
                         }}
                         type="button"    
-                        style={{opacity: cancelButtonOpacity, pointerEvents: cancelButtonOpacity === 0 ? 'none' : 'auto'}}
+                        style={{opacity: hiddenElementsOpacity, display: hiddenElementsOpacity === 0 ? 'none' : 'auto'}}
                     >
                         Cancelar
                     </CancelButton>
                 </div>
-                
                 <p style={{ color: 'red' }}>{message}</p>
             </form>
         </div>
