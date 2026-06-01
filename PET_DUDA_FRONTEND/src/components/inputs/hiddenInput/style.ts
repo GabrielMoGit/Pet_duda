@@ -5,7 +5,7 @@ export const HiddenInputStyled = styled.input`
     width: 80%;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid 
+    border: 1px solid #cccc;
     font-size: 16px;
 
     &:focus {

@@ -4,8 +4,8 @@ import { RegisterButton } from "../../components/buttons/registerButton"
 import { SuggestionPetList } from "../../components/petSuggestionList"
 import { AlterColorButton } from "../../components/buttons/alterColorButton"
 import { api } from '../../services/api'   
-import { CancelButton } from "../../components/buttons/cancelButton"
 import { HiddenStyledInput } from "../../components/inputs/hiddenInput"
+import { ActionButton } from "../../components/buttons/ActionButton"
 
 export function PackageRegister(){
 
@@ -30,7 +30,14 @@ export function PackageRegister(){
     const [hour, setHour] = useState('')
     const [submitType, setSubmiteType] = useState('register')
     const [submitButtonName, setSubmiteButtonName] = useState('Cadastrar')
-    const [hiddenElementsOpacity, setHiddenElementsOpacity] = useState(0)
+    const [showElementsALreadyHaveRegister, setShowElementsALreadyHaveRegister] = useState(false)
+    const [inputIsEditable, setInputIsEditable] = useState(true)
+    const [firstDate, setFirstDate] = useState('')
+    const [secondDate, setSecondDate] = useState('')
+    const [thirdDate, setThirdDate] = useState('')
+    const [fourthDate, setFourthDate] = useState('')
+    const [showTwoMoreDatesIfRegistersIsWeekly, setShowTwoMoreDatesIfRegistersIsWeekly] = useState(false)
+    const [showButtonToChangeDataOfRegister, setShowButtonToChangeDataOfRegister] = useState(false)
 
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -178,8 +185,9 @@ export function PackageRegister(){
         setServiceDate('')
         setValue("")
         setHour("")
-        setHiddenElementsOpacity(0)
+        setShowElementsALreadyHaveRegister(false)
         setSubmiteButtonName("Cadastrar")
+        setShowTwoMoreDatesIfRegistersIsWeekly(false)
     }
 
     return(
@@ -222,11 +230,17 @@ export function PackageRegister(){
                                             if(response){
                                                 setValue(`R$ ${response.data.packageFound.value}`)
                                                 if(response.data.packageFound.package_type === 'Quinzenal'){
+                                                    setShowTwoMoreDatesIfRegistersIsWeekly(false)
                                                     setWeeklyButtonColor('grey')
                                                     setBiWeeklyButtonColor('green')
                                                     setPackageType('Quinzenal')
                                                 }
-                                                
+                                                if(response.data.packageFound.package_type === 'Semanal'){
+                                                    setShowTwoMoreDatesIfRegistersIsWeekly(true)
+                                                    setWeeklyButtonColor('green')
+                                                    setBiWeeklyButtonColor('grey')
+                                                    setPackageType('Semanal')
+                                                }
                                                 let formattedDate = new Date(response.data.firstService.service_date)
                                                 setServiceDate(formattedDate.toLocaleDateString())
                                                 setHour(formattedDate.toLocaleTimeString('pt-BR', {
@@ -234,7 +248,7 @@ export function PackageRegister(){
                                                     minute: '2-digit'
                                                 }))
                                                 setSubmiteButtonName("Alterar dados do pacote")
-                                                setHiddenElementsOpacity(1)
+                                                setShowElementsALreadyHaveRegister(true)
                                             }
                                         }catch{
                                             setPackageType("")
@@ -243,7 +257,7 @@ export function PackageRegister(){
                                             setServiceDate('')
                                             setValue("")
                                             setHour("")
-                                            setHiddenElementsOpacity(0)
+                                            setShowElementsALreadyHaveRegister(false)
                                             setSubmiteButtonName("Cadastrar")
                                         }
                                         
@@ -260,17 +274,17 @@ export function PackageRegister(){
                 <br/>
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <AlterColorButton color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal')}}>
+                    <AlterColorButton color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal'), setShowTwoMoreDatesIfRegistersIsWeekly(true)}}>
                         Semanal
                     </AlterColorButton>
-                    <AlterColorButton color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal')}}>
+                    <AlterColorButton color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal'), setShowTwoMoreDatesIfRegistersIsWeekly(false)}}>
                         Quinzenal
                     </AlterColorButton>
                 </div>
                 
                 <br/>
                 <div style={{width: '30%'}}>
-                    <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '20px', opacity: hiddenElementsOpacity, display: hiddenElementsOpacity === 0 ? 'none' : 'auto'}}>Valor</div>
+                    <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Valor</div>
                     <GenericInputStyled
                         name="value"
                         placeholder="Valor"
@@ -292,6 +306,7 @@ export function PackageRegister(){
                 <div style={{ display: 'flex', gap: '25px'}}>
 
                     <div style={{width: '40%'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Data inicial</div>
                         <GenericInputStyled
                             name="serviceDate"
                             placeholder="Data de início"
@@ -319,6 +334,7 @@ export function PackageRegister(){
                     </div>
                     
                     <div style={{width: '30%'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Horário</div>
                         <GenericInputStyled
                         name="hour"
                         placeholder="Hora"
@@ -340,8 +356,125 @@ export function PackageRegister(){
                         hasSuccess={hasSuccess}
                         />
                     </div>
-                    
                 </div>
+                <br/>
+                <div >
+                    <div style={{marginBottom: '3px'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>1ª data</div>
+                        <div style={{display: 'flex', gap: '20px'}}>
+                            <HiddenStyledInput
+                                name={"firstDate"}
+                                value={firstDate}
+                                readOnly={inputIsEditable}
+                                isVisible={showElementsALreadyHaveRegister}
+                                onChange={(e) => setFirstDate(e.target.value)}
+                            />
+                            <div style={{display: 'flex', gap: '5px'}}>
+                                <ActionButton
+                                    name={'jumpFirstService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Pular serviço
+                                </ActionButton>
+                                <ActionButton
+                                    name={'rescheduleFirstService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Remarcar
+                                </ActionButton>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div style={{marginBottom: '3px'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>2ª data</div>
+                        <div style={{display: 'flex', gap: '20px'}}>
+                            <HiddenStyledInput
+                                name={"secondDate"}
+                                value={secondDate}
+                                readOnly={inputIsEditable}
+                                isVisible={showElementsALreadyHaveRegister}
+                                onChange={(e) => setFirstDate(e.target.value)}
+                            />
+                            <div style={{display: 'flex', gap: '5px'}}>
+                                <ActionButton
+                                    name={'jumpSecondService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Pular serviço
+                                </ActionButton>
+                                <ActionButton
+                                    name={'rescheduleSecondService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Remarcar
+                                </ActionButton>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{marginBottom: '3px'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>3ª data</div>
+                        <div style={{display: 'flex', gap: '20px'}}>
+                            <HiddenStyledInput
+                                name={"thirdDate"}
+                                value={thirdDate}
+                                readOnly={inputIsEditable}
+                                isVisible={showTwoMoreDatesIfRegistersIsWeekly}
+                                onChange={(e) => setFirstDate(e.target.value)}
+                            />
+                            <div style={{display: 'flex', gap: '5px'}}>
+                                <ActionButton
+                                    name={'jumpThirdService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Pular serviço
+                                </ActionButton>
+                                <ActionButton
+                                    name={'rescheduleThirdService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Remarcar
+                                </ActionButton>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{marginBottom: '3px'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>4ª data</div>
+                        <div style={{display: 'flex', gap: '20px'}}>
+                            <HiddenStyledInput
+                                name={"fourthDate"}
+                                value={fourthDate}
+                                readOnly={inputIsEditable}
+                                isVisible={showTwoMoreDatesIfRegistersIsWeekly}
+                                onChange={(e) => setFirstDate(e.target.value)}
+                            />
+                            <div style={{display: 'flex', gap: '5px'}}>
+                                <ActionButton
+                                    name={'jumpFourthService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Pular serviço
+                                </ActionButton>
+                                <ActionButton
+                                    name={'rescheduleFourthService'}
+                                    onClick={(e) => {
+                                    }}
+                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                > Remarcar
+                                </ActionButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
                 <br/>
                 <div style={{display: 'flex', gap: '25px'}}>
                     <RegisterButton
@@ -349,16 +482,17 @@ export function PackageRegister(){
                     >
                         {submitButtonName}
                     </RegisterButton>
-                    <CancelButton
+                    
+                    <ActionButton
+                        name={'CancelButton'}
                         onClick={(e) => {
                             e.stopPropagation()
                             handleResetPageInfo()
                         }}
-                        type="button"    
-                        style={{opacity: hiddenElementsOpacity, display: hiddenElementsOpacity === 0 ? 'none' : 'auto'}}
+                        style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: 'red'}}
                     >
                         Cancelar
-                    </CancelButton>
+                    </ActionButton>
                 </div>
                 <p style={{ color: 'red' }}>{message}</p>
             </form>
