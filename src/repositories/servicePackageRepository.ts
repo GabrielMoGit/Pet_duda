@@ -70,6 +70,28 @@ class ServicePackageRepository {
             active_package: 1
         })
     }
+
+    async updateServicePackage(id: number, package_type: string, value: string, active_package: number){
+        const servicePackage = await this.repository.findOneBy({id})
+
+        if(!servicePackage){
+            return
+        }
+        
+        if(active_package === 0){
+            servicePackage.active_package = 0
+            await this.repository.save(servicePackage)
+            return {
+                message: 'Pacote cancelado'
+            }
+        }
+
+        servicePackage.package_type = package_type
+        servicePackage.value = value
+
+        await this.repository.save(servicePackage)
+
+    }
 }
 
-export { ServicePackageRepository }
+export { ServicePackageRepository } 

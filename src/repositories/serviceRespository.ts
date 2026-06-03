@@ -40,7 +40,7 @@ class ServiceRepository{
         await this.repository.save(services)
     }
 
-    async alterserviceDate(id: number, service_date: Date){
+    async alterServiceDate(id: number, service_date: Date){
         const service = await this.repository.findOneBy({id})
 
         if(!service){
