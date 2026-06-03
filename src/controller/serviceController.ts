@@ -31,7 +31,7 @@ class ServiceController{
         return dates
     }
     
-    async   listAllServicesForPackageId(package_id: number){
+    async listAllServicesForPackageId(package_id: number){
 
         const serviceRepository = new ServiceRepository()
 
@@ -94,6 +94,15 @@ class ServiceController{
 
         return date
     }   
+
+    async alterServiceDate(service_id: number, service_date: Date){
+        const serviceRepository = new ServiceRepository()
+
+        const service = await serviceRepository.alterServiceDate(service_id, service_date)
+
+        return service
+
+    }
 }
 
 export { ServiceController }

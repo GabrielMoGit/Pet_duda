@@ -257,6 +257,39 @@ class ServicePackageController{
         const services = await serviceController.returnDateForPackageId(packageFound.id)
         return response.json({packageFound, services})
     }
+
+    async updateServicePackage(request: Request, response: Response){
+        //const {id, package_type, value, active_package} = request.body
+        //const dates: Date[] = request.body.dates
+
+        const {id} = request.body
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+
+        const services = await serviceController.listAllServicesForPackageId(id)
+
+        //2026-06-13T17:10:00.000Z
+        const testDates: Date[] =[
+            new Date(`2026-07-14T17:10:00.000Z`),
+            new Date(`2026-07-21T17:10:00.000Z`),
+            new Date(`2026-07-28T17:10:00.000Z`),
+            new Date(`2026-08-05T17:10:00.000Z`)
+        ]
+
+        let newDates: Date [] = []
+
+        for(let i = 0; i < services.length; i++){
+            const date = await serviceController.alterServiceDate(services[i].id, testDates[i])
+
+            if(!date){
+                return
+            }
+            newDates.push(date.service_date)
+        }
+
+        return response.json({id, services, newDates})
+
+    }
 }
 
 export { ServicePackageController }

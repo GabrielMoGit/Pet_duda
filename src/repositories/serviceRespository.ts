@@ -47,7 +47,7 @@ class ServiceRepository{
             return 
         }
 
-        if(service.service_date > service_date){
+        if(service.service_date.getTime() > service_date.getTime()){
             service.service_done = 1
         }
         service.service_date = service_date
