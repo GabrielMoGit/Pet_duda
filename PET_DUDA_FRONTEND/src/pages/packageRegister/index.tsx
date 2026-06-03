@@ -274,6 +274,7 @@ export function PackageRegister(){
                                                 }
                                             })
                                             if(response){
+                                                
                                                 setValue(`R$ ${response.data.packageFound.value}`)
                                                 if(response.data.packageFound.package_type === 'Quinzenal'){
                                                     setShowTwoMoreDatesIfRegistersIsWeekly(false)
@@ -287,7 +288,7 @@ export function PackageRegister(){
                                                     setBiWeeklyButtonColor('grey')
                                                     setPackageType('Semanal')
                                                 }
-                                                let formattedDate = new Date(response.data.firstService.service_date)
+                                                let formattedDate = new Date(response.data.services[0].service_date)
                                                 setServiceDate(formattedDate.toLocaleDateString())
                                                 setHour(formattedDate.toLocaleTimeString('pt-BR', {
                                                     hour: '2-digit',

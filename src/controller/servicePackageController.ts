@@ -254,9 +254,8 @@ class ServicePackageController{
             })
         }
 
-        const firstService = await serviceController.returnDateForPackageId(packageFound.id)
-        console.log(packageFound, firstService)
-        return response.json({packageFound, firstService})
+        const services = await serviceController.returnDateForPackageId(packageFound.id)
+        return response.json({packageFound, services})
     }
 }
 

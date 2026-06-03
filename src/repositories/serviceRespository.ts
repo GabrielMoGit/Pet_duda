@@ -40,6 +40,21 @@ class ServiceRepository{
         await this.repository.save(services)
     }
 
+    async alterserviceDate(id: number, service_date: Date){
+        const service = await this.repository.findOneBy({id})
+
+        if(!service){
+            return 
+        }
+
+        if(service.service_date > service_date){
+            service.service_done = 1
+        }
+        service.service_date = service_date
+
+        await this.repository.save(service)
+    }
+
     async returnDatesFromPackage(service_package_id: number){
         return await this.repository.find({
             where: { service_package_id}
