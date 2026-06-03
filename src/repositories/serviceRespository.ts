@@ -53,6 +53,7 @@ class ServiceRepository{
         service.service_date = service_date
 
         await this.repository.save(service)
+        return (service)
     }
 
     async returnDatesFromPackage(service_package_id: number){
