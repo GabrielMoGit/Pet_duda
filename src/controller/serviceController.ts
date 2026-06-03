@@ -103,6 +103,21 @@ class ServiceController{
         return service
 
     }
+
+    async removeDate(id: number){
+        const serviceRepository = new ServiceRepository()
+
+        try{
+            const date = await serviceRepository.removeDate(id)
+
+            return date
+            
+        }catch(error){
+            return {
+                message: ('Não foi possível remover' + error)
+            }
+        }
+    }
 }
 
 export { ServiceController }

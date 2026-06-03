@@ -66,6 +66,9 @@ class ServiceRepository{
         }
 
         await this.repository.remove(date)
+        return {
+            message: 'Data removida'
+        }
     }
 
     async returnDatesFromPackage(service_package_id: number){
