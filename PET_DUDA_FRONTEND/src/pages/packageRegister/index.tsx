@@ -45,6 +45,12 @@ export function PackageRegister(){
     const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')
 
 
+    const [firstServiceButtonsVisibility, setFirstServiceButtonsVisibility] = useState('hidden')
+    const [secondServiceButtonsVisibility, setSecondServiceButtonsVisibility] = useState('hidden')
+    const [thirdServiceButtonsVisibility, setThirdServiceButtonsVisibility] = useState('hidden')
+    const [fourthServiceButtonsVisibility, setFourthServiceButtonsVisibility] = useState('hidden')
+ 
+
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
 
@@ -188,6 +194,46 @@ export function PackageRegister(){
         setShowElementsALreadyHaveRegister(false)
         setSubmiteButtonName("Cadastrar")
         setShowTwoMoreDatesIfRegistersIsWeekly(false)
+        setFirstServiceButtonsVisibility('hidden')
+        setThirdServiceButtonsVisibility('hidden')
+        setFourthServiceButtonsVisibility('hidden')
+        setSecondServiceButtonsVisibility('hidden')
+    }
+
+    const controlUpdateDataButtonVisibility = async (e: React.MouseEvent<HTMLInputElement>) =>{
+        const clickedInput = e.target as HTMLInputElement
+
+        if(clickedInput.name === 'firstDate'){
+            setSecondServiceButtonsVisibility('hidden')
+            setThirdServiceButtonsVisibility('hidden')
+            setFourthServiceButtonsVisibility('hidden')
+            setFirstServiceButtonsVisibility('visible')
+        }
+        if(clickedInput.name === 'secondDate'){
+            setFirstServiceButtonsVisibility('hidden')
+            setThirdServiceButtonsVisibility('hidden')
+            setFourthServiceButtonsVisibility('hidden')
+            setSecondServiceButtonsVisibility('visible')
+        }
+        if(clickedInput.name === 'thirdDate'){
+            setFirstServiceButtonsVisibility('hidden')
+            setSecondServiceButtonsVisibility('hidden')
+            setFourthServiceButtonsVisibility('hidden')
+            setThirdServiceButtonsVisibility('visible')
+        }
+        if(clickedInput.name === 'fourthDate'){
+            setFirstServiceButtonsVisibility('hidden')
+            setSecondServiceButtonsVisibility('hidden')
+            setThirdServiceButtonsVisibility('hidden')
+            setFourthServiceButtonsVisibility('visible')
+        }
+
+        const button = e.target as HTMLButtonElement
+
+        if(button.name === 'jumpFirstService'){
+            
+
+        }
     }
 
     return(
@@ -363,6 +409,7 @@ export function PackageRegister(){
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>1ª data</div>
                         <div style={{display: 'flex', gap: '20px'}}>
                             <HiddenStyledInput
+                                onClick={controlUpdateDataButtonVisibility}
                                 name={"firstDate"}
                                 value={firstDate}
                                 readOnly={inputIsEditable}
@@ -374,14 +421,14 @@ export function PackageRegister(){
                                     name={'jumpFirstService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleFirstService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
@@ -392,25 +439,26 @@ export function PackageRegister(){
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>2ª data</div>
                         <div style={{display: 'flex', gap: '20px'}}>
                             <HiddenStyledInput
+                                onClick={controlUpdateDataButtonVisibility}
                                 name={"secondDate"}
                                 value={secondDate}
                                 readOnly={inputIsEditable}
                                 isVisible={showElementsALreadyHaveRegister}
-                                onChange={(e) => setFirstDate(e.target.value)}
+                                onChange={(e) => setSecondDate(e.target.value)}
                             />
                             <div style={{display: 'flex', gap: '5px'}}>
                                 <ActionButton
                                     name={'jumpSecondService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleSecondService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
@@ -420,25 +468,26 @@ export function PackageRegister(){
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>3ª data</div>
                         <div style={{display: 'flex', gap: '20px'}}>
                             <HiddenStyledInput
+                                onClick={controlUpdateDataButtonVisibility}
                                 name={"thirdDate"}
                                 value={thirdDate}
                                 readOnly={inputIsEditable}
                                 isVisible={showTwoMoreDatesIfRegistersIsWeekly}
-                                onChange={(e) => setFirstDate(e.target.value)}
+                                onChange={(e) => setThirdDate(e.target.value)}
                             />
                             <div style={{display: 'flex', gap: '5px'}}>
                                 <ActionButton
                                     name={'jumpThirdService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleThirdService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
@@ -448,25 +497,26 @@ export function PackageRegister(){
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>4ª data</div>
                         <div style={{display: 'flex', gap: '20px'}}>
                             <HiddenStyledInput
+                                onClick={controlUpdateDataButtonVisibility}
                                 name={"fourthDate"}
                                 value={fourthDate}
                                 readOnly={inputIsEditable}
                                 isVisible={showTwoMoreDatesIfRegistersIsWeekly}
-                                onChange={(e) => setFirstDate(e.target.value)}
+                                onChange={(e) => setFourthDate(e.target.value)}
                             />
                             <div style={{display: 'flex', gap: '5px'}}>
                                 <ActionButton
                                     name={'jumpFourthService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleFourthService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
