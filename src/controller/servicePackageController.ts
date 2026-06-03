@@ -249,11 +249,13 @@ class ServicePackageController{
         const packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
 
         if(!packageFound){
-            return response.status(404)
+            return response.status(404).json({
+                message: 'Pacote não encontrado'
+            })
         }
 
         const firstService = await serviceController.returnDateForPackageId(packageFound.id)
-
+        console.log(packageFound, firstService)
         return response.json({packageFound, firstService})
     }
 }

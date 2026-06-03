@@ -90,7 +90,7 @@ class ServiceController{
     async returnDateForPackageId(servicePackageId: number){
         const serviceRepository = new ServiceRepository()
 
-        const date = await serviceRepository.returnFirstDateFromPackage(servicePackageId)
+        const date = await serviceRepository.returnDatesFromPackage(servicePackageId)
 
         return date
     }   

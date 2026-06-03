@@ -40,10 +40,9 @@ class ServiceRepository{
         await this.repository.save(services)
     }
 
-    async returnFirstDateFromPackage(service_package_id: number){
-        return await this.repository.findOne({
-            where: { service_package_id},
-            order: { id: 'ASC'}
+    async returnDatesFromPackage(service_package_id: number){
+        return await this.repository.find({
+            where: { service_package_id}
         })
     }
     
