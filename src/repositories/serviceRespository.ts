@@ -56,6 +56,18 @@ class ServiceRepository{
         return (service)
     }
 
+    async removeDate(id: number){
+        const date =await this.repository.findOneBy({id})
+
+        if(!date){
+            return {
+                message: 'Data não localizada'
+            }
+        }
+
+        await this.repository.remove(date)
+    }
+
     async returnDatesFromPackage(service_package_id: number){
         return await this.repository.find({
             where: { service_package_id}
