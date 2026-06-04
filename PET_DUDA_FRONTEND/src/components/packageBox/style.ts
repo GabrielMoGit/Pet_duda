@@ -19,4 +19,11 @@ export const Box = styled.div`
     margin: 0;
     word-break: break-word;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 18px;
+    height: auto;
+  }
+
 `;

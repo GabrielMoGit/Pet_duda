@@ -19,18 +19,16 @@ class ServiceRepository{
         return this.repository.findBy({service_package_id})
     }
 
-    
-
     async listAllServices(){
         return await this.repository.find()
     }
 
     async turnDonethepPassedServices(){
-        const today = new Date()
-        today.setHours(0, 0, 0, 0);
+        const now = new Date()
+
         const services = await this.repository.find({
             where: {
-                service_date: LessThan(today),
+                service_date: LessThan(now),
                 service_done: 0
             }
         })
@@ -42,9 +40,43 @@ class ServiceRepository{
         await this.repository.save(services)
     }
 
-    async checkIfServiceIsDone(){
+    async alterServiceDate(id: number, service_date: Date){
+        const service = await this.repository.findOneBy({id})
 
+        if(!service){
+            return 
+        }
+
+        if(service.service_date.getTime() > service_date.getTime()){
+            service.service_done = 1
+        }
+        service.service_date = service_date
+
+        await this.repository.save(service)
+        return (service)
     }
+
+    async removeDate(id: number){
+        const date =await this.repository.findOneBy({id})
+
+        if(!date){
+            return {
+                message: 'Data não localizada'
+            }
+        }
+
+        await this.repository.remove(date)
+        return {
+            message: 'Data removida'
+        }
+    }
+
+    async returnDatesFromPackage(service_package_id: number){
+        return await this.repository.find({
+            where: { service_package_id}
+        })
+    }
+    
 }
 
 export { ServiceRepository  }  

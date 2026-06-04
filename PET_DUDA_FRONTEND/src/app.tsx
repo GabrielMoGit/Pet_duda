@@ -3,6 +3,7 @@ import { Layout } from './components/layout'
 import { Home } from './pages/Home'
 import { TutorRegister } from './pages/tutorRegister'
 import { PetRegister } from './pages/petsRegister'
+import { PackageRegister } from './pages/packageRegister'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="home" element={<Home />} />
           <Route path="register" element={<TutorRegister />} />
           <Route path="petRegister" element={<PetRegister/>} />
+          <Route path="packageRegister" element={<PackageRegister/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

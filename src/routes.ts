@@ -20,6 +20,7 @@ const serviceController = new ServiceController()
 router.post("/tutor", tutorController.create)
 
 router.post("/pet", petController.create)
+router.get("/listPetsAndRespectiveTutors", petController.listAllPetsAndRespectiveTutors)
 
 router.post("/street", streetController.create)
 router.get("/listStreets", streetController.listStreets)
@@ -32,14 +33,13 @@ router.post("/address", addressController.create)
 router.post("/servicePackage", servicePackageController.userResponse)
 router.get("/listPackages", servicePackageController.listPackages)
 router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
+router.get("/returnPackage", servicePackageController.returnExistentPackageForPetid)
 
 
 
 
 //test route
-router.patch('/test', servicePackageController
-      .turnPackagesToDoneStatusAndCreateNewPackage
-      .bind(servicePackageController))
+router.patch('/test', servicePackageController.updateServicePackage)
 
 
 

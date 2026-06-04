@@ -4,34 +4,78 @@ import { ServiceController } from "./serviceController";
 import { PetController } from "./petController";
 import { TutorController } from "./tutorController";
 import { AddressController } from "./addressController";
+import { PetRepository } from "../repositories/petRepository";
 
 class ServicePackageController{
 
     async userResponse(request: Request, response: Response){
         const {pet_id, package_type, service_date, value} = request.body
 
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+        const petRepository = new PetRepository()
+
+        const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+        if(!petAlreadyExist){
+            return response.status(404).json({
+                error: "Pet não encontrado"
+            })
+        }
+
+        const today = new Date()
+        const serviceDate = new Date(service_date)
+
+        if(today > serviceDate){
+            return response.status(400).json({
+                error: "Impossível criar em data passada"
+            })
+        }
+
+        const petAlreadyHavePackage = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+
+        if(petAlreadyHavePackage){
+            return response.status(409).json({
+                error: "Pacote já criado para esse pet"
+            })
+        }
+
         try{
-            const createdPackage = await this.create(pet_id, package_type, service_date, value)
-                
-            return response.json(createdPackage)
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
+            const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
+            return response.status(201).json({
+                message: "Pacote criado"
+            })
 
         }catch(error){
-            return response.json(error)
+            console.log(error)
+            return response.status(500).json({
+                error: "Erro ao criar pacote"
+            })
         }
     }
 
-    async create(pet_id: string, package_type: string, service_date: Date, value: string){
+    async create(pet_id: string, package_type: string, service_date: string, value: string){
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
-        try{
+        const petRepository = new PetRepository()
 
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value) 
-                await serviceController.create(createdPackage.id, new Date(service_date))
+        const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+            if(!petAlreadyExist){
+                    console.log("Pet não encontrado")
+                    return
+            }
+
+        try{    
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
+            const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
                 
-            return (createdPackage)
+            return ({createdPackage, createdServices})
 
         }catch(error){
-            return console.log(error)
+            console.log(error)
+            throw error
         }
     }
 
@@ -73,7 +117,7 @@ class ServicePackageController{
         let packageRepositoryResponse = []
 
         if(kind === "unpaid"){
-            packageRepositoryResponse = await servicePackageRepository.listAllUndonePackages()
+            packageRepositoryResponse = await servicePackageRepository.listAllUndoneActivePackages()
         }else{
             packageRepositoryResponse = await servicePackageRepository.listAllPackages()
         }
@@ -152,7 +196,7 @@ class ServicePackageController{
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
-        const undonePackages = await servicePackageRepository.listAllUndonePackages()
+        const undonePackages = await servicePackageRepository.listAllUndoneActivePackages()
 
         if (undonePackages.length === 0) {
             return;
@@ -178,10 +222,9 @@ class ServicePackageController{
 
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
-                await this.create(item.pet_id, item.package_type, date, item.value)
+                await this.create(item.pet_id, item.package_type, date.toString(), item.value)
             }
         }
-
     }
 
     async turnPackagesToPaidStatus(request: Request, response: Response){
@@ -194,12 +237,93 @@ class ServicePackageController{
         return response.json({
             message: "Pacote pago"
         })
-
     }
 
+    async returnExistentPackageForPetid(request: Request, response: Response){
+        const pet_id = request.query.pet_id as string
 
-    
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
 
+
+        const packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+
+        if(!packageFound){
+            return response.status(404).json({
+                message: 'Pacote não encontrado'
+            })
+        }
+
+        const services = await serviceController.returnDateForPackageId(packageFound.id)
+        return response.json({packageFound, services})
+    }
+
+    async updateServicePackage(request: Request, response: Response){
+        const {id, package_type, value, active_package} = request.body
+        const reviciedDates: Date[] = request.body.dates.map((date: string) => new Date(date))
+
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
+
+        try{
+
+            const packageFound = await servicePackageRepository.findOneById(id)
+
+            if(!packageFound){
+                return response.status(404).json({
+                    message: "Pacote não encontrado" 
+                })
+            }
+
+            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package)
+
+            if(!packageUpdated){
+                return response.status(404).json({
+                    message: "Pacote atualizado inexistente"
+                })
+            }
+
+            if(active_package === 0){
+                return response.status(200).json({
+                    message: "Pacote cancelado com sucesso"
+                })
+            }
+
+            const services = await serviceController.listAllServicesForPackageId(id)
+
+            if(services.length != reviciedDates.length){
+
+                for(const item of services){
+                    await serviceController.removeDate(item.id)
+                }
+
+                await serviceController.create(id, reviciedDates[0])
+            }
+
+            const newServices = await serviceController.listAllServicesForPackageId(id)
+
+            let newDates: Date [] = []
+
+            for(let i = 0; i < newServices.length; i++){
+
+                const date = await serviceController.alterServiceDate(newServices[i].id, reviciedDates[i])
+
+                if(!date){
+                    return
+                }
+
+                newDates.push(date.service_date)
+            }
+
+            await serviceController.turnDoneThePassedServices()
+
+            return response.json({packageUpdated, newDates})
+
+        }catch(error){
+            console.log(error)
+            throw error
+        }
+    }
 }
 
 export { ServicePackageController }

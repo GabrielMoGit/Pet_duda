@@ -1,13 +1,18 @@
 import styled from "styled-components";
 
-export const RegisterButtonStyled = styled.button`
+type Props= {
+    color: string
+}
+
+export const AlterColorButtonStyled = styled.button<Props>`
     width: fit-content;
     whiteSpace: nowrap;
     padding: 12px;
     border-radius: 8px;
     border: none;
 
-    background-color: #007bff;
+    background-color: ${({ color }) => color};
+
     color: white;
 
     font-size: 16px;
@@ -17,7 +22,5 @@ export const RegisterButtonStyled = styled.button`
 
     transition: 0.2s;
 
-    &:hover{
-    background-color: #0056b3;
-    }
+    
 `

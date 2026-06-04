@@ -51,6 +51,41 @@ class PetController{
 
         return pets
     }
+
+        async listAllPetsAndRespectiveTutors(request: Request, response: Response){
+
+            const petRepository = new PetRepository()
+            const tutorRepository = new TutorRepository()
+
+            type PetAndTutorData = {
+                pet_id: string,
+                pet_name: string,
+                tutor_name: string,
+                tutor_phone: string
+            }
+
+            let petAndTutorData: PetAndTutorData[] = []
+
+            const pets = await petRepository.listAllExistentPets()
+
+            if(!pets){
+                return
+            }
+
+            for(const item of pets){
+                const tutor = await tutorRepository.findById(item.id_tutor)
+
+                petAndTutorData.push({
+                    pet_id: item.id,
+                    pet_name: item.name,
+                    tutor_name: tutor.tutor.tutorName,
+                    tutor_phone: tutor.tutor.tutorPhone
+                })
+            }
+
+            return response.json({petAndTutorData})
+
+        }
 }
 
 export { PetController }

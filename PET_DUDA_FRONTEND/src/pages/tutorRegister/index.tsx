@@ -2,9 +2,10 @@ import { GenericStyledInput } from '../../components/inputs/genericInput'
 import { RegisterButton } from '../../components/buttons/registerButton'
 import { SuggestionList } from '../../components/suggestionList'
 import { useState, useRef, useEffect } from 'react'
-import { api } from '../../services/api'
+import { api } from '../../services/api'   
 
 export function TutorRegister(){
+
 
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
@@ -25,10 +26,10 @@ export function TutorRegister(){
     const [number, setNumber] = useState('')
 
     //Position reference to know where de click happens
-    const positionRef = useRef<HTMLDivElement>(null)
+    const   positionRef = useRef<HTMLDivElement>(null)
 
     //Initial state to know wich item is been selected, "-1" = none selected
-    const [selectedIndex, setSelectedIndex] = useState(-1)
+    const [ selectedIndex, setSelectedIndex] = useState(-1)
 
     const [houseNumber, setHouseNumber] = useState("")
 
@@ -81,18 +82,17 @@ export function TutorRegister(){
 
     //function do identify where the click mouse happens
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if(positionRef.current && !positionRef.current.contains(event?.target as Node)
-            ){
+        const handleClickOutside = (e: TouchEvent) => {
+            if(positionRef.current && !positionRef.current.contains(e?.target as Node)){
                 setStreetShowSuggestions(false)
                 setShowNeighborhoodSuggestions(false)
             }
         }
 
-        document.addEventListener('mousedown', handleClickOutside)
+        document.addEventListener('touchend', handleClickOutside)
 
         return() => {
-            document.removeEventListener('mousedown', handleClickOutside)
+            document.removeEventListener('touchend', handleClickOutside)
         }
     })
 
@@ -113,14 +113,12 @@ export function TutorRegister(){
         setSelectedIndex(-1)
 
         try{
-            const response = await api.get(route,{
-                params: {name: text}
-            })
+            const response = await api.get(route)
 
-            const dataBaseResponse = response.data.filter((content: string) => content.toLowerCase().includes(text.toLowerCase()))
+            const onlyTypedByUserResponse = response.data.filter((content: string) => content.toLowerCase().includes(text.toLowerCase()))
 
             if(e.target.name === "street"){
-            setStreetSuggestions(dataBaseResponse)
+            setStreetSuggestions(onlyTypedByUserResponse)
             setStreetShowSuggestions(true)
                 if(text.trim() === "") {
                     setStreetSuggestions([])
@@ -129,7 +127,7 @@ export function TutorRegister(){
                 }
             }
             if(e.target.name === "neighborhood"){
-                setNeighborhoodSuggestions(dataBaseResponse)
+                setNeighborhoodSuggestions(onlyTypedByUserResponse)
                 setShowNeighborhoodSuggestions(true)
                 if(text.trim() === ""){
                     setNeighborhoodSuggestions([])
@@ -219,8 +217,8 @@ export function TutorRegister(){
         <div>
             <h1>Cadastrar Tutor</h1>
 
-            <form onSubmit={handleSubmit}>
-                <div style={{ display: 'flex', gap: '10px'}}>
+            <form autoComplete="off" onSubmit={handleSubmit}>
+
                 <GenericStyledInput 
                 name="name"
                 placeholder="Nome" 
@@ -229,6 +227,7 @@ export function TutorRegister(){
                 hasError={hasError}
                 hasSuccess={hasSuccess}
                 />
+                <br/>
                 <GenericStyledInput 
                 name="phone"
                 placeholder="telefone" 
@@ -256,87 +255,80 @@ export function TutorRegister(){
                 hasError={hasError}
                 hasSuccess={hasSuccess}
                 />
-                </div>
                 <br />
-                <div style={{ display: 'flex', gap: '10px'}}>
-                    <div 
-                        data-type="street"
-                        style={{ position: "relative", flex: 1, width: '100%' }} 
-                        onKeyDown={handleKeyDown}
-                        ref={positionRef}
-                    >
-                        <GenericStyledInput 
-                            name="street"
-                            placeholder="Rua" 
-                            value={streetTyped}
-                            onChange={handleChange}
-                            hasError={hasError}
-                            hasSuccess={hasSuccess}
-                        />
+                <div 
+                    data-type="street"
+                    style={{ position: "relative", flex: 1, width: '100%' }} 
+                    onKeyDown={handleKeyDown}
+                    ref={positionRef}
+                >
+                    <GenericStyledInput 
+                        name="street"
+                        placeholder="Rua" 
+                        value={streetTyped}
+                        onChange={handleChange}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
 
-                        {showStreetSuggestions && streetSuggestions.length > 0 && streetTyped.length > 2 &&(
+                    {showStreetSuggestions && streetSuggestions.length > 0 && streetTyped.length > 2 &&(
+                        <SuggestionList  
+                            suggestions={streetSuggestions}
+                            selectedIndex={selectedIndex}
+                            onSelect={(street) => {
+                                setStreetTyped(street)
+                                setStreetShowSuggestions(false)
+                            }}
+                        />
+                    )}
+                </div>
+                <br/>
+                <div
+                    data-type="neighborhood"
+                    style={{ position: "relative", flex: 1, width: '100%' }} 
+                    onKeyDown={handleKeyDown}
+                    ref={positionRef}
+                >
+                    <div style={{ flex: 1, width: '100%' }}>
+                    <GenericStyledInput 
+                        name="neighborhood"
+                        placeholder="Bairro" 
+                        value={neighborhoodTyped}
+                        onChange={handleChange}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+
+                        {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && neighborhoodTyped.length > 2 &&(
                             <SuggestionList  
-                                suggestions={streetSuggestions}
+                                suggestions={neighborhoodSuggestions}
                                 selectedIndex={selectedIndex}
-                                onSelect={(street) => {
-                                    setStreetTyped(street)
-                                    setStreetShowSuggestions(false)
+                                onSelect={(neighborhood) => {
+                                    setNeighborhoodTyped(neighborhood)
+                                    setShowNeighborhoodSuggestions(false)
                                 }}
                             />
                         )}
                     </div>
-
-                    <div
-                        data-type="neighborhood"
-                        style={{ position: "relative", flex: 1, width: '100%' }} 
-                        onKeyDown={handleKeyDown}
-                        ref={positionRef}
-                    >
-                        <div style={{ flex: 1, width: '100%' }}>
-                        <GenericStyledInput 
-                            name="neighborhood"
-                            placeholder="Bairro" 
-                            value={neighborhoodTyped}
-                            onChange={handleChange}
-                            hasError={hasError}
-                            hasSuccess={hasSuccess}
-                        />
-
-                            {showNeighborhoodSuggestions && neighborhoodSuggestions.length > 0 && neighborhoodTyped.length > 2 &&(
-                                <SuggestionList  
-                                    suggestions={neighborhoodSuggestions}
-                                    selectedIndex={selectedIndex}
-                                    onSelect={(neighborhood) => {
-                                        setNeighborhoodTyped(neighborhood)
-                                        setShowNeighborhoodSuggestions(false)
-                                    }}
-                                />
-                            )}
-                        </div>
-                    </div>
-                    <div>
-                        <GenericStyledInput 
-                        name="number"
-                        placeholder="Número" 
-                        value={number}
-                        onChange={(e) => {
-                            const onlyNumbers = e.target.value.replace(/\D/g, '')
-                            setNumber(onlyNumbers)
-                        }}
-                        hasError={hasError}
-                        hasSuccess={hasSuccess}
-                        />
-                    </div>
-                    
-
                 </div>
-
-                <p style={{ color: 'red' }}>{message}</p>
-                <div style={{display: 'flex', gap: '10px'}}>
-                    <RegisterButton 
+                <br/>
+                <div style={{width: '40%'}}>
+                    <GenericStyledInput 
+                    name="number"
+                    placeholder="Número" 
+                    value={number}
+                    onChange={(e) => {
+                        const onlyNumbers = e.target.value.replace(/\D/g, '')
+                        setNumber(onlyNumbers)
+                    }}
+                    hasError={hasError}
+                    hasSuccess={hasSuccess}
+                    />
+                </div>
+                <br/>
+                <RegisterButton 
                     type="submit">Cadastrar
-                    </RegisterButton>
-                </div>
+                </RegisterButton>
             </form>
         </div>
     )

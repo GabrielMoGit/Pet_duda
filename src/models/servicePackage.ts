@@ -21,6 +21,9 @@ class servicePackage{
 
     @Column()
     value!: string
+
+    @Column()
+    active_package!: number
 }
 
 export { servicePackage }

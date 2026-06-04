@@ -31,7 +31,7 @@ class ServiceController{
         return dates
     }
     
-    async   listAllServicesForPackageId(package_id: number){
+    async listAllServicesForPackageId(package_id: number){
 
         const serviceRepository = new ServiceRepository()
 
@@ -85,6 +85,45 @@ class ServiceController{
 
         return services
 
+    }
+
+    async returnDateForPackageId(servicePackageId: number){
+        const serviceRepository = new ServiceRepository()
+
+        const date = await serviceRepository.returnDatesFromPackage(servicePackageId)
+
+        return date
+    }   
+
+    async alterServiceDate(service_id: number, service_date: Date){
+        const serviceRepository = new ServiceRepository()
+
+        const service = await serviceRepository.alterServiceDate(service_id, service_date)
+
+        return service
+
+    }
+
+    async removeDate(id: number){
+        const serviceRepository = new ServiceRepository()
+
+        try{
+            const date = await serviceRepository.removeDate(id)
+
+            return date
+            
+        }catch(error){
+            return {
+                message: ('Não foi possível remover' + error)
+            }
+        }
+    }
+
+    async turnDoneThePassedServices(){
+
+        const serviceRepository = new ServiceRepository()
+
+        await serviceRepository.turnDonethepPassedServices()
     }
 }
 

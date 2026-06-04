@@ -10,8 +10,8 @@ class ServicePackageRepository {
         this.repository = dataSource.getRepository(servicePackage)
     }
 
-    async createAndSave(pet_id: string, package_type: string,package_done: number, paid: number, value: string){
-        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid, value})
+    async createAndSave(pet_id: string, package_type: string,package_done: number, paid: number, value: string, active_package: number){
+        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid, value, active_package})
         return this.repository.save(servicePackage)
     }
 
@@ -31,10 +31,11 @@ class ServicePackageRepository {
         })
     }
 
-    async listAllUndonePackages(){
+    async listAllUndoneActivePackages(){
         return await this.repository.find({
             where: {
-                package_done: 0
+                package_done: 0,
+                active_package: 1
             }
         })
     }
@@ -62,6 +63,38 @@ class ServicePackageRepository {
         
         await this.repository.save(pkg)
     }
+
+    async checkIfPetAlreadyHavePackage(pet_id: string){
+        return await this.repository.findOneBy({
+            pet_id,
+            active_package: 1
+        })
+    }
+
+    async updateServicePackage(id: number, package_type: string, value: string, active_package: number){
+        const servicePackage = await this.repository.findOneBy({id})
+
+        if(!servicePackage){
+            return {
+                message: "Pacote não lozalido no banco de dados, não é possível alterar os dados"
+            }
+        }
+        
+        if(active_package === 0){
+            servicePackage.active_package = 0
+            await this.repository.save(servicePackage)
+            return {
+                message: 'Pacote cancelado'
+            }
+        }
+
+        servicePackage.package_type = package_type
+        servicePackage.value = value
+
+        await this.repository.save(servicePackage)
+
+        return servicePackage
+    }
 }
 
-export { ServicePackageRepository }
+export { ServicePackageRepository } 

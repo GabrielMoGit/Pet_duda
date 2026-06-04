@@ -39,7 +39,7 @@ export function Home(){
             try{
                 const {data} = await api.get('/ListPackages', {
                   params:{
-                    kindOfPackage: 'unpaid'
+                    kindOfPackage: ''
                   }
                 })
                 setServicePackages(data.finalPackages)
@@ -64,9 +64,10 @@ return (
 
         {servicePackages.length === 0 && <p>Nenhum pacote encontrado</p>}
 
-        <div style={{ display: "flex",flexWrap: "wrap", gap: "20px"}}>
+        <div style={{ width: "100%"}}>
             {servicePackages.map(pkg => (
             <StyledBox
+            key={pkg.package_id}
             package_id={pkg.package_id}
             package_type={pkg.package_type}
             tutor_name={pkg.tutor_name} 

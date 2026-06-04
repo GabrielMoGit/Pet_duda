@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-export const GenericInputStyled = styled.input<{hasError: boolean, hasSuccess: boolean}>`
+export const HiddenInputStyled = styled.input`
     display: block;
     width: 80%;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid ${props => props.hasError ? 'red' : props.hasSuccess ? '#22c55e' : '#ccc'};
+    border: 1px solid #cccc;
     font-size: 16px;
 
     &:focus {
