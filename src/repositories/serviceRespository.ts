@@ -24,11 +24,11 @@ class ServiceRepository{
     }
 
     async turnDonethepPassedServices(){
-        const today = new Date()
-        today.setHours(0, 0, 0, 0);
+        const now = new Date()
+
         const services = await this.repository.find({
             where: {
-                service_date: LessThan(today),
+                service_date: LessThan(now),
                 service_done: 0
             }
         })

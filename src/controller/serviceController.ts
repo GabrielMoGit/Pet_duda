@@ -118,6 +118,13 @@ class ServiceController{
             }
         }
     }
+
+    async turnDoneThePassedServices(){
+
+        const serviceRepository = new ServiceRepository()
+
+        await serviceRepository.turnDonethepPassedServices()
+    }
 }
 
 export { ServiceController }

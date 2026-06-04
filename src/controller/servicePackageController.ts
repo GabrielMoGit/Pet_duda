@@ -262,16 +262,6 @@ class ServicePackageController{
         const {id, package_type, value, active_package} = request.body
         const reviciedDates: Date[] = request.body.dates.map((date: string) => new Date(date))
 
-
-
-        /*const testDates: Date[] =[
-            new Date(`2026-07-16T17:10:00.000Z`),
-            new Date(`2026-07-21T17:10:00.000Z`),
-            new Date(`2026-07-28T17:10:00.000Z`),
-            new Date(`2026-08-05T17:10:00.000Z`)
-            
-        ]*/
-
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
@@ -317,8 +307,6 @@ class ServicePackageController{
             for(let i = 0; i < newServices.length; i++){
 
                 const date = await serviceController.alterServiceDate(newServices[i].id, reviciedDates[i])
-                console.log("ID DO SERVICO" + newServices[i].id)
-                console.log(date)
 
                 if(!date){
                     return
@@ -327,16 +315,14 @@ class ServicePackageController{
                 newDates.push(date.service_date)
             }
 
-            return response.json({packageUpdated, newDates})
+            await serviceController.turnDoneThePassedServices()
 
+            return response.json({packageUpdated, newDates})
 
         }catch(error){
             console.log(error)
             throw error
         }
-
-        
-
     }
 }
 
