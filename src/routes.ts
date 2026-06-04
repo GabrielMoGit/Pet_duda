@@ -39,7 +39,7 @@ router.get("/returnPackage", servicePackageController.returnExistentPackageForPe
 
 
 //test route
-//router.get('/test', servicePackageController.transformServiceDateToReferenceDate)
+router.get('/test', servicePackageController.turnPackagesToDoneStatusAndCreateNewPackage)
 
 
 

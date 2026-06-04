@@ -217,26 +217,18 @@ class ServicePackageController{
         }
 
         for(const item of undonePackages){
+
             const response = await serviceController.listAllServicesForPackageId(item.id)
-            
-            const lastService = response[response.length - 1]
-            const date = lastService?.service_date ?? null
-            if(item.package_type === "Quinzenal"){
-                date.setDate(date.getDate() + 14)
-            }else{
-                date.setDate(date.getDate() + 7)
-            }
+
             const isDone = response.every(
                 service => service.service_done
             )
-
-            if(!date){
-                continue
-            }
+             
 
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
-                await this.create(item.pet_id, item.package_type, date.toString(), item.value)
+                await this.create(item.pet_id, item.package_type, item.reference_date.toString(), item.value)
+                
             }
         }
     }
