@@ -259,35 +259,83 @@ class ServicePackageController{
     }
 
     async updateServicePackage(request: Request, response: Response){
-        //const {id, package_type, value, active_package} = request.body
-        //const dates: Date[] = request.body.dates
+        const {id, package_type, value, active_package} = request.body
+        const reviciedDates: Date[] = request.body.dates.map((date: string) => new Date(date))
 
-        const {id} = request.body
-        const servicePackageRepository = new ServicePackageRepository()
-        const serviceController = new ServiceController()
 
-        const services = await serviceController.listAllServicesForPackageId(id)
 
-        //2026-06-13T17:10:00.000Z
-        const testDates: Date[] =[
-            new Date(`2026-07-14T17:10:00.000Z`),
+        /*const testDates: Date[] =[
+            new Date(`2026-07-16T17:10:00.000Z`),
             new Date(`2026-07-21T17:10:00.000Z`),
             new Date(`2026-07-28T17:10:00.000Z`),
             new Date(`2026-08-05T17:10:00.000Z`)
-        ]
+            
+        ]*/
 
-        let newDates: Date [] = []
+        const servicePackageRepository = new ServicePackageRepository()
+        const serviceController = new ServiceController()
 
-        for(let i = 0; i < services.length; i++){
-            const date = await serviceController.alterServiceDate(services[i].id, testDates[i])
+        try{
 
-            if(!date){
-                return
+            const packageFound = await servicePackageRepository.findOneById(id)
+
+            if(!packageFound){
+                return response.status(404).json({
+                    message: "Pacote não encontrado" 
+                })
             }
-            newDates.push(date.service_date)
+
+            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package)
+
+            if(!packageUpdated){
+                return response.status(404).json({
+                    message: "Pacote atualizado inexistente"
+                })
+            }
+
+            if(active_package === 0){
+                return response.status(200).json({
+                    message: "Pacote cancelado com sucesso"
+                })
+            }
+
+            const services = await serviceController.listAllServicesForPackageId(id)
+
+            if(services.length != reviciedDates.length){
+
+                for(const item of services){
+                    await serviceController.removeDate(item.id)
+                }
+
+                await serviceController.create(id, reviciedDates[0])
+            }
+
+            const newServices = await serviceController.listAllServicesForPackageId(id)
+
+            let newDates: Date [] = []
+
+            for(let i = 0; i < newServices.length; i++){
+
+                const date = await serviceController.alterServiceDate(newServices[i].id, reviciedDates[i])
+                console.log("ID DO SERVICO" + newServices[i].id)
+                console.log(date)
+
+                if(!date){
+                    return
+                }
+
+                newDates.push(date.service_date)
+            }
+
+            return response.json({packageUpdated, newDates})
+
+
+        }catch(error){
+            console.log(error)
+            throw error
         }
 
-        return response.json({id, services, newDates})
+        
 
     }
 }

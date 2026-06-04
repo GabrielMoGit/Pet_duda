@@ -75,7 +75,9 @@ class ServicePackageRepository {
         const servicePackage = await this.repository.findOneBy({id})
 
         if(!servicePackage){
-            return
+            return {
+                message: "Pacote não lozalido no banco de dados, não é possível alterar os dados"
+            }
         }
         
         if(active_package === 0){
@@ -91,6 +93,7 @@ class ServicePackageRepository {
 
         await this.repository.save(servicePackage)
 
+        return servicePackage
     }
 }
 
