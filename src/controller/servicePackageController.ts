@@ -8,6 +8,15 @@ import { PetRepository } from "../repositories/petRepository";
 
 class ServicePackageController{
 
+    private transformServiceDateToReferenceDate(service_date: Date){
+
+        let reference_date = new Date()
+
+        reference_date.setDate(service_date.getDate() + 28)
+    
+        return reference_date
+    }
+
     async userResponse(request: Request, response: Response){
         const {pet_id, package_type, service_date, value} = request.body
 
@@ -41,8 +50,10 @@ class ServicePackageController{
         }
 
         try{
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
-            const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
+            const reference_date = this.transformServiceDateToReferenceDate(service_date)
+
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
+            await serviceController.create(createdPackage.id, new Date(service_date))
             return response.status(201).json({
                 message: "Pacote criado"
             })
@@ -68,7 +79,9 @@ class ServicePackageController{
             }
 
         try{    
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
+            const reference_date = this.transformServiceDateToReferenceDate(new Date(service_date))
+
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
             const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
                 
             return ({createdPackage, createdServices})
