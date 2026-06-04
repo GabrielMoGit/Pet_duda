@@ -5,15 +5,16 @@ import { PetController } from "./petController";
 import { TutorController } from "./tutorController";
 import { AddressController } from "./addressController";
 import { PetRepository } from "../repositories/petRepository";
+import { serialize } from "node:v8";
 
 class ServicePackageController{
 
-    private transformServiceDateToReferenceDate(service_date: Date){
+    private transformServiceDateToReferenceDate(service_date: string){
+        const reference_date = new Date(service_date)
 
-        let reference_date = new Date()
-
-        reference_date.setDate(service_date.getDate() + 28)
-    
+        console.log(service_date)
+        reference_date.setDate(reference_date.getDate() + 28)
+        console.log(reference_date)
         return reference_date
     }
 
@@ -25,6 +26,8 @@ class ServicePackageController{
         const petRepository = new PetRepository()
 
         const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+        const reference_date = this.transformServiceDateToReferenceDate(service_date)
 
         if(!petAlreadyExist){
             return response.status(404).json({
@@ -50,8 +53,6 @@ class ServicePackageController{
         }
 
         try{
-            const reference_date = this.transformServiceDateToReferenceDate(service_date)
-
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
             await serviceController.create(createdPackage.id, new Date(service_date))
             return response.status(201).json({
@@ -79,7 +80,7 @@ class ServicePackageController{
             }
 
         try{    
-            const reference_date = this.transformServiceDateToReferenceDate(new Date(service_date))
+            const reference_date = this.transformServiceDateToReferenceDate(service_date)
 
             const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
             const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
