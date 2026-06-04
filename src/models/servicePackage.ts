@@ -14,6 +14,9 @@ class servicePackage{
     package_type!: string
 
     @Column()
+    reference_date!: Date
+
+    @Column()
     package_done!: number
 
     @Column()
