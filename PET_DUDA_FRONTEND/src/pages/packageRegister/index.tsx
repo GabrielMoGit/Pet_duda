@@ -198,6 +198,10 @@ export function PackageRegister(){
         setThirdServiceButtonsVisibility('hidden')
         setFourthServiceButtonsVisibility('hidden')
         setSecondServiceButtonsVisibility('hidden')
+        setFirstDate("")
+        setSecondDate("")
+        setThirdDate("")
+        setFourthDate("")
     }
 
     const controlUpdateDataButtonVisibility = async (e: React.MouseEvent<HTMLInputElement>) =>{
@@ -282,6 +286,8 @@ export function PackageRegister(){
                                                     setWeeklyButtonColor('grey')
                                                     setBiWeeklyButtonColor('green')
                                                     setPackageType('Quinzenal')
+                                                    setFirstDate(new Date(response.data.services[0].service_date).toLocaleDateString())
+                                                    setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString())
                                                 }
                                                 if(response.data.packageFound.package_type === 'Semanal'){
 
@@ -290,6 +296,10 @@ export function PackageRegister(){
                                                     setPackageType('Semanal')
                                                     setShowTwoMoreDatesIfRegistersIsWeekly(true)
                                                     setShowElementsALreadyHaveRegister(true)
+                                                    setFirstDate(new Date(response.data.services[0].service_date).toLocaleDateString())
+                                                    setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString())
+                                                    setThirdDate(new Date(response.data.services[2].service_date).toLocaleDateString())
+                                                    setFourthDate(new Date(response.data.services[3].service_date).toLocaleDateString())
                                                 }
                                                 let formattedDate = new Date(response.data.services[0].service_date)
                                                 setServiceDate(formattedDate.toLocaleDateString())
