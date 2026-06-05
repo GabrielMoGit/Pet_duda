@@ -6,6 +6,7 @@ import { TutorController } from "./tutorController";
 import { AddressController } from "./addressController";
 import { PetRepository } from "../repositories/petRepository";
 import { serialize } from "node:v8";
+import { servicePackage } from "../models/servicePackage";
 
 class ServicePackageController{
 
@@ -224,11 +225,9 @@ class ServicePackageController{
                 service => service.service_done
             )
              
-
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
                 await this.create(item.pet_id, item.package_type, item.reference_date.toString(), item.value)
-                
             }
         }
     }
@@ -266,7 +265,7 @@ class ServicePackageController{
 
     async updateServicePackage(request: Request, response: Response){
         const {id, package_type, value, active_package} = request.body
-        const reviciedDates: Date[] = request.body.dates.map((date: string) => new Date(date))
+        const recivedDates: Date[] = request.body.dates.map((date: string) => new Date(date))
 
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
@@ -297,13 +296,13 @@ class ServicePackageController{
 
             const services = await serviceController.listAllServicesForPackageId(id)
 
-            if(services.length != reviciedDates.length){
+            if(services.length != recivedDates.length){
 
                 for(const item of services){
                     await serviceController.removeDate(item.id)
                 }
 
-                await serviceController.create(id, reviciedDates[0])
+                await serviceController.create(id, recivedDates[0])
             }
 
             const newServices = await serviceController.listAllServicesForPackageId(id)
@@ -312,7 +311,7 @@ class ServicePackageController{
 
             for(let i = 0; i < newServices.length; i++){
 
-                const date = await serviceController.alterServiceDate(newServices[i].id, reviciedDates[i])
+                const date = await serviceController.alterServiceDate(newServices[i].id, recivedDates[i])
 
                 if(!date){
                     return
@@ -321,9 +320,40 @@ class ServicePackageController{
                 newDates.push(date.service_date)
             }
 
-            await serviceController.turnDoneThePassedServices()
+            let diferenceBetweenDates: number [] = []
 
-            return response.json({packageUpdated, newDates})
+            if(services.length == recivedDates.length){
+                let oldDates: Date [] = []
+                for(const item of services){
+                    oldDates.push(item.service_date)
+                }
+
+                for(let i = 0; i < services.length; i++){
+                    let number = (recivedDates[i].getTime() - oldDates[i].getTime())
+                    diferenceBetweenDates.push((number / (1000 * 60 * 60 * 24)))
+                }
+
+                if("package_type" in packageUpdated){
+
+                    let jumpDatesCont = 0
+                    let jumpWeek  = 0
+                    for(let i = 0; i < diferenceBetweenDates.length; i++){
+                        
+                        if(diferenceBetweenDates[i] > (6 + jumpWeek)){
+                            jumpDatesCont++
+                            jumpWeek = jumpWeek + 7
+                        }
+                    }
+                    const newReferenceDate = packageUpdated.reference_date
+                    newReferenceDate.setDate(newReferenceDate.getDate() + (jumpDatesCont * 7))
+                    servicePackageRepository.alterReferenceDate(packageUpdated.id, newReferenceDate)
+                }
+
+            }
+
+            serviceController.turnDoneThePassedServices()
+
+            return response.json({packageUpdated, services, newDates, diferenceBetweenDates})
 
         }catch(error){
             console.log(error)

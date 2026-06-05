@@ -39,7 +39,7 @@ router.get("/returnPackage", servicePackageController.returnExistentPackageForPe
 
 
 //test route
-router.get('/test', servicePackageController.turnPackagesToDoneStatusAndCreateNewPackage)
+router.patch('/test', servicePackageController.updateServicePackage)
 
 
 
