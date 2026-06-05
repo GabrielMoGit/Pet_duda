@@ -274,19 +274,22 @@ export function PackageRegister(){
                                                 }
                                             })
                                             if(response){
-                                                
+                                                console.log(response)
                                                 setValue(`R$ ${response.data.packageFound.value}`)
                                                 if(response.data.packageFound.package_type === 'Quinzenal'){
                                                     setShowTwoMoreDatesIfRegistersIsWeekly(false)
+                                                    setShowElementsALreadyHaveRegister(true)
                                                     setWeeklyButtonColor('grey')
                                                     setBiWeeklyButtonColor('green')
                                                     setPackageType('Quinzenal')
                                                 }
                                                 if(response.data.packageFound.package_type === 'Semanal'){
-                                                    setShowTwoMoreDatesIfRegistersIsWeekly(true)
-                                                    setWeeklyButtonColor('green')
+
+                                                    setWeeklyButtonColor('green') 
                                                     setBiWeeklyButtonColor('grey')
                                                     setPackageType('Semanal')
+                                                    setShowTwoMoreDatesIfRegistersIsWeekly(true)
+                                                    setShowElementsALreadyHaveRegister(true)
                                                 }
                                                 let formattedDate = new Date(response.data.services[0].service_date)
                                                 setServiceDate(formattedDate.toLocaleDateString())
@@ -321,10 +324,10 @@ export function PackageRegister(){
                 <br/>
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <AlterColorButton color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal'), setShowTwoMoreDatesIfRegistersIsWeekly(true)}}>
+                    <AlterColorButton color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal'), setShowTwoMoreDatesIfRegistersIsWeekly(true), setShowElementsALreadyHaveRegister(true)}}>
                         Semanal
                     </AlterColorButton>
-                    <AlterColorButton color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal'), setShowTwoMoreDatesIfRegistersIsWeekly(false)}}>
+                    <AlterColorButton color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal'), setShowTwoMoreDatesIfRegistersIsWeekly(false), setShowElementsALreadyHaveRegister(true)}}>
                         Quinzenal
                     </AlterColorButton>
                 </div>
@@ -408,7 +411,8 @@ export function PackageRegister(){
                 <div >
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>1ª data</div>
-                        <div style={{display: 'flex', gap: '20px'}}>
+                        
+                        <div style={{display: 'flex', gap: '10px'}}>
                             <HiddenStyledInput
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"firstDate"}
@@ -422,14 +426,14 @@ export function PackageRegister(){
                                     name={'jumpFirstService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleFirstService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
@@ -438,7 +442,7 @@ export function PackageRegister(){
                     </div>
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>2ª data</div>
-                        <div style={{display: 'flex', gap: '20px'}}>
+                        <div style={{display: 'flex', gap: '10px'}}>
                             <HiddenStyledInput
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"secondDate"}
@@ -452,14 +456,14 @@ export function PackageRegister(){
                                     name={'jumpSecondService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleSecondService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none',backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
@@ -467,7 +471,7 @@ export function PackageRegister(){
                     </div>
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>3ª data</div>
-                        <div style={{display: 'flex', gap: '20px'}}>
+                        <div style={{display: 'flex', gap: '10px'}}>
                             <HiddenStyledInput
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"thirdDate"}
@@ -481,14 +485,14 @@ export function PackageRegister(){
                                     name={'jumpThirdService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none',backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleThirdService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
@@ -496,7 +500,7 @@ export function PackageRegister(){
                     </div>
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>4ª data</div>
-                        <div style={{display: 'flex', gap: '20px'}}>
+                        <div style={{display: 'flex', gap: '10px'}}>
                             <HiddenStyledInput
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"fourthDate"}
@@ -510,14 +514,14 @@ export function PackageRegister(){
                                     name={'jumpFourthService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Pular serviço
                                 </ActionButton>
                                 <ActionButton
                                     name={'rescheduleFourthService'}
                                     onClick={(e) => {
                                     }}
-                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', backgroundColor: '#007bff', fontSize: '15px'}}
+                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
                                 > Remarcar
                                 </ActionButton>
                             </div>
