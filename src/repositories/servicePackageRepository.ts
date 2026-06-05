@@ -1,3 +1,4 @@
+import { response } from "express";
 import { dataSource } from "../database/dataSource";
 import { servicePackage } from "../models/servicePackage";
 import { Repository } from "typeorm";
@@ -94,6 +95,22 @@ class ServicePackageRepository {
         await this.repository.save(servicePackage)
 
         return servicePackage
+    }
+
+
+    async alterReferenceDate(id: number, reference_date: Date){
+        const packageFound = await this.repository.findOneBy({id})
+
+        if(!packageFound){
+            return {
+                message: "Não foi possível alterar a data referência"
+            }
+        }
+
+        packageFound.reference_date = reference_date
+        await this.repository.save(packageFound)
+
+        return packageFound
     }
 }
 
