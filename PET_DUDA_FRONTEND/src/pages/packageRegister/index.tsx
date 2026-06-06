@@ -16,8 +16,10 @@ export function PackageRegister(){
     tutor_phone: string
 }
 
+    const [packageStatus, setPackageStatus] = useState()
     const [petName, setPetName] = useState('')  
     const [petId, setPetId] = useState('')
+    const [packageId, setPackageId] = useState()
     const [packageType, setPackageType] = useState('')
     const [serviceDate, setServiceDate] = useState('')
     const [value, setValue] = useState('')
@@ -64,9 +66,8 @@ export function PackageRegister(){
             return
         }
         
-
-        let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
         const onlyValue = value.replace("R$", "").trim()
+        
 
         if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
             setMessage("Todos os campos precisam ser preenchidos")
@@ -76,26 +77,56 @@ export function PackageRegister(){
 
         try{
             if(submitType === "register"){
-                 const packageResponse = await api.post('/servicePackage', {
+
+                let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
+    
+                const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
                 package_type: packageType,
                 service_date: databaseDateForm,
                 value: onlyValue
-            })
+                })
 
-            setHasError(false)
-            setHasSuccess(true)
-            setMessage(packageResponse.data.message)
-            setTimeout(() => {setHasSuccess(false)}, 500  )
-            setPetName("")
-            setPackageType("")
-            setWeeklyButtonColor('grey')
-            setBiWeeklyButtonColor('grey')
-            setServiceDate('')
-            setValue("")
-            setHour("")
+                setHasError(false)
+                setHasSuccess(true)
+                setMessage(packageResponse.data.message)
+                setTimeout(() => {setHasSuccess(false)}, 500  )
+                setPetName("")
+                setPackageType("")
+                setWeeklyButtonColor('grey')
+                setBiWeeklyButtonColor('grey')
+                setServiceDate('')
+                setValue("")
+                setHour("")
             }
             if(submitType === "update"){
+
+                let servicesDates: String [] = []
+                let arrayDatabaseDataForm: String [] = []
+                if(packageType === "Semanal"){
+                    servicesDates.push(firstDate)
+                    servicesDates.push(secondDate)
+                    servicesDates.push(thirdDate)
+                    servicesDates.push(fourthDate)
+                }
+                if(packageType === "Quinzenal"){
+                    servicesDates.push(firstDate)
+                    servicesDates.push(secondDate)
+                }
+
+                for(const item of servicesDates){
+                    let databaseDateForm = (item.slice(6,10) + '-' + item.slice(3,5) + '-' + item.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
+                    arrayDatabaseDataForm.push(databaseDateForm)
+                }
+                
+                const packageResponse = await api.post('/updatePackage', {
+                id: packageId,
+                package_type: packageType,
+                value: onlyValue,
+                active_package: packageStatus,
+                dates: arrayDatabaseDataForm,
+                })
+                
 
             }
 
@@ -310,7 +341,8 @@ export function PackageRegister(){
                                                 console.log(response)
                                                 setValue(`R$ ${response.data.packageFound.value}`)
                                                 setSubmiteType('update')
-                                                
+                                                setPackageId(response.data.packageFound.id)
+                                                setPackageStatus(response.data.packageFound.active_package)
                                                 if(response.data.packageFound.package_type === 'Quinzenal'){
                                                     setShowTwoMoreDatesIfRegistersIsWeekly(false)
                                                     setShowElementsALreadyHaveRegister(true)
