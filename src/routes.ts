@@ -34,6 +34,7 @@ router.post("/servicePackage", servicePackageController.userResponse.bind(servic
 router.get("/listPackages", servicePackageController.listPackages)
 router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
 router.get("/returnPackage", servicePackageController.returnExistentPackageForPetid)
+router.patch("/updatePackage", servicePackageController.updateServicePackage)
 
 
 

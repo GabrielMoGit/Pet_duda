@@ -79,7 +79,7 @@ export function PackageRegister(){
             if(submitType === "register"){
 
                 let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
-    
+                
                 const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
                 package_type: packageType,
@@ -98,6 +98,7 @@ export function PackageRegister(){
                 setServiceDate('')
                 setValue("")
                 setHour("")
+                
             }
             if(submitType === "update"){
 
@@ -118,8 +119,7 @@ export function PackageRegister(){
                     let databaseDateForm = (item.slice(6,10) + '-' + item.slice(3,5) + '-' + item.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
                     arrayDatabaseDataForm.push(databaseDateForm)
                 }
-                
-                const packageResponse = await api.post('/updatePackage', {
+                const packageResponse = await api.patch('/updatePackage', {
                 id: packageId,
                 package_type: packageType,
                 value: onlyValue,
