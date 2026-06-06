@@ -37,7 +37,6 @@ export function PackageRegister(){
     const [thirdDate, setThirdDate] = useState('')
     const [fourthDate, setFourthDate] = useState('')
     const [showTwoMoreDatesIfRegistersIsWeekly, setShowTwoMoreDatesIfRegistersIsWeekly] = useState(false)
-    const [showButtonToChangeDataOfRegister, setShowButtonToChangeDataOfRegister] = useState(false)
 
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -49,6 +48,8 @@ export function PackageRegister(){
     const [secondServiceButtonsVisibility, setSecondServiceButtonsVisibility] = useState('hidden')
     const [thirdServiceButtonsVisibility, setThirdServiceButtonsVisibility] = useState('hidden')
     const [fourthServiceButtonsVisibility, setFourthServiceButtonsVisibility] = useState('hidden')
+
+    const[referenceDate, setReferenceDate] = useState(new Date)
  
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -202,6 +203,7 @@ export function PackageRegister(){
         setSecondDate("")
         setThirdDate("")
         setFourthDate("")
+        setSubmiteType("register")
     }
 
     const controlUpdateDataButtonVisibility = async (e: React.MouseEvent<HTMLInputElement>) =>{
@@ -233,10 +235,37 @@ export function PackageRegister(){
         }
 
         const button = e.target as HTMLButtonElement
+    }
 
-        if(button.name === 'jumpFirstService'){
-            
+    const changeServiceRangeToWeekly = () => {
 
+        if(packageType === "Quinzenal"){
+            setShowTwoMoreDatesIfRegistersIsWeekly(true)
+
+            const newSecondDate = new Date(referenceDate)
+            newSecondDate.setDate(newSecondDate.getDate() + 7)
+            setSecondDate(newSecondDate.toLocaleDateString())
+
+            const newThirdDate = new Date(newSecondDate)
+            newThirdDate.setDate(newThirdDate.getDate() + 7)
+            setThirdDate(newThirdDate.toLocaleDateString())
+
+            const newFourthDate = new Date(newThirdDate)
+            newFourthDate.setDate(newFourthDate.getDate() + 7)
+            setFourthDate(newFourthDate.toLocaleDateString())
+        }   
+    }
+
+    const changeServiceRangeToBiWeekly = () => {
+
+        if(packageType === "Semanal"){
+            setShowTwoMoreDatesIfRegistersIsWeekly(false)
+            setThirdDate('')
+            setFourthDate('')
+
+            const newSecondDate = new Date(referenceDate)
+            newSecondDate.setDate(newSecondDate.getDate() + 14)
+            setSecondDate(newSecondDate.toLocaleDateString())
         }
     }
 
@@ -280,6 +309,8 @@ export function PackageRegister(){
                                             if(response){
                                                 console.log(response)
                                                 setValue(`R$ ${response.data.packageFound.value}`)
+                                                setSubmiteType('update')
+                                                
                                                 if(response.data.packageFound.package_type === 'Quinzenal'){
                                                     setShowTwoMoreDatesIfRegistersIsWeekly(false)
                                                     setShowElementsALreadyHaveRegister(true)
@@ -288,6 +319,7 @@ export function PackageRegister(){
                                                     setPackageType('Quinzenal')
                                                     setFirstDate(new Date(response.data.services[0].service_date).toLocaleDateString())
                                                     setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString())
+                                                    setReferenceDate(response.data.services[0].service_date)
                                                 }
                                                 if(response.data.packageFound.package_type === 'Semanal'){
 
@@ -334,10 +366,22 @@ export function PackageRegister(){
                 <br/>
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
-                    <AlterColorButton color={weeklyButtonColor} onClick={() => {setWeeklyButtonColor('green'), setBiWeeklyButtonColor('grey'), setPackageType('Semanal'), setShowTwoMoreDatesIfRegistersIsWeekly(true), setShowElementsALreadyHaveRegister(true)}}>
+                    <AlterColorButton color={weeklyButtonColor} 
+                        onClick={() => {setWeeklyButtonColor('green'), 
+                        setBiWeeklyButtonColor('grey'), 
+                        setPackageType('Semanal'), 
+                        setShowTwoMoreDatesIfRegistersIsWeekly(true), 
+                        setShowElementsALreadyHaveRegister(true),
+                        changeServiceRangeToWeekly()}}>
                         Semanal
                     </AlterColorButton>
-                    <AlterColorButton color={biWeeklyButtonColor} onClick={() => {setBiWeeklyButtonColor('green'), setWeeklyButtonColor('grey'), setPackageType('Quinzenal'), setShowTwoMoreDatesIfRegistersIsWeekly(false), setShowElementsALreadyHaveRegister(true)}}>
+                    <AlterColorButton color={biWeeklyButtonColor} 
+                        onClick={() => {setBiWeeklyButtonColor('green'), 
+                        setWeeklyButtonColor('grey'), 
+                        setPackageType('Quinzenal'), 
+                        setShowTwoMoreDatesIfRegistersIsWeekly(false), 
+                        setShowElementsALreadyHaveRegister(true),
+                        changeServiceRangeToBiWeekly()}}>
                         Quinzenal
                     </AlterColorButton>
                 </div>
