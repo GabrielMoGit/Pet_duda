@@ -49,7 +49,7 @@ export function PackageRegister(){
     const [thirdServiceButtonsVisibility, setThirdServiceButtonsVisibility] = useState('hidden')
     const [fourthServiceButtonsVisibility, setFourthServiceButtonsVisibility] = useState('hidden')
 
-    const[referenceDate, setReferenceDate] = useState(new Date)
+    const[referenceDate, setReferenceDate] = useState<Date>()
  
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -204,6 +204,7 @@ export function PackageRegister(){
         setThirdDate("")
         setFourthDate("")
         setSubmiteType("register")
+        setReferenceDate(undefined)
     }
 
     const controlUpdateDataButtonVisibility = async (e: React.MouseEvent<HTMLInputElement>) =>{
@@ -239,10 +240,9 @@ export function PackageRegister(){
 
     const changeServiceRangeToWeekly = () => {
 
-        if(packageType === "Quinzenal"){
+        if(packageType === "Quinzenal" && referenceDate !== undefined){
             setShowTwoMoreDatesIfRegistersIsWeekly(true)
-
-            const newSecondDate = new Date(referenceDate)
+            const newSecondDate = new Date(referenceDate!)
             newSecondDate.setDate(newSecondDate.getDate() + 7)
             setSecondDate(newSecondDate.toLocaleDateString())
 
@@ -258,12 +258,12 @@ export function PackageRegister(){
 
     const changeServiceRangeToBiWeekly = () => {
 
-        if(packageType === "Semanal"){
+        if(packageType === "Semanal" && referenceDate !== undefined){
             setShowTwoMoreDatesIfRegistersIsWeekly(false)
             setThirdDate('')
             setFourthDate('')
 
-            const newSecondDate = new Date(referenceDate)
+            const newSecondDate = new Date(referenceDate!)
             newSecondDate.setDate(newSecondDate.getDate() + 14)
             setSecondDate(newSecondDate.toLocaleDateString())
         }
@@ -381,7 +381,7 @@ export function PackageRegister(){
                         setPackageType('Quinzenal'), 
                         setShowTwoMoreDatesIfRegistersIsWeekly(false), 
                         setShowElementsALreadyHaveRegister(true),
-                        changeServiceRangeToBiWeekly()}}>
+                        changeServiceRangeToBiWeekly()  }}>
                         Quinzenal
                     </AlterColorButton>
                 </div>
