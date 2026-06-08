@@ -90,7 +90,7 @@ export function PackageRegister(){
                 setHasError(false)
                 setHasSuccess(true)
                 setMessage(packageResponse.data.message)
-                setTimeout(() => {setHasSuccess(false)}, 500  )
+                setTimeout(() => {setHasSuccess(false)}, 500)
                 setPetName("")
                 setPackageType("")
                 setWeeklyButtonColor('grey')
@@ -127,7 +127,10 @@ export function PackageRegister(){
                 dates: arrayDatabaseDataForm,
                 })
                 
-
+                setHasError(false)
+                setHasSuccess(true)
+                setMessage(packageResponse.data.message)
+                setTimeout(() => {setHasSuccess(false)}, 500)
             }
 
         }catch(error: any){

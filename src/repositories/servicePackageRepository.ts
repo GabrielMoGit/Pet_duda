@@ -72,7 +72,7 @@ class ServicePackageRepository {
         })
     }
 
-    async updateServicePackage(id: number, package_type: string, value: string, active_package: number){
+    async updateServicePackage(id: number, package_type: string, value: string, active_package: number, reference_date: Date){
         const servicePackage = await this.repository.findOneBy({id})
 
         if(!servicePackage){
@@ -91,6 +91,7 @@ class ServicePackageRepository {
 
         servicePackage.package_type = package_type
         servicePackage.value = value
+        servicePackage.reference_date = reference_date
 
         await this.repository.save(servicePackage)
 

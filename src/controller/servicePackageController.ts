@@ -264,7 +264,7 @@ class ServicePackageController{
     }
 
     async updateServicePackage(request: Request, response: Response){
-        const {id, package_type, value, active_package} = request.body
+        const {id, package_type, value, active_package, reference_date} = request.body
         const recived_dates: string[] = request.body.dates
 
         const servicePackageRepository = new ServicePackageRepository()
@@ -360,7 +360,7 @@ class ServicePackageController{
 
             serviceController.turnDoneThePassedServices()
 
-            return response.status(500).json({
+            return response.status(200).json({
                 message: "Pacote alterado"
             })
             
