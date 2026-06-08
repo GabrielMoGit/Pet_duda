@@ -271,6 +271,7 @@ class ServicePackageController{
         const serviceController = new ServiceController()
 
         let turnRecivedDatesToDateForm: Date [] = []
+        const turnReferenceDateToDateType = new Date(reference_date)
 
         for(const item of recived_dates){
             turnRecivedDatesToDateForm.push(new Date(item))
@@ -287,7 +288,7 @@ class ServicePackageController{
                 })
             }
 
-            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package)
+            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package, turnReferenceDateToDateType)
 
             if(!packageUpdated){
                 return response.status(404).json({
@@ -327,6 +328,8 @@ class ServicePackageController{
                 newDates.push(date.service_date)
             }
 
+            /*
+
             let diferenceBetweenDates: number [] = []
 
             if(services.length == turnRecivedDatesToDateForm.length){
@@ -357,6 +360,8 @@ class ServicePackageController{
                 }
 
             }
+
+            */
 
             serviceController.turnDoneThePassedServices()
 
