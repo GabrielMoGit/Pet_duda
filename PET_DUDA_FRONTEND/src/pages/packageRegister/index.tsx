@@ -43,7 +43,9 @@ export function PackageRegister(){
     const positionRef = useRef<HTMLDivElement>(null)
 
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
-    const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')
+    const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')  
+
+    const [initialOrReferenceDate, setInitialOrReferenceDate] = useState('Data de início')
 
 
     const [firstServiceButtonsVisibility, setFirstServiceButtonsVisibility] = useState('hidden')
@@ -124,6 +126,7 @@ export function PackageRegister(){
                 package_type: packageType,
                 value: onlyValue,
                 active_package: packageStatus,
+                reference_date: initialOrReferenceDate, 
                 dates: arrayDatabaseDataForm,
                 })
                 
@@ -346,6 +349,7 @@ export function PackageRegister(){
                                                 setSubmiteType('update')
                                                 setPackageId(response.data.packageFound.id)
                                                 setPackageStatus(response.data.packageFound.active_package)
+                                                setInitialOrReferenceDate('Início do próximo pacote')
                                                 if(response.data.packageFound.package_type === 'Quinzenal'){
                                                     setShowTwoMoreDatesIfRegistersIsWeekly(false)
                                                     setShowElementsALreadyHaveRegister(true)
@@ -368,7 +372,7 @@ export function PackageRegister(){
                                                     setThirdDate(new Date(response.data.services[2].service_date).toLocaleDateString())
                                                     setFourthDate(new Date(response.data.services[3].service_date).toLocaleDateString())
                                                 }
-                                                let formattedDate = new Date(response.data.services[0].service_date)
+                                                let formattedDate = new Date(response.data.packageFound.reference_date)
                                                 setServiceDate(formattedDate.toLocaleDateString())
                                                 setHour(formattedDate.toLocaleTimeString('pt-BR', {
                                                     hour: '2-digit',
@@ -445,10 +449,10 @@ export function PackageRegister(){
                 <div style={{ display: 'flex', gap: '25px'}}>
 
                     <div style={{width: '40%'}}>
-                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Data inicial</div>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>{initialOrReferenceDate}</div>
                         <GenericInputStyled
                             name="serviceDate"
-                            placeholder="Data de início"
+                            placeholder= {initialOrReferenceDate}
                             value={serviceDate}
                             onChange={(e) => {
                                 const onlyNumbers = e.target.value.replace(/\D/g, '')
