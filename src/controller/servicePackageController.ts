@@ -5,8 +5,19 @@ import { PetController } from "./petController";
 import { TutorController } from "./tutorController";
 import { AddressController } from "./addressController";
 import { PetRepository } from "../repositories/petRepository";
+import { serialize } from "node:v8";
+import { servicePackage } from "../models/servicePackage";
 
 class ServicePackageController{
+
+    private transformServiceDateToReferenceDate(service_date: string){
+        const reference_date = new Date(service_date)
+
+        console.log(service_date)
+        reference_date.setDate(reference_date.getDate() + 28)
+        console.log(reference_date)
+        return reference_date
+    }
 
     async userResponse(request: Request, response: Response){
         const {pet_id, package_type, service_date, value} = request.body
@@ -16,6 +27,8 @@ class ServicePackageController{
         const petRepository = new PetRepository()
 
         const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
+
+        const reference_date = this.transformServiceDateToReferenceDate(service_date)
 
         if(!petAlreadyExist){
             return response.status(404).json({
@@ -41,8 +54,8 @@ class ServicePackageController{
         }
 
         try{
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
-            const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
+            await serviceController.create(createdPackage.id, new Date(service_date))
             return response.status(201).json({
                 message: "Pacote criado"
             })
@@ -68,7 +81,9 @@ class ServicePackageController{
             }
 
         try{    
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, 0, 0, value, 1) 
+            const reference_date = this.transformServiceDateToReferenceDate(service_date)
+
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
             const createdServices = await serviceController.create(createdPackage.id, new Date(service_date))
                 
             return ({createdPackage, createdServices})
@@ -203,26 +218,16 @@ class ServicePackageController{
         }
 
         for(const item of undonePackages){
+
             const response = await serviceController.listAllServicesForPackageId(item.id)
-            
-            const lastService = response[response.length - 1]
-            const date = lastService?.service_date ?? null
-            if(item.package_type === "Quinzenal"){
-                date.setDate(date.getDate() + 14)
-            }else{
-                date.setDate(date.getDate() + 7)
-            }
+
             const isDone = response.every(
                 service => service.service_done
             )
-
-            if(!date){
-                continue
-            }
-
+             
             if(isDone){
                 await servicePackageRepository.turnDoneCompletedPackage(item.id)
-                await this.create(item.pet_id, item.package_type, date.toString(), item.value)
+                await this.create(item.pet_id, item.package_type, item.reference_date.toString(), item.value)
             }
         }
     }
@@ -259,12 +264,20 @@ class ServicePackageController{
     }
 
     async updateServicePackage(request: Request, response: Response){
-        const {id, package_type, value, active_package} = request.body
-        const reviciedDates: Date[] = request.body.dates.map((date: string) => new Date(date))
+        const {id, package_type, value, active_package, reference_date} = request.body
+        const recived_dates: string[] = request.body.dates
 
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
+        let turnRecivedDatesToDateForm: Date [] = []
+        const turnReferenceDateToDateType = new Date(reference_date)
+
+        for(const item of recived_dates){
+            turnRecivedDatesToDateForm.push(new Date(item))
+        }
+
+        
         try{
 
             const packageFound = await servicePackageRepository.findOneById(id)
@@ -275,7 +288,7 @@ class ServicePackageController{
                 })
             }
 
-            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package)
+            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package, turnReferenceDateToDateType)
 
             if(!packageUpdated){
                 return response.status(404).json({
@@ -291,13 +304,13 @@ class ServicePackageController{
 
             const services = await serviceController.listAllServicesForPackageId(id)
 
-            if(services.length != reviciedDates.length){
+            if(services.length != recived_dates.length){
 
                 for(const item of services){
                     await serviceController.removeDate(item.id)
                 }
 
-                await serviceController.create(id, reviciedDates[0])
+                await serviceController.create(id, turnRecivedDatesToDateForm[0])
             }
 
             const newServices = await serviceController.listAllServicesForPackageId(id)
@@ -306,7 +319,7 @@ class ServicePackageController{
 
             for(let i = 0; i < newServices.length; i++){
 
-                const date = await serviceController.alterServiceDate(newServices[i].id, reviciedDates[i])
+                const date = await serviceController.alterServiceDate(newServices[i].id, turnRecivedDatesToDateForm[i])
 
                 if(!date){
                     return
@@ -315,9 +328,47 @@ class ServicePackageController{
                 newDates.push(date.service_date)
             }
 
-            await serviceController.turnDoneThePassedServices()
+            /*
 
-            return response.json({packageUpdated, newDates})
+            let diferenceBetweenDates: number [] = []
+
+            if(services.length == turnRecivedDatesToDateForm.length){
+                let oldDates: Date [] = []
+                for(const item of services){
+                    oldDates.push(item.service_date)
+                }
+
+                for(let i = 0; i < services.length; i++){
+                    let number = (turnRecivedDatesToDateForm[i].getTime() - oldDates[i].getTime())
+                    diferenceBetweenDates.push((number / (1000 * 60 * 60 * 24)))
+                }
+
+                if("package_type" in packageUpdated){
+
+                    let jumpDatesCont = 0
+                    let jumpWeek  = 0
+                    for(let i = 0; i < diferenceBetweenDates.length; i++){
+                        
+                        if(diferenceBetweenDates[i] > (6 + jumpWeek)){
+                            jumpDatesCont++
+                            jumpWeek = jumpWeek + 7
+                        }
+                    }
+                    const newReferenceDate = packageUpdated.reference_date
+                    newReferenceDate.setDate(newReferenceDate.getDate() + (jumpDatesCont * 7))
+                    servicePackageRepository.alterReferenceDate(packageUpdated.id, newReferenceDate)
+                }
+
+            }
+
+            */
+
+            serviceController.turnDoneThePassedServices()
+
+            return response.status(200).json({
+                message: "Pacote alterado"
+            })
+            
 
         }catch(error){
             console.log(error)

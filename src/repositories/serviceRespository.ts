@@ -42,12 +42,13 @@ class ServiceRepository{
 
     async alterServiceDate(id: number, service_date: Date){
         const service = await this.repository.findOneBy({id})
-
+        const now = new Date()
+        
         if(!service){
             return 
         }
 
-        if(service.service_date.getTime() > service_date.getTime()){
+        if(now.getTime() > service_date.getTime()){
             service.service_done = 1
         }
         service.service_date = service_date

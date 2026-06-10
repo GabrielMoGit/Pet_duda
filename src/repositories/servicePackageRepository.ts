@@ -1,3 +1,4 @@
+import { response } from "express";
 import { dataSource } from "../database/dataSource";
 import { servicePackage } from "../models/servicePackage";
 import { Repository } from "typeorm";
@@ -10,8 +11,8 @@ class ServicePackageRepository {
         this.repository = dataSource.getRepository(servicePackage)
     }
 
-    async createAndSave(pet_id: string, package_type: string,package_done: number, paid: number, value: string, active_package: number){
-        const servicePackage = this.repository.create({pet_id, package_type, package_done, paid, value, active_package})
+    async createAndSave(pet_id: string, package_type: string, reference_date: Date, package_done: number, paid: number, value: string, active_package: number){
+        const servicePackage = this.repository.create({pet_id, package_type, reference_date, package_done, paid, value, active_package})
         return this.repository.save(servicePackage)
     }
 
@@ -71,7 +72,7 @@ class ServicePackageRepository {
         })
     }
 
-    async updateServicePackage(id: number, package_type: string, value: string, active_package: number){
+    async updateServicePackage(id: number, package_type: string, value: string, active_package: number, reference_date: Date){
         const servicePackage = await this.repository.findOneBy({id})
 
         if(!servicePackage){
@@ -90,10 +91,27 @@ class ServicePackageRepository {
 
         servicePackage.package_type = package_type
         servicePackage.value = value
+        servicePackage.reference_date = reference_date
 
         await this.repository.save(servicePackage)
 
         return servicePackage
+    }
+
+
+    async alterReferenceDate(id: number, reference_date: Date){
+        const packageFound = await this.repository.findOneBy({id})
+
+        if(!packageFound){
+            return {
+                message: "Não foi possível alterar a data referência"
+            }
+        }
+
+        packageFound.reference_date = reference_date
+        await this.repository.save(packageFound)
+
+        return packageFound
     }
 }
 
