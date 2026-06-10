@@ -16,6 +16,7 @@ export function PackageRegister(){
     tutor_phone: string
 }
 
+
     const [packageStatus, setPackageStatus] = useState()
     const [petName, setPetName] = useState('')  
     const [petId, setPetId] = useState('')
@@ -306,6 +307,8 @@ export function PackageRegister(){
         }
     }
 
+    
+
     return(
         <div>
             <h1>Cadastrar Pacote</h1>
@@ -344,7 +347,7 @@ export function PackageRegister(){
                                                 }
                                             })
                                             if(response){
-                                                console.log(response)
+                                                //console.log(response)
                                                 setValue(`R$ ${response.data.packageFound.value}`)
                                                 setSubmiteType('update')
                                                 setPackageId(response.data.packageFound.id)
