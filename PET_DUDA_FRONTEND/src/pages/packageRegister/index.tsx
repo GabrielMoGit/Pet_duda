@@ -34,7 +34,7 @@ export function PackageRegister(){
     const [submitType, setSubmiteType] = useState('register')
     const [submitButtonName, setSubmiteButtonName] = useState('Cadastrar')
     const [showElementsALreadyHaveRegister, setShowElementsALreadyHaveRegister] = useState(false)
-    const [inputIsEditable, setInputIsEditable] = useState(true)
+    
     const [firstDate, setFirstDate] = useState('')
     const [secondDate, setSecondDate] = useState('')
     const [thirdDate, setThirdDate] = useState('')
@@ -55,6 +55,13 @@ export function PackageRegister(){
     const [fourthServiceButtonsVisibility, setFourthServiceButtonsVisibility] = useState('hidden')
 
     const[referenceDate, setReferenceDate] = useState<Date>()
+
+    const [petAlreadyhavePackage, setPetAlreadyhavePackage] = useState(false)
+
+    const [firstDateinputIsEditable, setFirstDateinputIsEditable] = useState(false)
+    const [secondDateinputIsEditable, setSecondDateinputIsEditable] = useState(false)
+    const [thirdDateinputIsEditable, setThirdDateinputIsEditable] = useState(false)
+    const [fourthDateinputIsEditable, setFourthDateinputIsEditable] = useState(false)
  
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -63,12 +70,18 @@ export function PackageRegister(){
         const hourToOnlyHour = Number(hour.slice(0,2))
         const hourToOnlyMinute = Number(hour.slice(3,5))
 
-        if(hourToOnlyHour > 23 || hourToOnlyHour < 0 || hourToOnlyMinute < 0 || hourToOnlyMinute > 59){
+        if(hourToOnlyHour > 23 || hourToOnlyHour < 0 || hourToOnlyMinute < 0 || hourToOnlyMinute > 59 || hour.length < 5){
             setMessage("Horário inválido")
             setTimeout(() => {setMessage("")}, 2000)
             return
         }
         
+        if(serviceDate.length < 10){
+            setMessage("Data inválida")
+            setTimeout(() => {setMessage("")}, 2000)
+            return
+        }
+
         const onlyValue = value.replace("R$", "").trim()
         
 
@@ -81,7 +94,7 @@ export function PackageRegister(){
         try{
             if(submitType === "register"){
 
-                let databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
+                const databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
                 
                 const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
@@ -94,13 +107,14 @@ export function PackageRegister(){
                 setHasSuccess(true)
                 setMessage(packageResponse.data.message)
                 setTimeout(() => {setHasSuccess(false)}, 500)
-                setPetName("")
                 setPackageType("")
                 setWeeklyButtonColor('grey')
                 setBiWeeklyButtonColor('grey')
                 setServiceDate('')
                 setValue("")
                 setHour("")
+
+                loadPackageData(petId)
                 
             }
             if(submitType === "update"){
@@ -119,15 +133,29 @@ export function PackageRegister(){
                 }
 
                 for(const item of servicesDates){
-                    let databaseDateForm = (item.slice(6,10) + '-' + item.slice(3,5) + '-' + item.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
+                    //new form will be: let databaseDateForm = (date.slice(6,10) + '-' + date.slice(3,5) + '-' + date.slice(0,2) + ' ' + date.slice(13,18))
+                    let databaseDateForm = (item.slice(6,10) + '-' + item.slice(3,5) + '-' + item.slice(0,2) + ' ' + item.slice(13,18))
                     arrayDatabaseDataForm.push(databaseDateForm)
                 }
+
+                for(const item of arrayDatabaseDataForm){
+                    if(item.length < 16){
+                        setMessage("As datas precisam estar corretas")
+                        setTimeout(() => {setMessage("")}, 2000)
+                        return
+                    }
+                }
+                
+                const lastPackagesService = arrayDatabaseDataForm.at(-1)
+
+                const nextPackageInitialDate = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + lastPackagesService?.slice(11,18))
+
                 const packageResponse = await api.patch('/updatePackage', {
                 id: packageId,
                 package_type: packageType,
                 value: onlyValue,
                 active_package: packageStatus,
-                reference_date: initialOrReferenceDate, 
+                reference_date: nextPackageInitialDate, 
                 dates: arrayDatabaseDataForm,
                 })
                 
@@ -135,6 +163,14 @@ export function PackageRegister(){
                 setHasSuccess(true)
                 setMessage(packageResponse.data.message)
                 setTimeout(() => {setHasSuccess(false)}, 500)
+                setFirstDateinputIsEditable(false)
+                setSecondDateinputIsEditable(false)
+                setThirdDateinputIsEditable(false)
+                setFourthDateinputIsEditable(false)
+                setFirstServiceButtonsVisibility('hidden')
+                setSecondServiceButtonsVisibility('hidden')
+                setThirdServiceButtonsVisibility('hidden')
+                setFourthServiceButtonsVisibility('hidden')
             }
 
         }catch(error: any){
@@ -227,7 +263,7 @@ export function PackageRegister(){
         setPackageType("")
         setWeeklyButtonColor('grey')
         setBiWeeklyButtonColor('grey')
-        setServiceDate('')
+        setServiceDate('')  
         setValue("")
         setHour("")
         setShowElementsALreadyHaveRegister(false)
@@ -243,6 +279,7 @@ export function PackageRegister(){
         setFourthDate("")
         setSubmiteType("register")
         setReferenceDate(undefined)
+        setPetAlreadyhavePackage(false)
     }
 
     const controlUpdateDataButtonVisibility = async (e: React.MouseEvent<HTMLInputElement>) =>{
@@ -280,17 +317,31 @@ export function PackageRegister(){
 
         if(packageType === "Quinzenal" && referenceDate !== undefined){
             setShowTwoMoreDatesIfRegistersIsWeekly(true)
+
+            let thirddHour = ''
+            let fourthHour = ''
+
+            if(thirdDate === ""){
+                thirddHour = secondDate.slice(10, 18)
+                fourthHour = thirddHour
+            }
+            else{
+                thirddHour = thirdDate.slice(10, 18)
+                fourthHour = fourthDate.slice(10, 18)
+            }
+
+            const secondHour = secondDate.slice(10, 18)
             const newSecondDate = new Date(referenceDate!)
             newSecondDate.setDate(newSecondDate.getDate() + 7)
-            setSecondDate(newSecondDate.toLocaleDateString())
+            setSecondDate((newSecondDate.toLocaleDateString() + secondHour))
 
             const newThirdDate = new Date(newSecondDate)
             newThirdDate.setDate(newThirdDate.getDate() + 7)
-            setThirdDate(newThirdDate.toLocaleDateString())
+            setThirdDate(newThirdDate.toLocaleDateString() + thirddHour)
 
             const newFourthDate = new Date(newThirdDate)
             newFourthDate.setDate(newFourthDate.getDate() + 7)
-            setFourthDate(newFourthDate.toLocaleDateString())
+            setFourthDate(newFourthDate.toLocaleDateString() + fourthHour)
         }   
     }
 
@@ -298,16 +349,149 @@ export function PackageRegister(){
 
         if(packageType === "Semanal" && referenceDate !== undefined){
             setShowTwoMoreDatesIfRegistersIsWeekly(false)
-            setThirdDate('')
-            setFourthDate('')
 
+            const secondHour = secondDate.slice(10, 18)
             const newSecondDate = new Date(referenceDate!)
             newSecondDate.setDate(newSecondDate.getDate() + 14)
-            setSecondDate(newSecondDate.toLocaleDateString())
+            setSecondDate((newSecondDate.toLocaleDateString() + secondHour))
         }
     }
 
+    async function loadPackageData(pet_id: string) {
+
+    try {
+
+        const response = await api.get('/returnPackage', {
+            params: {
+                pet_id
+            }
+        })
+
+        setPetAlreadyhavePackage(true)
+        setValue(`R$ ${response.data.packageFound.value}`)
+        setSubmiteType('update')
+        setPackageId(response.data.packageFound.id)
+        setPackageStatus(response.data.packageFound.active_package)
+        setInitialOrReferenceDate('Início do próximo pacote')
+        setReferenceDate(response.data.services[0].service_date)
+        setPetName(response.data.packageFound.pet_name)
+
+        if(response.data.packageFound.package_type === 'Quinzenal'){
+            setShowTwoMoreDatesIfRegistersIsWeekly(false)
+            setShowElementsALreadyHaveRegister(true)
+            setWeeklyButtonColor('grey')
+            setBiWeeklyButtonColor('green')
+            setPackageType('Quinzenal')
+            setFirstDate(
+                new Date(response.data.services[0].service_date).toLocaleDateString('pt-BR')
+                + ' - '
+                + new Date(response.data.services[0].service_date).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            )
+
+            setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString('pt-BR')
+                + ' - '
+                + new Date(response.data.services[1].service_date).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            )
+                                                    
+        }
+
+        if(response.data.packageFound.package_type === 'Semanal'){
+            setWeeklyButtonColor('green') 
+            setBiWeeklyButtonColor('grey')
+            setPackageType('Semanal')
+            setShowTwoMoreDatesIfRegistersIsWeekly(true)
+            setShowElementsALreadyHaveRegister(true)
+
+            setFirstDate(
+                new Date(response.data.services[0].service_date).toLocaleDateString('pt-BR')
+                + ' - '
+                + new Date(response.data.services[0].service_date).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            )
+
+            setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString('pt-BR')
+                + ' - '
+                + new Date(response.data.services[1].service_date).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            )
+            setThirdDate(new Date(response.data.services[2].service_date).toLocaleDateString('pt-BR')
+                + ' - '
+                + new Date(response.data.services[2].service_date).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            )
+            setFourthDate(new Date(response.data.services[3].service_date).toLocaleDateString('pt-BR')
+                + ' - '
+                + new Date(response.data.services[3].service_date).toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            )
+        }
+
+        let formattedDate = new Date(response.data.packageFound.reference_date)
+
+        setServiceDate(formattedDate.toLocaleDateString())
+        setHour(
+            formattedDate.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        )
+
+        setSubmiteButtonName("Alterar")
+        setShowElementsALreadyHaveRegister(true)
+
+    } catch {
+
+        setPackageType("")
+        setWeeklyButtonColor('grey')
+        setBiWeeklyButtonColor('grey')
+        setServiceDate('')
+        setValue("")
+        setHour("")
+        setShowElementsALreadyHaveRegister(false)
+        setSubmiteButtonName("Cadastrar")
+    }
+}
+
+function inputFormattedToDateTime(date: string){
+
+
+    const onlyNumbers = date.replace(/\D/g, '')
+    const limitedNumbers = onlyNumbers.slice(0, 12)
+
+    let formatted = limitedNumbers
     
+
+    if(limitedNumbers.length > 2){
+        formatted = limitedNumbers.slice(0,2) + '/' + limitedNumbers.slice(2)
+
+    }
+    if(limitedNumbers.length > 4){
+        formatted = limitedNumbers.slice(0,2) + '/' + limitedNumbers.slice(2,4) + '/' + limitedNumbers.slice(4,8)
+    }
+    if(limitedNumbers.length > 8){
+        formatted = limitedNumbers.slice(0,2) + '/' + limitedNumbers.slice(2,4) + '/' + limitedNumbers.slice(4,8) + ' - ' + limitedNumbers.slice(8, 10)
+    }
+    if(limitedNumbers.length > 10){
+        formatted = limitedNumbers.slice(0,2) + '/' + limitedNumbers.slice(2,4) + '/' + limitedNumbers.slice(4,8) + ' - ' + limitedNumbers.slice(8, 10) + ':' + limitedNumbers.slice(10, 12)
+    }
+
+    return formatted
+
+}
 
     return(
         <div>
@@ -339,64 +523,7 @@ export function PackageRegister(){
                                     setPetId(pet.pet_id)
                                     setShowSuggestions(false)
 
-                                    const fetchData = async () => {
-                                        try{
-                                            const response = await api.get('/returnPackage', {
-                                                params:{
-                                                    pet_id: pet.pet_id
-                                                }
-                                            })
-                                            if(response){
-                                                //console.log(response)
-                                                setValue(`R$ ${response.data.packageFound.value}`)
-                                                setSubmiteType('update')
-                                                setPackageId(response.data.packageFound.id)
-                                                setPackageStatus(response.data.packageFound.active_package)
-                                                setInitialOrReferenceDate('Início do próximo pacote')
-                                                if(response.data.packageFound.package_type === 'Quinzenal'){
-                                                    setShowTwoMoreDatesIfRegistersIsWeekly(false)
-                                                    setShowElementsALreadyHaveRegister(true)
-                                                    setWeeklyButtonColor('grey')
-                                                    setBiWeeklyButtonColor('green')
-                                                    setPackageType('Quinzenal')
-                                                    setFirstDate(new Date(response.data.services[0].service_date).toLocaleDateString())
-                                                    setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString())
-                                                    setReferenceDate(response.data.services[0].service_date)
-                                                }
-                                                if(response.data.packageFound.package_type === 'Semanal'){
-
-                                                    setWeeklyButtonColor('green') 
-                                                    setBiWeeklyButtonColor('grey')
-                                                    setPackageType('Semanal')
-                                                    setShowTwoMoreDatesIfRegistersIsWeekly(true)
-                                                    setShowElementsALreadyHaveRegister(true)
-                                                    setFirstDate(new Date(response.data.services[0].service_date).toLocaleDateString())
-                                                    setSecondDate(new Date(response.data.services[1].service_date).toLocaleDateString())
-                                                    setThirdDate(new Date(response.data.services[2].service_date).toLocaleDateString())
-                                                    setFourthDate(new Date(response.data.services[3].service_date).toLocaleDateString())
-                                                }
-                                                let formattedDate = new Date(response.data.packageFound.reference_date)
-                                                setServiceDate(formattedDate.toLocaleDateString())
-                                                setHour(formattedDate.toLocaleTimeString('pt-BR', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                }))
-                                                setSubmiteButtonName("Alterar dados do pacote")
-                                                setShowElementsALreadyHaveRegister(true)
-                                            }
-                                        }catch{
-                                            setPackageType("")
-                                            setWeeklyButtonColor('grey')
-                                            setBiWeeklyButtonColor('grey')
-                                            setServiceDate('')
-                                            setValue("")
-                                            setHour("")
-                                            setShowElementsALreadyHaveRegister(false)
-                                            setSubmiteButtonName("Cadastrar")
-                                        }
-                                        
-                                    }
-                                    fetchData()
+                                    loadPackageData(pet.pet_id)
                                 }}
                             />
                         )}
@@ -409,21 +536,33 @@ export function PackageRegister(){
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
                     <AlterColorButton color={weeklyButtonColor} 
-                        onClick={() => {setWeeklyButtonColor('green'), 
-                        setBiWeeklyButtonColor('grey'), 
-                        setPackageType('Semanal'), 
-                        setShowTwoMoreDatesIfRegistersIsWeekly(true), 
-                        setShowElementsALreadyHaveRegister(true),
-                        changeServiceRangeToWeekly()}}>
-                        Semanal
+                        onClick={() => {
+
+                            if(petAlreadyhavePackage){
+                                setShowTwoMoreDatesIfRegistersIsWeekly(true)
+                                setShowElementsALreadyHaveRegister(true)
+                            }
+                            setWeeklyButtonColor('green')
+                            setBiWeeklyButtonColor('grey')
+                            setPackageType('Semanal')
+                            
+                            changeServiceRangeToWeekly()
+                        }}>
+                            Semanal
                     </AlterColorButton>
                     <AlterColorButton color={biWeeklyButtonColor} 
-                        onClick={() => {setBiWeeklyButtonColor('green'), 
-                        setWeeklyButtonColor('grey'), 
-                        setPackageType('Quinzenal'), 
-                        setShowTwoMoreDatesIfRegistersIsWeekly(false), 
-                        setShowElementsALreadyHaveRegister(true),
-                        changeServiceRangeToBiWeekly()  }}>
+                        onClick={() => {
+                            
+                            if(petAlreadyhavePackage){
+                                setShowElementsALreadyHaveRegister(true)
+                            }
+
+                            setBiWeeklyButtonColor('green')
+                            setWeeklyButtonColor('grey')
+                            setPackageType('Quinzenal')
+                            setShowTwoMoreDatesIfRegistersIsWeekly(false)
+                            changeServiceRangeToBiWeekly()
+                        }}>
                         Quinzenal
                     </AlterColorButton>
                 </div>
@@ -479,7 +618,7 @@ export function PackageRegister(){
                         />
                     </div>
                     
-                    <div style={{width: '30%'}}>
+                    <div style={{width: '30%', display: petAlreadyhavePackage ? 'none' : 'block'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Horário</div>
                         <GenericInputStyled
                         name="hour"
@@ -507,33 +646,32 @@ export function PackageRegister(){
                 <div >
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>1ª data</div>
-                        
                         <div style={{display: 'flex', gap: '10px'}}>
                             <HiddenStyledInput
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"firstDate"}
                                 value={firstDate}
-                                readOnly={inputIsEditable}
+                                readOnly={!firstDateinputIsEditable}
                                 isVisible={showElementsALreadyHaveRegister}
-                                onChange={(e) => setFirstDate(e.target.value)}
+                                onChange={(e) => {setFirstDate(inputFormattedToDateTime(e.target.value))}}
                             />
-                            <div style={{display: 'flex', gap: '5px'}}>
-                                <ActionButton
-                                    name={'jumpFirstService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Pular serviço
-                                </ActionButton>
-                                <ActionButton
-                                    name={'rescheduleFirstService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Remarcar
-                                </ActionButton>
-                            </div>
-                            
+                            <ActionButton
+                                name={'rescheduleFirstService'}
+                                onClick={(e) => {
+                                    if(firstDateinputIsEditable === false){
+                                        setFirstDateinputIsEditable(true)
+                                    }
+                                    if(firstDateinputIsEditable === true){
+                                        setFirstDateinputIsEditable(false)
+                                    }
+                                    setSecondDateinputIsEditable(false)
+                                    setThirdDateinputIsEditable(false)
+                                    setFourthDateinputIsEditable(false)
+                                    
+                                }}
+                                style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                            > Remarcar
+                            </ActionButton>
                         </div>
                     </div>
                     <div style={{marginBottom: '3px'}}>
@@ -543,26 +681,26 @@ export function PackageRegister(){
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"secondDate"}
                                 value={secondDate}
-                                readOnly={inputIsEditable}
+                                readOnly={!secondDateinputIsEditable}
                                 isVisible={showElementsALreadyHaveRegister}
-                                onChange={(e) => setSecondDate(e.target.value)}
+                                onChange={(e) => {setSecondDate(inputFormattedToDateTime(e.target.value))}}
                             />
-                            <div style={{display: 'flex', gap: '5px'}}>
-                                <ActionButton
-                                    name={'jumpSecondService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Pular serviço
-                                </ActionButton>
-                                <ActionButton
-                                    name={'rescheduleSecondService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none',backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Remarcar
-                                </ActionButton>
-                            </div>
+                            <ActionButton
+                                name={'rescheduleSecondService'}
+                                onClick={(e) => {
+                                    if(secondDateinputIsEditable === false){
+                                        setSecondDateinputIsEditable(true)
+                                    }
+                                    if(secondDateinputIsEditable === true){
+                                        setSecondDateinputIsEditable(false)
+                                    }
+                                    setFirstDateinputIsEditable(false)
+                                    setThirdDateinputIsEditable(false)
+                                    setFourthDateinputIsEditable(false)
+                                }}
+                                style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none',backgroundColor: '#007bff', fontSize: '15px'}}
+                            > Remarcar
+                            </ActionButton>
                         </div>
                     </div>
                     <div style={{marginBottom: '3px'}}>
@@ -572,26 +710,26 @@ export function PackageRegister(){
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"thirdDate"}
                                 value={thirdDate}
-                                readOnly={inputIsEditable}
+                                readOnly={!thirdDateinputIsEditable}
                                 isVisible={showTwoMoreDatesIfRegistersIsWeekly}
-                                onChange={(e) => setThirdDate(e.target.value)}
+                                onChange={(e) => {setThirdDate(inputFormattedToDateTime(e.target.value))}}
                             />
-                            <div style={{display: 'flex', gap: '5px'}}>
-                                <ActionButton
-                                    name={'jumpThirdService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none',backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Pular serviço
-                                </ActionButton>
-                                <ActionButton
-                                    name={'rescheduleThirdService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Remarcar
-                                </ActionButton>
-                            </div>
+                            <ActionButton
+                                name={'rescheduleThirdService'}
+                                onClick={(e) => {
+                                    if(thirdDateinputIsEditable === false){
+                                        setThirdDateinputIsEditable(true)
+                                    }
+                                    if(thirdDateinputIsEditable === true){
+                                        setThirdDateinputIsEditable(false)
+                                    }
+                                    setFirstDateinputIsEditable(false)
+                                    setSecondDateinputIsEditable(false)
+                                    setFourthDateinputIsEditable(false)
+                                }}
+                                style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                            > Remarcar
+                            </ActionButton>
                         </div>
                     </div>
                     <div style={{marginBottom: '3px'}}>
@@ -601,31 +739,29 @@ export function PackageRegister(){
                                 onClick={controlUpdateDataButtonVisibility}
                                 name={"fourthDate"}
                                 value={fourthDate}
-                                readOnly={inputIsEditable}
+                                readOnly={!fourthDateinputIsEditable}
                                 isVisible={showTwoMoreDatesIfRegistersIsWeekly}
-                                onChange={(e) => setFourthDate(e.target.value)}
+                                onChange={(e) => {setFourthDate(inputFormattedToDateTime(e.target.value))}}
                             />
-                            <div style={{display: 'flex', gap: '5px'}}>
-                                <ActionButton
-                                    name={'jumpFourthService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Pular serviço
-                                </ActionButton>
-                                <ActionButton
-                                    name={'rescheduleFourthService'}
-                                    onClick={(e) => {
-                                    }}
-                                    style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                                > Remarcar
-                                </ActionButton>
-                            </div>
+                            <ActionButton
+                                name={'rescheduleFourthService'}
+                                onClick={(e) => {
+                                    if(fourthDateinputIsEditable === false){
+                                        setFourthDateinputIsEditable(true)
+                                    }
+                                    if(fourthDateinputIsEditable === true){
+                                        setFourthDateinputIsEditable(false)
+                                    }
+                                    setFirstDateinputIsEditable(false)
+                                    setSecondDateinputIsEditable(false)
+                                    setThirdDateinputIsEditable(false)
+                                }}
+                                style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
+                            > Remarcar
+                            </ActionButton>
                         </div>
                     </div>
                 </div>
-                
-                
                 <br/>
                 <div style={{display: 'flex', gap: '25px'}}>
                     <RegisterButton
@@ -642,7 +778,17 @@ export function PackageRegister(){
                         }}
                         style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: 'red'}}
                     >
-                        Cancelar
+                        Cancelar Alteração
+                    </ActionButton>
+                    <ActionButton
+                        name={'CancelButton'}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleResetPageInfo()
+                        }}
+                        style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: 'red'}}
+                    >
+                        Cancelar Alteração
                     </ActionButton>
                 </div>
                 <p style={{ color: 'red' }}>{message}</p>
