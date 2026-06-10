@@ -17,7 +17,7 @@ export function PackageRegister(){
 }
 
 
-    const [packageStatus, setPackageStatus] = useState()
+    const [packageStatus, setPackageStatus] = useState(1)
     const [petName, setPetName] = useState('')  
     const [petId, setPetId] = useState('')
     const [packageId, setPackageId] = useState()
@@ -33,13 +33,14 @@ export function PackageRegister(){
     const [hour, setHour] = useState('')
     const [submitType, setSubmiteType] = useState('register')
     const [submitButtonName, setSubmiteButtonName] = useState('Cadastrar')
-    const [showElementsALreadyHaveRegister, setShowElementsALreadyHaveRegister] = useState(false)
+    
     
     const [firstDate, setFirstDate] = useState('')
     const [secondDate, setSecondDate] = useState('')
     const [thirdDate, setThirdDate] = useState('')
     const [fourthDate, setFourthDate] = useState('')
     const [showTwoMoreDatesIfRegistersIsWeekly, setShowTwoMoreDatesIfRegistersIsWeekly] = useState(false)
+    const [showElementsALreadyHaveRegister, setShowElementsALreadyHaveRegister] = useState(false)
 
     const positionRef = useRef<HTMLDivElement>(null)
 
@@ -49,19 +50,10 @@ export function PackageRegister(){
     const [initialOrReferenceDate, setInitialOrReferenceDate] = useState('Data de início')
 
 
-    const [firstServiceButtonsVisibility, setFirstServiceButtonsVisibility] = useState('hidden')
-    const [secondServiceButtonsVisibility, setSecondServiceButtonsVisibility] = useState('hidden')
-    const [thirdServiceButtonsVisibility, setThirdServiceButtonsVisibility] = useState('hidden')
-    const [fourthServiceButtonsVisibility, setFourthServiceButtonsVisibility] = useState('hidden')
-
     const[referenceDate, setReferenceDate] = useState<Date>()
 
     const [petAlreadyhavePackage, setPetAlreadyhavePackage] = useState(false)
 
-    const [firstDateinputIsEditable, setFirstDateinputIsEditable] = useState(false)
-    const [secondDateinputIsEditable, setSecondDateinputIsEditable] = useState(false)
-    const [thirdDateinputIsEditable, setThirdDateinputIsEditable] = useState(false)
-    const [fourthDateinputIsEditable, setFourthDateinputIsEditable] = useState(false)
  
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
@@ -69,28 +61,30 @@ export function PackageRegister(){
 
         const hourToOnlyHour = Number(hour.slice(0,2))
         const hourToOnlyMinute = Number(hour.slice(3,5))
-
-        if(hourToOnlyHour > 23 || hourToOnlyHour < 0 || hourToOnlyMinute < 0 || hourToOnlyMinute > 59 || hour.length < 5){
-            setMessage("Horário inválido")
-            setTimeout(() => {setMessage("")}, 2000)
-            return
-        }
-        
-        if(serviceDate.length < 10){
-            setMessage("Data inválida")
-            setTimeout(() => {setMessage("")}, 2000)
-            return
-        }
-
         const onlyValue = value.replace("R$", "").trim()
-        
 
-        if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
-            setMessage("Todos os campos precisam ser preenchidos")
-            setTimeout(() => {setMessage("")}, 2000)
-            return
+        if(packageStatus === 1){
+            if(hourToOnlyHour > 23 || hourToOnlyHour < 0 || hourToOnlyMinute < 0 || hourToOnlyMinute > 59 || hour.length < 5){
+                setMessage("Horário inválido")
+                setTimeout(() => {setMessage("")}, 2000)
+                return
+            }
+            
+            if(serviceDate.length < 10){
+                setMessage("Data inválida")
+                setTimeout(() => {setMessage("")}, 2000)
+                return
+            }
+
+            if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
+                setMessage("Todos os campos precisam ser preenchidos")
+                setTimeout(() => {setMessage("")}, 2000)
+                return
+            }
+
         }
 
+        
         try{
             if(submitType === "register"){
 
@@ -150,6 +144,8 @@ export function PackageRegister(){
 
                 const nextPackageInitialDate = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + lastPackagesService?.slice(11,18))
 
+                console.log(packageStatus)
+
                 const packageResponse = await api.patch('/updatePackage', {
                 id: packageId,
                 package_type: packageType,
@@ -163,14 +159,6 @@ export function PackageRegister(){
                 setHasSuccess(true)
                 setMessage(packageResponse.data.message)
                 setTimeout(() => {setHasSuccess(false)}, 500)
-                setFirstDateinputIsEditable(false)
-                setSecondDateinputIsEditable(false)
-                setThirdDateinputIsEditable(false)
-                setFourthDateinputIsEditable(false)
-                setFirstServiceButtonsVisibility('hidden')
-                setSecondServiceButtonsVisibility('hidden')
-                setThirdServiceButtonsVisibility('hidden')
-                setFourthServiceButtonsVisibility('hidden')
             }
 
         }catch(error: any){
@@ -269,10 +257,6 @@ export function PackageRegister(){
         setShowElementsALreadyHaveRegister(false)
         setSubmiteButtonName("Cadastrar")
         setShowTwoMoreDatesIfRegistersIsWeekly(false)
-        setFirstServiceButtonsVisibility('hidden')
-        setThirdServiceButtonsVisibility('hidden')
-        setFourthServiceButtonsVisibility('hidden')
-        setSecondServiceButtonsVisibility('hidden')
         setFirstDate("")
         setSecondDate("")
         setThirdDate("")
@@ -280,38 +264,9 @@ export function PackageRegister(){
         setSubmiteType("register")
         setReferenceDate(undefined)
         setPetAlreadyhavePackage(false)
+        setPackageStatus(1)
     }
 
-    const controlUpdateDataButtonVisibility = async (e: React.MouseEvent<HTMLInputElement>) =>{
-        const clickedInput = e.target as HTMLInputElement
-
-        if(clickedInput.name === 'firstDate'){
-            setSecondServiceButtonsVisibility('hidden')
-            setThirdServiceButtonsVisibility('hidden')
-            setFourthServiceButtonsVisibility('hidden')
-            setFirstServiceButtonsVisibility('visible')
-        }
-        if(clickedInput.name === 'secondDate'){
-            setFirstServiceButtonsVisibility('hidden')
-            setThirdServiceButtonsVisibility('hidden')
-            setFourthServiceButtonsVisibility('hidden')
-            setSecondServiceButtonsVisibility('visible')
-        }
-        if(clickedInput.name === 'thirdDate'){
-            setFirstServiceButtonsVisibility('hidden')
-            setSecondServiceButtonsVisibility('hidden')
-            setFourthServiceButtonsVisibility('hidden')
-            setThirdServiceButtonsVisibility('visible')
-        }
-        if(clickedInput.name === 'fourthDate'){
-            setFirstServiceButtonsVisibility('hidden')
-            setSecondServiceButtonsVisibility('hidden')
-            setThirdServiceButtonsVisibility('hidden')
-            setFourthServiceButtonsVisibility('visible')
-        }
-
-        const button = e.target as HTMLButtonElement
-    }
 
     const changeServiceRangeToWeekly = () => {
 
@@ -398,7 +353,9 @@ export function PackageRegister(){
                     minute: '2-digit'
                 })
             )
-                                                    
+                                         
+            setThirdDate('')
+            setFourthDate('')
         }
 
         if(response.data.packageFound.package_type === 'Semanal'){
@@ -454,7 +411,6 @@ export function PackageRegister(){
         setShowElementsALreadyHaveRegister(true)
 
     } catch {
-
         setPackageType("")
         setWeeklyButtonColor('grey')
         setBiWeeklyButtonColor('grey')
@@ -463,6 +419,14 @@ export function PackageRegister(){
         setHour("")
         setShowElementsALreadyHaveRegister(false)
         setSubmiteButtonName("Cadastrar")
+        setFirstDate('')
+        setSecondDate('')
+        setThirdDate('')
+        setFourthDate('')
+        setShowElementsALreadyHaveRegister(false)
+        setShowTwoMoreDatesIfRegistersIsWeekly(false)
+        setPetAlreadyhavePackage(false)
+        setSubmiteType('register')
     }
 }
 
@@ -646,120 +610,43 @@ function inputFormattedToDateTime(date: string){
                 <div >
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>1ª data</div>
-                        <div style={{display: 'flex', gap: '10px'}}>
-                            <HiddenStyledInput
-                                onClick={controlUpdateDataButtonVisibility}
-                                name={"firstDate"}
-                                value={firstDate}
-                                readOnly={!firstDateinputIsEditable}
-                                isVisible={showElementsALreadyHaveRegister}
-                                onChange={(e) => {setFirstDate(inputFormattedToDateTime(e.target.value))}}
-                            />
-                            <ActionButton
-                                name={'rescheduleFirstService'}
-                                onClick={(e) => {
-                                    if(firstDateinputIsEditable === false){
-                                        setFirstDateinputIsEditable(true)
-                                    }
-                                    if(firstDateinputIsEditable === true){
-                                        setFirstDateinputIsEditable(false)
-                                    }
-                                    setSecondDateinputIsEditable(false)
-                                    setThirdDateinputIsEditable(false)
-                                    setFourthDateinputIsEditable(false)
-                                    
-                                }}
-                                style={{visibility: firstServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                            > Remarcar
-                            </ActionButton>
-                        </div>
+                        <HiddenStyledInput
+                            name={"firstDate"}
+                            value={firstDate}
+                            readOnly={false}
+                            isVisible={showElementsALreadyHaveRegister}
+                            onChange={(e) => {setFirstDate(inputFormattedToDateTime(e.target.value))}}
+                        />
                     </div>
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>2ª data</div>
-                        <div style={{display: 'flex', gap: '10px'}}>
-                            <HiddenStyledInput
-                                onClick={controlUpdateDataButtonVisibility}
-                                name={"secondDate"}
-                                value={secondDate}
-                                readOnly={!secondDateinputIsEditable}
-                                isVisible={showElementsALreadyHaveRegister}
-                                onChange={(e) => {setSecondDate(inputFormattedToDateTime(e.target.value))}}
-                            />
-                            <ActionButton
-                                name={'rescheduleSecondService'}
-                                onClick={(e) => {
-                                    if(secondDateinputIsEditable === false){
-                                        setSecondDateinputIsEditable(true)
-                                    }
-                                    if(secondDateinputIsEditable === true){
-                                        setSecondDateinputIsEditable(false)
-                                    }
-                                    setFirstDateinputIsEditable(false)
-                                    setThirdDateinputIsEditable(false)
-                                    setFourthDateinputIsEditable(false)
-                                }}
-                                style={{visibility: secondServiceButtonsVisibility as 'hidden' | 'visible', display: showElementsALreadyHaveRegister ? 'block' : 'none',backgroundColor: '#007bff', fontSize: '15px'}}
-                            > Remarcar
-                            </ActionButton>
-                        </div>
+                        <HiddenStyledInput
+                            name={"secondDate"}
+                            value={secondDate}
+                            readOnly={false}
+                            isVisible={showElementsALreadyHaveRegister}
+                            onChange={(e) => {setSecondDate(inputFormattedToDateTime(e.target.value))}}
+                        />
                     </div>
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>3ª data</div>
-                        <div style={{display: 'flex', gap: '10px'}}>
-                            <HiddenStyledInput
-                                onClick={controlUpdateDataButtonVisibility}
-                                name={"thirdDate"}
-                                value={thirdDate}
-                                readOnly={!thirdDateinputIsEditable}
-                                isVisible={showTwoMoreDatesIfRegistersIsWeekly}
-                                onChange={(e) => {setThirdDate(inputFormattedToDateTime(e.target.value))}}
-                            />
-                            <ActionButton
-                                name={'rescheduleThirdService'}
-                                onClick={(e) => {
-                                    if(thirdDateinputIsEditable === false){
-                                        setThirdDateinputIsEditable(true)
-                                    }
-                                    if(thirdDateinputIsEditable === true){
-                                        setThirdDateinputIsEditable(false)
-                                    }
-                                    setFirstDateinputIsEditable(false)
-                                    setSecondDateinputIsEditable(false)
-                                    setFourthDateinputIsEditable(false)
-                                }}
-                                style={{visibility: thirdServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                            > Remarcar
-                            </ActionButton>
-                        </div>
+                        <HiddenStyledInput
+                            name={"thirdDate"}
+                            value={thirdDate}
+                            readOnly={false}
+                            isVisible={showTwoMoreDatesIfRegistersIsWeekly}
+                            onChange={(e) => {setThirdDate(inputFormattedToDateTime(e.target.value))}}
+                        />
                     </div>
                     <div style={{marginBottom: '3px'}}>
                         <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none'}}>4ª data</div>
-                        <div style={{display: 'flex', gap: '10px'}}>
-                            <HiddenStyledInput
-                                onClick={controlUpdateDataButtonVisibility}
-                                name={"fourthDate"}
-                                value={fourthDate}
-                                readOnly={!fourthDateinputIsEditable}
-                                isVisible={showTwoMoreDatesIfRegistersIsWeekly}
-                                onChange={(e) => {setFourthDate(inputFormattedToDateTime(e.target.value))}}
-                            />
-                            <ActionButton
-                                name={'rescheduleFourthService'}
-                                onClick={(e) => {
-                                    if(fourthDateinputIsEditable === false){
-                                        setFourthDateinputIsEditable(true)
-                                    }
-                                    if(fourthDateinputIsEditable === true){
-                                        setFourthDateinputIsEditable(false)
-                                    }
-                                    setFirstDateinputIsEditable(false)
-                                    setSecondDateinputIsEditable(false)
-                                    setThirdDateinputIsEditable(false)
-                                }}
-                                style={{visibility: fourthServiceButtonsVisibility as 'hidden' | 'visible', display: showTwoMoreDatesIfRegistersIsWeekly  ? 'block' : 'none', backgroundColor: '#007bff', fontSize: '15px'}}
-                            > Remarcar
-                            </ActionButton>
-                        </div>
+                        <HiddenStyledInput
+                            name={"fourthDate"}
+                            value={fourthDate}
+                            readOnly={false}
+                            isVisible={showTwoMoreDatesIfRegistersIsWeekly}
+                            onChange={(e) => {setFourthDate(inputFormattedToDateTime(e.target.value))}}
+                        />
                     </div>
                 </div>
                 <br/>
@@ -782,13 +669,16 @@ function inputFormattedToDateTime(date: string){
                     </ActionButton>
                     <ActionButton
                         name={'CancelButton'}
+                        type={'submit'}
                         onClick={(e) => {
-                            e.stopPropagation()
-                            handleResetPageInfo()
+                            setPackageStatus(0)
+                            setMessage("Pacote cancelado")
+                            setTimeout(() => {setMessage(""), window.location.reload()}, 1000)
+                            
                         }}
                         style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: 'red'}}
                     >
-                        Cancelar Alteração
+                        Cancelar Pacote
                     </ActionButton>
                 </div>
                 <p style={{ color: 'red' }}>{message}</p>
