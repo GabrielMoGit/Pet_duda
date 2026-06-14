@@ -42,7 +42,15 @@ class ServiceController{
 
     }
 
-    async create(service_package_id: number, service_date: Date){
+    async createIndependentService(request: Request, response: Response){
+        const {service_date, value, service_description, service_done} = request.body
+
+
+
+
+    }
+
+    async create(service_package_id: number, service_date: Date, value: string, service_description: string){
 
         const serviceRepository = new ServiceRepository()
         const servicePackageRepository = new ServicePackageRepository()
@@ -64,7 +72,7 @@ class ServiceController{
             }
 
             for(let i = 0; i < dates.length; i ++){
-                const services = await serviceRepository.createAndSave(service_package_id, dates[i], 0)
+                const services = await serviceRepository.createAndSave(service_package_id, dates[i], value, service_description, 0)
                 results.push(services)
             }
             
