@@ -6,10 +6,9 @@ type Props = {
     readOnly?: boolean
     isVisible: boolean
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-    onClick?: (e: React.MouseEvent<HTMLInputElement>) => void
 }
 
-export function HiddenStyledInput({name, value, readOnly, isVisible, onChange, onClick}: Props){
+export function HiddenStyledInput({name, value, readOnly, isVisible, onChange}: Props){
 
     return(
         <HiddenInputStyled
@@ -18,7 +17,6 @@ export function HiddenStyledInput({name, value, readOnly, isVisible, onChange, o
             readOnly={readOnly}
             onChange={onChange}
             style={{display: isVisible ? 'block' : 'none'}}
-            onClick={onClick}
         />
     )
 }
