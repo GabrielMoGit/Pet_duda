@@ -181,7 +181,14 @@ export function PackageRegister(){
                 setTimeout(() => {setHasSuccess(false)}, 500)
             }
             if(submitType === "cancelService"){
-                console.log("CANCELADO")
+
+                const canceledService = await api.delete('/deleteService',{
+                    data: {
+                        package_id: packageId
+                    }
+                })
+
+                setMessage(canceledService.data.message)
             }
 
         }catch(error: any){
