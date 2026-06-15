@@ -69,22 +69,20 @@ class ServiceController{
 
             const results = []
             
-            if(service_package_id !== 0){
+            const response = await servicePackageRepository.findOneById(service_package_id)
 
-                const response = await servicePackageRepository.findOneById(service_package_id)
-
-                if(response?.package_type === "Quinzenal"){
-                    dates = this.createBiweeklyDates(service_date)
-                }
-
-                if(response?.package_type === "Semanal"){
-                    dates = this.createWeeklyDates(service_date)
-                }
+            if(response?.package_type === "Quinzenal"){
+                dates = this.createBiweeklyDates(service_date)
             }
-            if(service_package_id === 0){
+
+            if(response?.package_type === "Semanal"){
+                dates = this.createWeeklyDates(service_date)
+            }
+            if(response?.package_type === "Único"){
                 dates.push(new Date(service_date))
             }
-
+            
+            
             for(let i = 0; i < dates.length; i ++){
                 const services = await serviceRepository.createAndSave(service_package_id, dates[i], value, service_description, 0)
                 results.push(services)
