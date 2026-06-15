@@ -122,6 +122,18 @@ class ServicePackageRepository {
 
         return packageFound
     }
+
+    async cancelPackage(id: number){
+        const packageFound = await this.repository.findOneBy({id})
+        
+        if(!packageFound){
+            return {
+                message: "Não foi possível cancelar o pacote"
+            }
+        }
+
+        await this.repository.remove(packageFound)
+    }
 }
 
 export { ServicePackageRepository } 
