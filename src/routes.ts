@@ -37,6 +37,7 @@ router.get("/listPackages", servicePackageController.listPackages)
 router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
 router.get("/returnPackage", servicePackageController.returnExistentPackageForPetid)
 router.patch("/updatePackage", servicePackageController.updateServicePackage)
+router.delete('/deleteService', servicePackageController.cancelPackage)
 
 
 
