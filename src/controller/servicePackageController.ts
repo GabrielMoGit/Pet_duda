@@ -361,6 +361,39 @@ class ServicePackageController{
             throw error
         }
     }
+
+    async cancelPackage(request: Request, response: Response){
+        const package_id = request.body
+
+        const serviceController = new ServiceController()
+        const servicePackageRepository = new ServicePackageRepository()
+
+        const packageFound = await servicePackageRepository.findOneById(package_id)
+
+        if(!packageFound){
+            return response.status(404).json({
+                message: "Pacote não encontrado"
+            })
+        }
+
+        const serviceFound = await serviceController.listAllServicesForPackageId(packageFound.id)
+
+        if(!serviceFound){
+            return response.status(404).json({
+                message: "Serviço não encontrado"
+            })
+        }
+
+        for(const item of serviceFound){
+            await serviceController.removeDate(item.id)
+        }
+        await servicePackageRepository.cancelPackage(packageFound.id)
+
+        return response.status(200).json({
+            message: "Serviço excluído"
+        })
+
+    }
 }
 
 export { ServicePackageController }
