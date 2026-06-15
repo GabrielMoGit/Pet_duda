@@ -30,6 +30,8 @@ router.get("/listNeighborhood", neighberhoodController.listNeighborhoods)
 
 router.post("/address", addressController.create)
 
+router.post("/createService", serviceController.createIndependentService.bind(serviceController))
+
 router.post("/servicePackage", servicePackageController.userResponse.bind(servicePackageController))
 router.get("/listPackages", servicePackageController.listPackages)
 router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus)
