@@ -18,6 +18,7 @@ const servicePackageController = new ServicePackageController()
 const serviceController = new ServiceController()
 
 router.post("/tutor", tutorController.create)
+router.get("/loadTutorData", tutorController.returnTutorDataFromPhone)
 
 router.post("/pet", petController.create)
 router.get("/listPetsAndRespectiveTutors", petController.listAllPetsAndRespectiveTutors)

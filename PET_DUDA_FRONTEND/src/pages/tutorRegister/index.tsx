@@ -96,6 +96,18 @@ export function TutorRegister(){
         }
     })
 
+    async function loadTutorData(phone: string){
+
+        const response = await api.get('/loadTutorData',{
+            params:{
+                phone: phone
+            }
+        })
+
+        console.log(response)
+
+    }
+
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         const text = e.target.value
 
@@ -249,7 +261,11 @@ export function TutorRegister(){
                     if(limitedNumbers.length > 7){
                         formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
                     }
+
                     setPhone(formatted)
+                    if(onlyNumbers.length === 11){
+                        loadTutorData(onlyNumbers)
+                    }
                 }}
                 
                 hasError={hasError}

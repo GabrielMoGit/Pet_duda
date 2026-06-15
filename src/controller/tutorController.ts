@@ -24,7 +24,7 @@ class TutorController{
     }
 
     async returnTutorDataFromPhone(request: Request, response: Response){
-        const {phone} = request.body
+        const phone = request.query.phone as string
 
         const tutorRepository = new TutorRepository()
         const addressRepository = new AddressRepository()
