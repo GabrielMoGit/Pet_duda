@@ -29,6 +29,7 @@ class ServicePackageController{
         const reference_date = this.transformServiceDateToReferenceDate(service_date)
 
         let description = ""
+        let active_package = 1
 
         if(!petAlreadyExist){
             return response.status(404).json({
@@ -57,10 +58,11 @@ class ServicePackageController{
         else{
 
             description = service_description
+            active_package = 0
         }
 
         try{
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, description, reference_date, 0, 0, value, 1) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, description, reference_date, 0, 0, value, active_package) 
             await serviceController.create(createdPackage.id, new Date(service_date), "package_value", "service_from_package")
             return response.status(201).json({
                 message: "Pacote criado"
