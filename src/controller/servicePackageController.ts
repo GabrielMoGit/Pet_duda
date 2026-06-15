@@ -253,12 +253,19 @@ class ServicePackageController{
 
     async returnExistentPackageForPetid(request: Request, response: Response){
         const pet_id = request.query.pet_id as string
+        const data_type = request.query.data_type as string
 
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
 
+        let packageFound: any
 
-        const packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+        if(data_type === "package"){
+            packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+        }
+        if(data_type === "unic"){
+            packageFound = await servicePackageRepository.checkIfPetAlreadyHaveUnicService(pet_id)
+        }   
 
         if(!packageFound){
             return response.status(404).json({
@@ -271,7 +278,7 @@ class ServicePackageController{
     }
 
     async updateServicePackage(request: Request, response: Response){
-        const {id, package_type, value, active_package, reference_date} = request.body
+        const {id, package_type, value, active_package, reference_date, service_description} = request.body
         const recived_dates: string[] = request.body.dates
 
         const servicePackageRepository = new ServicePackageRepository()
@@ -295,7 +302,7 @@ class ServicePackageController{
                 })
             }
 
-            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package, turnReferenceDateToDateType)
+            const packageUpdated = await servicePackageRepository.updateServicePackage(id, package_type, value, active_package, turnReferenceDateToDateType, service_description)
 
             if(!packageUpdated){
                 return response.status(404).json({
@@ -303,7 +310,7 @@ class ServicePackageController{
                 })
             }
 
-            if(active_package === 0){
+            if(active_package === 0 && package_type !== "Único"){
                 return response.status(200).json({
                     message: "Pacote cancelado com sucesso"
                 })
@@ -311,28 +318,35 @@ class ServicePackageController{
 
             const services = await serviceController.listAllServicesForPackageId(id)
 
-            if(services.length != recived_dates.length){
 
-                for(const item of services){
-                    await serviceController.removeDate(item.id)
+            if(package_type !== "Único"){
+
+                if(services.length != recived_dates.length){
+
+                    for(const item of services){
+                        await serviceController.removeDate(item.id)
+                    }
+
+                    await serviceController.create(id, turnRecivedDatesToDateForm[0], "package_value", "service_from_package")
                 }
 
-                await serviceController.create(id, turnRecivedDatesToDateForm[0], "package_value", "service_from_package")
+                const newServices = await serviceController.listAllServicesForPackageId(id)
+
+                let newDates: Date [] = []
+
+                for(let i = 0; i < newServices.length; i++){
+
+                    const date = await serviceController.alterServiceDate(newServices[i].id, turnRecivedDatesToDateForm[i])
+
+                    if(!date){
+                        return
+                    }
+
+                    newDates.push(date.service_date)
+                }
             }
-
-            const newServices = await serviceController.listAllServicesForPackageId(id)
-
-            let newDates: Date [] = []
-
-            for(let i = 0; i < newServices.length; i++){
-
-                const date = await serviceController.alterServiceDate(newServices[i].id, turnRecivedDatesToDateForm[i])
-
-                if(!date){
-                    return
-                }
-
-                newDates.push(date.service_date)
+            else{
+                await serviceController.alterServiceDate(services[0].id, turnReferenceDateToDateType)
             }
 
             serviceController.turnDoneThePassedServices()

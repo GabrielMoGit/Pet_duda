@@ -72,7 +72,15 @@ class ServicePackageRepository {
         })
     }
 
-    async updateServicePackage(id: number, package_type: string, value: string, active_package: number, reference_date: Date){
+    async checkIfPetAlreadyHaveUnicService(pet_id: string){
+        return await this.repository.findOneBy({
+            pet_id,
+            package_type: "Único",
+            paid: 0
+        })
+    }
+
+    async updateServicePackage(id: number, package_type: string, value: string, active_package: number, reference_date: Date, service_description: string){
         const servicePackage = await this.repository.findOneBy({id})
 
         if(!servicePackage){
@@ -80,8 +88,8 @@ class ServicePackageRepository {
                 message: "Pacote não lozalido no banco de dados, não é possível alterar os dados"
             }
         }
-        
-        if(active_package === 0){
+
+        if(active_package === 0 && package_type !== "Único"){
             servicePackage.active_package = 0
             await this.repository.save(servicePackage)
             return {
@@ -92,6 +100,7 @@ class ServicePackageRepository {
         servicePackage.package_type = package_type
         servicePackage.value = value
         servicePackage.reference_date = reference_date
+        servicePackage.service_description = service_description
 
         await this.repository.save(servicePackage)
 
