@@ -42,7 +42,23 @@ class ServiceController{
 
     }
 
-    async create(service_package_id: number, service_date: Date){
+    async createIndependentService(request: Request, response: Response){
+        const {service_date, value, service_description} = request.body
+
+        try{
+
+            const createdService = await this.create(0, service_date, value, service_description)
+
+            return response.status(200).json(createdService) 
+
+        }catch(error){
+            return response.status(500).json({
+                error: "Erro ao criar serviço"
+            })
+        }
+    }
+
+    async create(service_package_id: number, service_date: Date, value: string, service_description: string){
 
         const serviceRepository = new ServiceRepository()
         const servicePackageRepository = new ServicePackageRepository()
@@ -52,7 +68,7 @@ class ServiceController{
         try{
 
             const results = []
-
+            
             const response = await servicePackageRepository.findOneById(service_package_id)
 
             if(response?.package_type === "Quinzenal"){
@@ -62,7 +78,11 @@ class ServiceController{
             if(response?.package_type === "Semanal"){
                 dates = this.createWeeklyDates(service_date)
             }
-
+            if(response?.package_type === "Único"){
+                dates.push(new Date(service_date))
+            }
+            
+            
             for(let i = 0; i < dates.length; i ++){
                 const services = await serviceRepository.createAndSave(service_package_id, dates[i], 0)
                 results.push(services)

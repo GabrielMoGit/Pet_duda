@@ -24,6 +24,10 @@ export class ServicePackage1777319691397 implements MigrationInterface {
                         type: "varchar"
                     },
                     {
+                        name: "service_description",
+                        type: "varchar"
+                    },
+                    {
                         name: "reference_date",
                         type: "timeStamp"
                     },

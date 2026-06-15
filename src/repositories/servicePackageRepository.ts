@@ -11,8 +11,8 @@ class ServicePackageRepository {
         this.repository = dataSource.getRepository(servicePackage)
     }
 
-    async createAndSave(pet_id: string, package_type: string, reference_date: Date, package_done: number, paid: number, value: string, active_package: number){
-        const servicePackage = this.repository.create({pet_id, package_type, reference_date, package_done, paid, value, active_package})
+    async createAndSave(pet_id: string, package_type: string, service_description: string, reference_date: Date, package_done: number, paid: number, value: string, active_package: number){
+        const servicePackage = this.repository.create({pet_id, package_type, service_description, reference_date, package_done, paid, value, active_package})
         return this.repository.save(servicePackage)
     }
 
@@ -72,7 +72,15 @@ class ServicePackageRepository {
         })
     }
 
-    async updateServicePackage(id: number, package_type: string, value: string, active_package: number, reference_date: Date){
+    async checkIfPetAlreadyHaveUnicService(pet_id: string){
+        return await this.repository.findOneBy({
+            pet_id,
+            package_type: "Único",
+            paid: 0
+        })
+    }
+
+    async updateServicePackage(id: number, package_type: string, value: string, active_package: number, reference_date: Date, service_description: string){
         const servicePackage = await this.repository.findOneBy({id})
 
         if(!servicePackage){
@@ -80,8 +88,8 @@ class ServicePackageRepository {
                 message: "Pacote não lozalido no banco de dados, não é possível alterar os dados"
             }
         }
-        
-        if(active_package === 0){
+
+        if(active_package === 0 && package_type !== "Único"){
             servicePackage.active_package = 0
             await this.repository.save(servicePackage)
             return {
@@ -92,6 +100,7 @@ class ServicePackageRepository {
         servicePackage.package_type = package_type
         servicePackage.value = value
         servicePackage.reference_date = reference_date
+        servicePackage.service_description = service_description
 
         await this.repository.save(servicePackage)
 
@@ -112,6 +121,18 @@ class ServicePackageRepository {
         await this.repository.save(packageFound)
 
         return packageFound
+    }
+
+    async cancelPackage(id: number){
+        const packageFound = await this.repository.findOneBy({id})
+        
+        if(!packageFound){
+            return {
+                message: "Não foi possível cancelar o pacote"
+            }
+        }
+
+        await this.repository.remove(packageFound)
     }
 }
 
