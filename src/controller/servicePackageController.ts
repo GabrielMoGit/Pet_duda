@@ -61,7 +61,6 @@ class ServicePackageController{
             })
 
         }catch(error){
-            console.log(error)
             return response.status(500).json({
                 error: "Erro ao criar pacote"
             })
@@ -327,41 +326,6 @@ class ServicePackageController{
 
                 newDates.push(date.service_date)
             }
-
-            /*
-
-            let diferenceBetweenDates: number [] = []
-
-            if(services.length == turnRecivedDatesToDateForm.length){
-                let oldDates: Date [] = []
-                for(const item of services){
-                    oldDates.push(item.service_date)
-                }
-
-                for(let i = 0; i < services.length; i++){
-                    let number = (turnRecivedDatesToDateForm[i].getTime() - oldDates[i].getTime())
-                    diferenceBetweenDates.push((number / (1000 * 60 * 60 * 24)))
-                }
-
-                if("package_type" in packageUpdated){
-
-                    let jumpDatesCont = 0
-                    let jumpWeek  = 0
-                    for(let i = 0; i < diferenceBetweenDates.length; i++){
-                        
-                        if(diferenceBetweenDates[i] > (6 + jumpWeek)){
-                            jumpDatesCont++
-                            jumpWeek = jumpWeek + 7
-                        }
-                    }
-                    const newReferenceDate = packageUpdated.reference_date
-                    newReferenceDate.setDate(newReferenceDate.getDate() + (jumpDatesCont * 7))
-                    servicePackageRepository.alterReferenceDate(packageUpdated.id, newReferenceDate)
-                }
-
-            }
-
-            */
 
             serviceController.turnDoneThePassedServices()
 

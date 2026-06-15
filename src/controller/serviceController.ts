@@ -43,11 +43,19 @@ class ServiceController{
     }
 
     async createIndependentService(request: Request, response: Response){
-        const {service_date, value, service_description, service_done} = request.body
+        const {service_date, value, service_description} = request.body
 
+        try{
 
+            const createdService = await this.create(0, service_date, value, service_description)
 
+            return response.status(200).json(createdService) 
 
+        }catch(error){
+            return response.status(500).json({
+                error: "Erro ao criar serviço"
+            })
+        }
     }
 
     async create(service_package_id: number, service_date: Date, value: string, service_description: string){
@@ -60,15 +68,21 @@ class ServiceController{
         try{
 
             const results = []
+            
+            if(service_package_id !== 0){
 
-            const response = await servicePackageRepository.findOneById(service_package_id)
+                const response = await servicePackageRepository.findOneById(service_package_id)
 
-            if(response?.package_type === "Quinzenal"){
-                dates = this.createBiweeklyDates(service_date)
+                if(response?.package_type === "Quinzenal"){
+                    dates = this.createBiweeklyDates(service_date)
+                }
+
+                if(response?.package_type === "Semanal"){
+                    dates = this.createWeeklyDates(service_date)
+                }
             }
-
-            if(response?.package_type === "Semanal"){
-                dates = this.createWeeklyDates(service_date)
+            if(service_package_id === 0){
+                dates.push(new Date(service_date))
             }
 
             for(let i = 0; i < dates.length; i ++){
