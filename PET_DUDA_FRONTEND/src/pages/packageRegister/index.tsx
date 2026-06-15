@@ -41,18 +41,20 @@ export function PackageRegister(){
     const [thirdDate, setThirdDate] = useState('')
     const [fourthDate, setFourthDate] = useState('')
     const [showTwoMoreDatesIfRegistersIsWeekly, setShowTwoMoreDatesIfRegistersIsWeekly] = useState(false)
+
     const [showElementsALreadyHaveRegister, setShowElementsALreadyHaveRegister] = useState(false)
+    const [showElementsAlreadyHaveUnicService, setShowElementsAlreadyHaveUnicService] = useState(false)
 
     const positionRef = useRef<HTMLDivElement>(null)
 
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
     const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')  
-    const [packageDataButtonColor, setPackageDataButtonColor] = useState('green')
+    const [packageDataButtonColor, setPackageDataButtonColor] = useState('grey')
     const [unicDataButtonColor, setUnicDataButtonColor] = useState('grey')
 
     const [initialOrReferenceDate, setInitialOrReferenceDate] = useState('Data de início')
 
-    const [dataType, setDataType] = useState('package')
+    const [dataType, setDataType] = useState('')
 
     const[referenceDate, setReferenceDate] = useState<Date>()
 
@@ -79,13 +81,20 @@ export function PackageRegister(){
                 setTimeout(() => {setMessage("")}, 2000)
                 return
             }
-
-            if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
-                setMessage("Todos os campos precisam ser preenchidos")
-                setTimeout(() => {setMessage("")}, 2000)
-                return
+            if(dataType === "package"){
+                if(petName === "" || packageType === "" || serviceDate === "" || value === ""){
+                    setMessage("Todos os campos precisam ser preenchidos")
+                    setTimeout(() => {setMessage("")}, 2000)
+                    return
+                }
             }
-
+            if(dataType === "unic"){
+                if(petName === "" || serviceDate === "" || value === ""){
+                    setMessage("Todos os campos precisam ser preenchidos")
+                    setTimeout(() => {setMessage("")}, 2000)
+                    return
+                }
+            }
         }
 
         
@@ -93,7 +102,7 @@ export function PackageRegister(){
             if(submitType === "register"){
 
                 const databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
-                
+
                 const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
                 service_description: description,
@@ -170,6 +179,9 @@ export function PackageRegister(){
                 setHasSuccess(true)
                 setMessage(packageResponse.data.message)
                 setTimeout(() => {setHasSuccess(false)}, 500)
+            }
+            if(submitType === "cancelService"){
+                console.log("CANCELADO")
             }
 
         }catch(error: any){
@@ -266,6 +278,7 @@ export function PackageRegister(){
         setValue("")
         setHour("")
         setShowElementsALreadyHaveRegister(false)
+        setShowElementsAlreadyHaveUnicService(false)
         setSubmiteButtonName("Cadastrar")
         setShowTwoMoreDatesIfRegistersIsWeekly(false)
         setFirstDate("")
@@ -276,6 +289,7 @@ export function PackageRegister(){
         setReferenceDate(undefined)
         setPetAlreadyhavePackage(false)
         setPackageStatus(1)
+        setDescription('')
     }
 
 
@@ -339,6 +353,7 @@ export function PackageRegister(){
             setShowElementsALreadyHaveRegister(false)
             setInitialOrReferenceDate('Data do serviço')
             setDescription(response.data.packageFound.service_description)
+            setShowElementsAlreadyHaveUnicService(true)
         }
         else{
             setPetAlreadyhavePackage(true)
@@ -432,7 +447,9 @@ export function PackageRegister(){
         
 
     } catch {
-        setPackageType("")
+        if(packageType !== "Único"){
+            setPackageType("")
+        }
         setWeeklyButtonColor('grey')
         setBiWeeklyButtonColor('grey')
         setServiceDate('')
@@ -447,20 +464,13 @@ export function PackageRegister(){
         setShowElementsALreadyHaveRegister(false)
         setShowTwoMoreDatesIfRegistersIsWeekly(false)
         setPetAlreadyhavePackage(false)
+        setDescription('')
+        setShowElementsAlreadyHaveUnicService(false)
         setSubmiteType('register')
     }
 }
 
-function setPageToUnicService(){
-    
-    if(packageType !== "Único"){
-        setValue('')
-        setServiceDate('')
-        setInitialOrReferenceDate('Data do atendimento')
-        setPetAlreadyhavePackage(false)
-        setHour('')
-    }
-}
+
 
 function inputFormattedToDateTime(date: string){
 
@@ -498,6 +508,7 @@ function inputFormattedToDateTime(date: string){
                         setUnicDataButtonColor('grey')
                         setPackageDataButtonColor('green')
                         handleResetPageInfo()
+                        setInitialOrReferenceDate('Data de início')
                         setDataType('package')
                     }}>
                         Pacotes
@@ -509,6 +520,7 @@ function inputFormattedToDateTime(date: string){
                         handleResetPageInfo()
                         setDataType('unic')
                         setPackageType('Único')
+                        setInitialOrReferenceDate('Data do serviço')
                     }}>
                         Atendimentos únicos
                 </AlterColorButton>
@@ -548,45 +560,48 @@ function inputFormattedToDateTime(date: string){
                     </div>  
                 </div>
                 <br/>
-                Tipo do Atendimento
-                <br/>
-                <br/>
-                <div style={{ display: 'flex', gap: '10px'}}>
-                    <AlterColorButton color={weeklyButtonColor} 
-                        onClick={() => {
+                <div style={{display: dataType === 'package' ? 'block' : 'none'}}>
+                    Tipo do Atendimento
+                    <br/>
+                    <br/>
+                    <div style={{ display: 'flex', gap: '10px'}}>
+                        <AlterColorButton color={weeklyButtonColor} 
+                            onClick={() => {
 
-                            if(petAlreadyhavePackage){
-                                setShowTwoMoreDatesIfRegistersIsWeekly(true)
-                                setShowElementsALreadyHaveRegister(true)
-                            }
-                            setWeeklyButtonColor('green')
-                            setBiWeeklyButtonColor('grey')
-                            setPackageType('Semanal')
-                            
-                            changeServiceRangeToWeekly()
-                        }}>
-                            Semanal
-                    </AlterColorButton>
-                    <AlterColorButton color={biWeeklyButtonColor} 
-                        onClick={() => {
-                            
-                            if(petAlreadyhavePackage){
-                                setShowElementsALreadyHaveRegister(true)
-                            }
+                                if(petAlreadyhavePackage){
+                                    setShowTwoMoreDatesIfRegistersIsWeekly(true)
+                                    setShowElementsALreadyHaveRegister(true)
+                                }
+                                setWeeklyButtonColor('green')
+                                setBiWeeklyButtonColor('grey')
+                                setPackageType('Semanal')
+                                
+                                changeServiceRangeToWeekly()
+                            }}>
+                                Semanal
+                        </AlterColorButton>
+                        <AlterColorButton color={biWeeklyButtonColor} 
+                            onClick={() => {
+                                
+                                if(petAlreadyhavePackage){
+                                    setShowElementsALreadyHaveRegister(true)
+                                }
 
-                            setBiWeeklyButtonColor('green')
-                            setWeeklyButtonColor('grey')
-                            setPackageType('Quinzenal')
-                            setShowTwoMoreDatesIfRegistersIsWeekly(false)
-                            changeServiceRangeToBiWeekly()
-                        }}>
-                        Quinzenal
-                    </AlterColorButton>
+                                setBiWeeklyButtonColor('green')
+                                setWeeklyButtonColor('grey')
+                                setPackageType('Quinzenal')
+                                setShowTwoMoreDatesIfRegistersIsWeekly(false)
+                                changeServiceRangeToBiWeekly()
+                            }}>
+                            Quinzenal
+                        </AlterColorButton>
+                    </div>
                 </div>
                 
+                
                 <br/>
-                <div style={{width: '30%'}}>
-                    <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Valor</div>
+                    <div style={{width: '30%'}}>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister || showElementsAlreadyHaveUnicService ? 'block' : 'none'}}>Valor</div>
                     <GenericInputStyled
                         name="value"
                         placeholder="Valor"
@@ -608,7 +623,7 @@ function inputFormattedToDateTime(date: string){
                 <div style={{ display: 'flex', gap: '25px'}}>
 
                     <div style={{width: '40%'}}>
-                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>{initialOrReferenceDate}</div>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister || showElementsAlreadyHaveUnicService ? 'block' : 'none'}}>{initialOrReferenceDate}</div>
                         <GenericInputStyled
                             name="serviceDate"
                             placeholder= {initialOrReferenceDate}
@@ -636,7 +651,7 @@ function inputFormattedToDateTime(date: string){
                     </div>
                     
                     <div style={{width: '30%', display: petAlreadyhavePackage ? 'none' : 'block'}}>
-                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister  ? 'block' : 'none'}}>Horário</div>
+                        <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsALreadyHaveRegister || showElementsAlreadyHaveUnicService ? 'block' : 'none'}}>Horário</div>
                         <GenericInputStyled
                         name="hour"
                         placeholder="Hora"
@@ -660,16 +675,20 @@ function inputFormattedToDateTime(date: string){
                     </div>
                 </div>
                 <br/>
-                <GenericInputStyled
-                    name="description"
-                    placeholder="Descrição do Serviço"
-                    value={description}
-                    onChange={(e) => {
-                        setDescription(e.target.value)
-                    }}
-                    hasError={hasError}
-                    hasSuccess={hasSuccess}
-                />
+                <div style={{display: dataType === "unic" ? 'block' : 'none'}}>
+                    <div style={{marginLeft: '10px', marginBottom: '3px', fontSize: '15px', display: showElementsAlreadyHaveUnicService ? 'block' : 'none'}}>Descrição</div>
+                    <GenericInputStyled
+                        name="description"
+                        placeholder="Descrição do Serviço"
+                        value={description}
+                        onChange={(e) => {
+                            setDescription(e.target.value)
+                        }}
+                        hasError={hasError}
+                        hasSuccess={hasSuccess}
+                    />
+                </div>
+                
                 <br/>
                 <div >
                     <div style={{marginBottom: '3px'}}>
@@ -727,7 +746,7 @@ function inputFormattedToDateTime(date: string){
                             e.stopPropagation()
                             handleResetPageInfo()
                         }}
-                        style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: 'red'}}
+                        style={{display: showElementsALreadyHaveRegister || showElementsAlreadyHaveUnicService ? 'block' : 'none', backgroundColor: 'red'}}
                     >
                         Cancelar Alteração
                     </ActionButton>
@@ -735,12 +754,17 @@ function inputFormattedToDateTime(date: string){
                         name={'CancelButton'}
                         type={'submit'}
                         onClick={(e) => {
-                            setPackageStatus(0)
+                            if(dataType === "package"){
+                                setPackageStatus(0)
+                            }
+                            if(dataType === "unic"){
+                                setSubmiteType('cancelService')
+                            }
                             setMessage("Pacote cancelado")
                             setTimeout(() => {setMessage(""), window.location.reload()}, 1000)
                             
                         }}
-                        style={{display: showElementsALreadyHaveRegister  ? 'block' : 'none', backgroundColor: 'red'}}
+                        style={{display: showElementsALreadyHaveRegister || showElementsAlreadyHaveUnicService ? 'block' : 'none', backgroundColor: 'red'}}
                     >
                         Cancelar Pacote
                     </ActionButton>
