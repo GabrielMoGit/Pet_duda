@@ -5,8 +5,6 @@ import { PetController } from "./petController";
 import { TutorController } from "./tutorController";
 import { AddressController } from "./addressController";
 import { PetRepository } from "../repositories/petRepository";
-import { serialize } from "node:v8";
-import { servicePackage } from "../models/servicePackage";
 
 class ServicePackageController{
 
@@ -20,7 +18,7 @@ class ServicePackageController{
     }
 
     async userResponse(request: Request, response: Response){
-        const {pet_id, package_type, service_date, value} = request.body
+        const {pet_id, service_description, package_type, service_date, value} = request.body
 
         const servicePackageRepository = new ServicePackageRepository()
         const serviceController = new ServiceController()
@@ -30,6 +28,8 @@ class ServicePackageController{
 
         const reference_date = this.transformServiceDateToReferenceDate(service_date)
 
+        let description = ""
+
         if(!petAlreadyExist){
             return response.status(404).json({
                 error: "Pet não encontrado"
@@ -37,24 +37,30 @@ class ServicePackageController{
         }
 
         const today = new Date()
-        const serviceDate = new Date(service_date)
 
-        if(today > serviceDate){
+        if(today > new Date(service_date)){
             return response.status(400).json({
                 error: "Impossível criar em data passada"
             })
         }
+        
+        if(package_type !== "Único"){
+            
+            const petAlreadyHavePackage = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
 
-        const petAlreadyHavePackage = await servicePackageRepository.checkIfPetAlreadyHavePackage(pet_id)
+            if(petAlreadyHavePackage){
+                return response.status(409).json({
+                    error: "Pacote já criado para esse pet"
+                })
+            }
+        }
+        else{
 
-        if(petAlreadyHavePackage){
-            return response.status(409).json({
-                error: "Pacote já criado para esse pet"
-            })
+            description = service_description
         }
 
         try{
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, description, reference_date, 0, 0, value, 1) 
             await serviceController.create(createdPackage.id, new Date(service_date), "package_value", "service_from_package")
             return response.status(201).json({
                 message: "Pacote criado"
@@ -75,14 +81,14 @@ class ServicePackageController{
         const petAlreadyExist = await petRepository.returnTutorAndPetNameFromPetId(pet_id)
 
             if(!petAlreadyExist){
-                    console.log("Pet não encontrado")
-                    return
+                console.log("Pet não encontrado")
+                return
             }
 
         try{    
             const reference_date = this.transformServiceDateToReferenceDate(service_date)
 
-            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, reference_date, 0, 0, value, 1) 
+            const createdPackage = await servicePackageRepository.createAndSave(pet_id, package_type, "", reference_date, 0, 0, value, 1) 
             const createdServices = await serviceController.create(createdPackage.id, new Date(service_date), "package_value", "service_from_package")
                 
             return ({createdPackage, createdServices})
