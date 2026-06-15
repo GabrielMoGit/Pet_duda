@@ -31,6 +31,7 @@ export function PackageRegister(){
     const [hasSuccess, setHasSuccess] = useState(false)
     const [message, setMessage] = useState('')
     const [hour, setHour] = useState('')
+    const [description, setDescription] = useState('')
     const [submitType, setSubmiteType] = useState('register')
     const [submitButtonName, setSubmiteButtonName] = useState('Cadastrar')
     
@@ -46,9 +47,12 @@ export function PackageRegister(){
 
     const [weeklyButtonColor, setWeeklyButtonColor] = useState('grey')
     const [biWeeklyButtonColor, setBiWeeklyButtonColor] = useState('grey')  
+    const [packageDataButtonColor, setPackageDataButtonColor] = useState('green')
+    const [unicDataButtonColor, setUnicDataButtonColor] = useState('grey')
 
     const [initialOrReferenceDate, setInitialOrReferenceDate] = useState('Data de início')
 
+    const [dataType, setDataType] = useState('package')
 
     const[referenceDate, setReferenceDate] = useState<Date>()
 
@@ -92,6 +96,7 @@ export function PackageRegister(){
                 
                 const packageResponse = await api.post('/servicePackage', {
                 pet_id: petId,
+                service_description: description,
                 package_type: packageType,
                 service_date: databaseDateForm,
                 value: onlyValue
@@ -107,8 +112,9 @@ export function PackageRegister(){
                 setServiceDate('')
                 setValue("")
                 setHour("")
+                setDescription('')
 
-                loadPackageData(petId)
+                loadPackageData(petId, dataType)
                 
             }
             if(submitType === "update"){
@@ -312,22 +318,32 @@ export function PackageRegister(){
         }
     }
 
-    async function loadPackageData(pet_id: string) {
+    async function loadPackageData(pet_id: string, data_type: string) {
 
     try {
 
         const response = await api.get('/returnPackage', {
             params: {
-                pet_id
+                pet_id,
+                data_type
             }
         })
 
-        setPetAlreadyhavePackage(true)
+        if(response.data.packageFound.package_type === 'Único'){
+            setPetAlreadyhavePackage(false)
+            setShowElementsALreadyHaveRegister(false)
+            setInitialOrReferenceDate('Data do serviço')
+            setDescription(response.data.packageFound.service_description)
+        }
+        else{
+            setPetAlreadyhavePackage(true)
+            setInitialOrReferenceDate('Início do próximo pacote')
+        }
+
         setValue(`R$ ${response.data.packageFound.value}`)
         setSubmiteType('update')
         setPackageId(response.data.packageFound.id)
         setPackageStatus(response.data.packageFound.active_package)
-        setInitialOrReferenceDate('Início do próximo pacote')
         setReferenceDate(response.data.services[0].service_date)
         setPetName(response.data.packageFound.pet_name)
 
@@ -408,7 +424,7 @@ export function PackageRegister(){
         )
 
         setSubmiteButtonName("Alterar")
-        setShowElementsALreadyHaveRegister(true)
+        
 
     } catch {
         setPackageType("")
@@ -427,6 +443,17 @@ export function PackageRegister(){
         setShowTwoMoreDatesIfRegistersIsWeekly(false)
         setPetAlreadyhavePackage(false)
         setSubmiteType('register')
+    }
+}
+
+function setPageToUnicService(){
+    
+    if(packageType !== "Único"){
+        setValue('')
+        setServiceDate('')
+        setInitialOrReferenceDate('Data do atendimento')
+        setPetAlreadyhavePackage(false)
+        setHour('')
     }
 }
 
@@ -460,7 +487,27 @@ function inputFormattedToDateTime(date: string){
     return(
         <div>
             <h1>Cadastrar Pacote</h1>
-            
+            <div style={{ display: 'flex', gap: '10px'}}>
+                <AlterColorButton color={packageDataButtonColor} 
+                    onClick={() => {
+                        setUnicDataButtonColor('grey')
+                        setPackageDataButtonColor('green')
+                        handleResetPageInfo()
+                        setDataType('package')
+                    }}>
+                        Pacotes
+                </AlterColorButton>
+                <AlterColorButton color={unicDataButtonColor} 
+                    onClick={() => {
+                        setPackageDataButtonColor('grey')
+                        setUnicDataButtonColor('green')
+                        handleResetPageInfo()
+                        setDataType('unic')
+                    }}>
+                        Atendimentos únicos
+                </AlterColorButton>
+            </div>
+            <br/>
             <form autoComplete="off" onSubmit={handleSubmit}>
                 <div style={{ display: 'flex', gap: '10px'}}>
                     <div 
@@ -487,7 +534,7 @@ function inputFormattedToDateTime(date: string){
                                     setPetId(pet.pet_id)
                                     setShowSuggestions(false)
 
-                                    loadPackageData(pet.pet_id)
+                                    loadPackageData(pet.pet_id, dataType)
                                 }}
                             />
                         )}
@@ -495,7 +542,7 @@ function inputFormattedToDateTime(date: string){
                     </div>  
                 </div>
                 <br/>
-                Tipo do Pacote
+                Tipo do Atendimento
                 <br/>
                 <br/>
                 <div style={{ display: 'flex', gap: '10px'}}>
@@ -606,6 +653,17 @@ function inputFormattedToDateTime(date: string){
                         />
                     </div>
                 </div>
+                <br/>
+                <GenericInputStyled
+                    name="description"
+                    placeholder="Descrição do Serviço"
+                    value={description}
+                    onChange={(e) => {
+                        setDescription(e.target.value)
+                    }}
+                    hasError={hasError}
+                    hasSuccess={hasSuccess}
+                />
                 <br/>
                 <div >
                     <div style={{marginBottom: '3px'}}>
