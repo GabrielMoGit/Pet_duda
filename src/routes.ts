@@ -43,7 +43,7 @@ router.delete('/deleteService', servicePackageController.cancelPackage)
 
 
 //test route
-router.patch('/test', servicePackageController.updateServicePackage)
+router.get('/test', tutorController.returnTutorDataFromPhone)
 
 
 

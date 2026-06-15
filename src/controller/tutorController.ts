@@ -1,5 +1,6 @@
 import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
+import { AddressRepository } from "../repositories/addressRepository";
 
 class TutorController{
     async create(request: Request, response: Response){
@@ -20,6 +21,26 @@ class TutorController{
             message: "Tutor cadastrado!"
         })
         
+    }
+
+    async returnTutorDataFromPhone(request: Request, response: Response){
+        const {phone} = request.body
+
+        const tutorRepository = new TutorRepository()
+        const addressRepository = new AddressRepository()
+
+        const tutorFound = await tutorRepository.findByPhone(phone)
+
+        if(!tutorFound){
+            return response.status(404).json({
+                message: "Tutor não encontrado"
+            })
+        }
+
+        const addressFound = await addressRepository.ListAllAddressesFromTutorId(tutorFound.id)
+
+        return response.json({addressFound, tutorFound})
+
     }
 
     async filterTutorForId(id: string[]){

@@ -11,7 +11,13 @@ class TutorRepository{
     }
 
     async findByPhone(phone: string){
-        return await this.repository.findOneBy({phone})
+        const tutor =  await this.repository.findOneBy({phone})
+
+        if(!tutor){
+            throw new Error('Tutor não existe')
+        }
+
+        return tutor
     }
 
     async findById(id: string){
