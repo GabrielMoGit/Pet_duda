@@ -363,7 +363,7 @@ class ServicePackageController{
     }
 
     async cancelPackage(request: Request, response: Response){
-        const package_id = request.body
+        const {package_id} = request.body
 
         const serviceController = new ServiceController()
         const servicePackageRepository = new ServicePackageRepository()
