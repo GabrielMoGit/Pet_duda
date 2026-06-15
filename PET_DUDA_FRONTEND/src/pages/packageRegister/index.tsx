@@ -133,7 +133,6 @@ export function PackageRegister(){
                 }
 
                 for(const item of servicesDates){
-                    //new form will be: let databaseDateForm = (date.slice(6,10) + '-' + date.slice(3,5) + '-' + date.slice(0,2) + ' ' + date.slice(13,18))
                     let databaseDateForm = (item.slice(6,10) + '-' + item.slice(3,5) + '-' + item.slice(0,2) + ' ' + item.slice(13,18))
                     arrayDatabaseDataForm.push(databaseDateForm)
                 }
@@ -145,19 +144,25 @@ export function PackageRegister(){
                         return
                     }
                 }
+
+                let databaseDateForm: any 
+
+                if(packageType === "Único"){
+                    databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + hourToOnlyHour + ":" + hourToOnlyMinute)
+                }
+                else{
+                    const lastPackagesService = arrayDatabaseDataForm.at(-1)
+
+                    databaseDateForm = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + lastPackagesService?.slice(11,18))
+                }
                 
-                const lastPackagesService = arrayDatabaseDataForm.at(-1)
-
-                const nextPackageInitialDate = (serviceDate.slice(6,10) + '-' + serviceDate.slice(3,5) + '-' + serviceDate.slice(0,2) + ' ' + lastPackagesService?.slice(11,18))
-
-                console.log(packageStatus)
-
                 const packageResponse = await api.patch('/updatePackage', {
                 id: packageId,
                 package_type: packageType,
                 value: onlyValue,
                 active_package: packageStatus,
-                reference_date: nextPackageInitialDate, 
+                reference_date: databaseDateForm, 
+                service_description: description,
                 dates: arrayDatabaseDataForm,
                 })
                 
@@ -503,6 +508,7 @@ function inputFormattedToDateTime(date: string){
                         setUnicDataButtonColor('green')
                         handleResetPageInfo()
                         setDataType('unic')
+                        setPackageType('Único')
                     }}>
                         Atendimentos únicos
                 </AlterColorButton>
