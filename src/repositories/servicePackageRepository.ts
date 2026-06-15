@@ -11,8 +11,8 @@ class ServicePackageRepository {
         this.repository = dataSource.getRepository(servicePackage)
     }
 
-    async createAndSave(pet_id: string, package_type: string, reference_date: Date, package_done: number, paid: number, value: string, active_package: number){
-        const servicePackage = this.repository.create({pet_id, package_type, reference_date, package_done, paid, value, active_package})
+    async createAndSave(pet_id: string, package_type: string, service_description: string, reference_date: Date, package_done: number, paid: number, value: string, active_package: number){
+        const servicePackage = this.repository.create({pet_id, package_type, service_description, reference_date, package_done, paid, value, active_package})
         return this.repository.save(servicePackage)
     }
 
