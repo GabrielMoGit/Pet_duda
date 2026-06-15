@@ -14,12 +14,6 @@ class services{
     service_date!: Date
 
     @Column()
-    value!: string
-
-    @Column()
-    service_description!: string
-
-    @Column()
     service_done!: number
 }
 

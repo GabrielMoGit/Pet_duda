@@ -24,14 +24,6 @@ export class Services1777319655213 implements MigrationInterface {
                         type: "timestamp"
                     },
                     {
-                        name: "value",
-                        type: "varchar"
-                    },
-                    {
-                        name: "service_description",
-                        type: "varchar"
-                    },
-                    {
                         name: "service_done",
                         type: "integer"
                     }
