@@ -54,7 +54,17 @@ class TutorController{
         const tutorRepository = new TutorRepository()
         const addressController = new AddressController()
 
-        console.log(name, phone, street, neighborhood, number)
+        const tutorFound = await tutorRepository.findByPhone(phone)
+
+        if(!tutorFound){
+            return response.status(404).json({
+                message: "Tutor não existe"
+            })
+        }
+
+        const alteredTutor = await tutorRepository.alterTutorData(tutorFound.id, phone, name)
+
+        
 
     }
 

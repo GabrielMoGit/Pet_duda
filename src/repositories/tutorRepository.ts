@@ -20,8 +20,8 @@ class TutorRepository{
         return tutor
     }
 
-    async alterTutorData(name: string, phone: string){
-        const tutor = await this.repository.findOneBy({phone})
+    async alterTutorData(id: string, name: string, phone: string){
+        const tutor = await this.repository.findOneBy({id})
 
         if(!tutor){
             throw new Error('Tutor não existe')
