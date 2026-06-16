@@ -1,6 +1,7 @@
 import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
 import { AddressRepository } from "../repositories/addressRepository";
+import { AddressController } from "./addressController";
 
 class TutorController{
     async create(request: Request, response: Response){
@@ -27,7 +28,7 @@ class TutorController{
         const phone = request.query.phone as string
 
         const tutorRepository = new TutorRepository()
-        const addressRepository = new AddressRepository()
+        const addressController = new AddressController()
 
         const tutorFound = await tutorRepository.findByPhone(phone)
 
@@ -37,9 +38,23 @@ class TutorController{
             })
         }
 
-        const addressFound = await addressRepository.ListAllAddressesFromTutorId(tutorFound.id)
+        const tutorId: string [] = []
 
-        return response.json({addressFound, tutorFound})
+        tutorId.push(tutorFound.id)
+
+        const addressFound = await addressController.listAddresses(tutorId)
+
+        return response.status(200).json({addressFound, tutorFound})
+
+    }
+
+    async alterTutorData(request: Request, response: Response){
+        const {name, phone, street, neighborhood, number} = request.body
+
+        const tutorRepository = new TutorRepository()
+        const addressController = new AddressController()
+
+        console.log(name, phone, street, neighborhood, number)
 
     }
 

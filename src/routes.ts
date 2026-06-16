@@ -19,6 +19,7 @@ const serviceController = new ServiceController()
 
 router.post("/tutor", tutorController.create)
 router.get("/loadTutorData", tutorController.returnTutorDataFromPhone)
+router.patch("/AlterTutorData", tutorController.alterTutorData)
 
 router.post("/pet", petController.create)
 router.get("/listPetsAndRespectiveTutors", petController.listAllPetsAndRespectiveTutors)
