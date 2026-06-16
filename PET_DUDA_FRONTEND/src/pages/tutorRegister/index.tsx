@@ -178,8 +178,6 @@ export function TutorRegister(){
                     return
                 }
             }
-            
-                
         }catch{ } 
     }
 
@@ -238,6 +236,14 @@ export function TutorRegister(){
             }
             if(submitType === "update"){
 
+                await api.patch('/AlterTutorData', {
+                    name: name,
+                    phone: cleanPhone,
+                    street: streetTyped,
+                    neighborhood: neighborhoodTyped,
+                    number: number
+
+                })
             }
         }
         catch(error: any){
