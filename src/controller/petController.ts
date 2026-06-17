@@ -1,6 +1,7 @@
 import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
 import { PetRepository } from "../repositories/petRepository";
+import { TutorController } from "./tutorController";
 
 class PetController{
 
@@ -88,11 +89,20 @@ class PetController{
     }
 
     async listExistentPetsForTutor(request: Request, response: Response){
-        const {tutor} = request.body
+        const tutor_phone = request.query.tutor
 
         const petRepository = new PetRepository()
+        const tutorRepository = new TutorRepository()
 
-        const pets = await petRepository.listExistentPetsForTutor(tutor)
+        const tutorFound = await tutorRepository.findByPhone(String(tutor_phone))
+
+        if(!tutorFound){
+             return response.status(500).json({
+                message: "Tutor não encontrado"
+            })
+        }
+
+        const pets = await petRepository.listExistentPetsForTutor(tutorFound.id)
 
         if(!pets){
             return response.status(500).json({
