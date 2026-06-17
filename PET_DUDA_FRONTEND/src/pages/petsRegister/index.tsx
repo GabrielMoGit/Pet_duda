@@ -7,12 +7,19 @@ import { api } from '../../services/api'
 
 export function PetRegister(){
 
+    type Pets = {
+        id: string,
+        id_tutor: string,
+        name: string
+    }
+
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [message, setMessage] = useState('')
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
     const [selectedPetId, setSelectedPetId] = useState("")
+    const [petList, setPetList] = useState<Pets[]>([])
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
@@ -28,7 +35,7 @@ export function PetRegister(){
             setMessage(response.data.message)
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
-            setPhone('')
+            await loadTutorsPets(cleanPhone)
         }
         catch(error: any){
             if(error.response){
@@ -47,7 +54,25 @@ export function PetRegister(){
                 setMessage("Erro de conexão com o servidor")
             }
         }
-    
+    }
+
+    async function loadTutorsPets(tutor_phone: string){
+
+        try{
+            const pets = await api.get('/listPetsForTutor',{
+                params:{
+                    tutor: tutor_phone  
+                }
+            })
+            setPetList(pets.data)
+            
+        }catch(Error){
+            setHasError(true)
+            setMessage('Erro ao carregar pets')
+            setTimeout(() => setHasError(false), 500)
+            setTimeout(() => setMessage(""), 2000)
+            return 
+        }   
     }
 
     return(
@@ -77,55 +102,63 @@ export function PetRegister(){
                         formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
                     }
                     setPhone(formatted)
+                    if(onlyNumbers.length === 11){
+                        loadTutorsPets(onlyNumbers)
+                        
+                    }
+                    else{
+                        setPetList([])
+                    }
                 }}
                 
                 hasError={hasError}
                 hasSuccess={hasSuccess}
                 />
-                <br />
-                <GenericStyledInput 
-                name="name"
-                placeholder="Nome" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                hasError={hasError}
-                hasSuccess={hasSuccess}
-                />
-                <br />
-                <p style={{ color: 'red' }}>{message}</p>
-                <div style={{display: 'flex', gap: '10px'}}>
+                <br/>
+                <div style={{display: 'flex', gap: '5px', width: '85%'}}>
+                    <GenericStyledInput 
+                    name="name"
+                    placeholder="Nome" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    hasError={hasError}
+                    hasSuccess={hasSuccess}
+                    />
                     <RegisterButton 
-                    type="submit">Cadastrar
+                        type="submit">Cadastrar
                     </RegisterButton>
                 </div>
                 <br/>
-                <div style={{display: 'flex', gap: '5px'}}>
-                    <HiddenInputStyled
-                        name={"fourthDate"}
-                        value={""}
-                        onChange={(e) => (e.target.value)}
-                    />
-                    <div style={{width: '50%',display: 'flex', gap: '4px'}}>
-                        <ActionButton
-                            name={'alterPetNameButton'}
-                            onClick={(e) => {
-                            }}
-                            style={{backgroundColor: '#007bff'}}
-                        >
-                            Alterar
-                        </ActionButton>
-                        <ActionButton
-                            name={'RemovePetButton'}
-                            onClick={(e) => {
-                            }}
-                            style={{backgroundColor: 'red'}}
-                        >
-                            Cancelar
-                        </ActionButton>
+                <p style={{ color: 'red' }}>{message}</p>
+                <br/>
+                {petList.map((pet, index) => (
+                    <div key={index} style={{display: 'flex', gap: '5px', marginBottom: '10px'}}>
+                        <HiddenInputStyled
+                            name={pet.id}
+                            value={pet.name}
+                            onChange={(e) => (e.target.value)}
+                        />
+                        <div style={{width: '50%',display: 'flex', gap: '4px'}}>
+                            <ActionButton
+                                name={'alterPetNameButton'}
+                                onClick={(e) => {
+                                    
+                                }}
+                                style={{backgroundColor: '#007bff'}}
+                            >
+                                Alterar
+                            </ActionButton>
+                            <ActionButton
+                                name={'RemovePetButton'}
+                                onClick={(e) => {
+                                }}
+                                style={{backgroundColor: 'red'}}
+                            >
+                                Remover
+                            </ActionButton>
+                        </div>
                     </div>
-                    
-                </div>
-                
+                ))}
             </form>
         </div>
     )
