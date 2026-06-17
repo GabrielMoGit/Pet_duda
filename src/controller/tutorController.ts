@@ -2,6 +2,7 @@ import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
 import { AddressRepository } from "../repositories/addressRepository";
 import { AddressController } from "./addressController";
+import { StreetController } from "./streetController";
 
 class TutorController{
     async create(request: Request, response: Response){
@@ -54,6 +55,7 @@ class TutorController{
 
         const tutorRepository = new TutorRepository()
         const addressController = new AddressController()
+        const streetController = new StreetController()
 
         const tutorFound = await tutorRepository.findByPhone(oldPhone)
 
@@ -68,7 +70,16 @@ class TutorController{
 
         const address = await addressController.listAddresses(tutorId)
 
-        console.log(address)
+        let streetFound: any
+
+        for(const item of address){
+            streetFound = await streetController.checkIfStreetExistIfDontCreate(item.streetName)
+        }
+
+        console.log(streetFound)
+        
+
+        
 
         //const alteredTutor = await tutorRepository.alterTutorData(tutorFound.id, name, newPhone)
 

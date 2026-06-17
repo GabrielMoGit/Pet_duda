@@ -61,7 +61,7 @@ class StreetController{
         return createdStreet
     }
 
-    async checkIfStreetExist(name: string){
+    async checkIfStreetExistIfDontCreate(name: string){
         const streetReposiroty = new StreetRepository()
         
         const streetFound = await streetReposiroty.checkIfStreetAlreadyExist(name)
