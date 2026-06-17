@@ -62,6 +62,19 @@ class PetRepository{
         return pets
     }
 
+    async deletePet(id: string){
+        const pet = await this.repository.findOneBy({id})
+
+        if(!pet){
+            throw new Error("Pet não encontrado")
+        }
+
+        await this.repository.delete(pet)
+        
+        return true
+    }
+
+
 }
 
 export {PetRepository}

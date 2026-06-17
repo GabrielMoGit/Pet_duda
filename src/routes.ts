@@ -24,6 +24,8 @@ router.patch("/AlterTutorData", tutorController.alterTutorData)
 router.post("/pet", petController.create)
 router.get("/listPetsAndRespectiveTutors", petController.listAllPetsAndRespectiveTutors)
 router.get('/listPetsForTutor', petController.listExistentPetsForTutor)
+router.patch("/alterPetData", petController.alterPetsData)
+router.delete("/deletePet", petController.deletePet)
 
 router.post("/street", streetController.create)
 router.get("/listStreets", streetController.listStreets)

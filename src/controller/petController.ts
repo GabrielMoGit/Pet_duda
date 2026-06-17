@@ -117,7 +117,7 @@ class PetController{
 
     async alterPetsData(request: Request, response: Response){
         const {id, name} = request.body
-
+        console.log(id, name)
         const petRepository = new PetRepository()
 
         const alteredPet = await petRepository.alterPetData(id, name)
@@ -130,6 +130,24 @@ class PetController{
 
         return response.status(200).json({
             message: "Nome Alterado"
+        })
+    }
+
+    async deletePet(request: Request, response: Response){
+        const id = request.body
+
+        const petRepository = new PetRepository()
+
+        const deletedPet = await petRepository.deletePet(id)
+
+        if(!deletedPet){
+            return response.status(500).json({
+                message: "Pet não encontrado"
+            })
+        }
+
+        return response.status(200).json({
+            message: "Pet removido"
         })
     }
 }
