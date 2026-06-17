@@ -111,7 +111,8 @@ export function PetRegister(){
 
         }catch(error: any){
             if(error.response){
-                setMessage(error.response.data.error)
+                setMessage(error.response?.data?.message)
+                setTimeout(() => setMessage(""), 4000)
             }
         }
     }

@@ -1,7 +1,7 @@
 import { Request, Response} from "express"
 import { TutorRepository } from "../repositories/tutorRepository";
 import { PetRepository } from "../repositories/petRepository";
-import { TutorController } from "./tutorController";
+import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 
 class PetController{
 
@@ -134,11 +134,21 @@ class PetController{
     }
 
     async deletePet(request: Request, response: Response){
-        const id = request.body
+        const id = request.query.id
 
         const petRepository = new PetRepository()
+        const servicePackageRepository = new ServicePackageRepository()
+        
+        const packageFound = await servicePackageRepository.checkIfPetAlreadyHavePackage(String(id))
 
-        const deletedPet = await petRepository.deletePet(id)
+        if(packageFound){
+            return response.status(400).json({
+                message: "Pet tem pacote em aberto, não é possível remover"
+            })
+        }
+
+        const deletedPet = await petRepository.deletePet(String(id))
+        
 
         if(!deletedPet){
             return response.status(500).json({
