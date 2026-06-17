@@ -205,77 +205,90 @@ export function TutorRegister(){
             return
         }
 
-        try{
-
-            if(submitType === "register"){
-                const neighborhoodResponse = await api.post('/neighborhood', {
+        if(submitType === "register"){
+            try{
+                await api.post('/neighborhood', {
                     name: neighborhoodTyped
                 })
-
-                const streetResponse = await api.post('/street', {
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criaçao de bairro')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return 
+            }
+            try{
+                await api.post('/street', {
                     name: streetTyped
                 })
-
-                const tutorResponse = await api.post('/tutor',{
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criação de rua')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return
+            }
+            try{
+                await api.post('/tutor',{
                     name,
                     phone: cleanPhone
-                })  
-
-                const addressResponse = await api.post('/address', {
+                })
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criação de tutor')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return
+            }
+            try{
+                await api.post('/address', {
                     tutorPhone: cleanPhone,
                     streetName: streetTyped,
                     neighborhoodName: neighborhoodTyped,
                     number: number
                 })
-
-                setHasSuccess(true)
-                setMessage(tutorResponse.data.message)
-                setTimeout(() => setHasSuccess(false), 500)
-                setName('')
-                setPhone('')
-                setNeighborhoodTyped('')
-                setStreetTyped('')
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criação de endereço')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return
             }
-            if(submitType === "update"){
-
-                try{
-
-                    await api.patch('/AlterTutorData', {
-                    name: name,
-                    newPhone: cleanPhone,
-                    oldPhone: oldPhone,
-                    street: streetTyped,
-                    neighborhood: neighborhoodTyped,
-                    number: number
-                })
-
-                }catch{
-
-                }
-            }
+            setHasSuccess(true)
+            setMessage("Tutor criado")
+            setTimeout(() => setHasSuccess(false), 500)
+            setName('')
+            setPhone('')
+            setNeighborhoodTyped('')
+            setStreetTyped('')
         }
-        catch(error: any){
-            if(error.response){
-                if(error.response.status === 400){
-                    setMessage(error.response.data.error)
-                    setTimeout(() => {setMessage("")}, 2000)
-                    setHasError(true)
-                    setTimeout(() => setHasError(false), 500)
-                }else{
-                    setMessage('Erro ao cadastrar tutor')
-                    setTimeout(() => {setMessage("")}, 4000)
-                }
-            }   
-            else{
-                setMessage("Erro de conexão com o servidor")
-                setTimeout(() => {setMessage("")}, 4000)
+        if(submitType === "update"){
+            try{
+                const response = await api.patch('/AlterTutorData', {
+                name: name,
+                newPhone: cleanPhone,
+                oldPhone: oldPhone,
+                street: streetTyped,
+                neighborhood: neighborhoodTyped,
+                number: number
+            })
+            setHasSuccess(true)
+            setMessage(response.data.message)   
+            setTimeout(() => setHasSuccess(false), 500)
+            setTimeout(() => setMessage(""), 2000)
+
+            }catch(error: any){
+            setHasError(true)
+            setMessage(error.response?.data?.message)   
+            setTimeout(() => setHasError(false), 500)
+            setTimeout(() => setMessage(""), 2000)
             }
         }
     }
 
     return (
         <div>
-            <h1>Cadastrar Tutor</h1>
+            <h1>Gerenciar dados do Tutor</h1>
 
             <form autoComplete="off" onSubmit={handleSubmit}>
                 <GenericStyledInput 
@@ -407,6 +420,7 @@ export function TutorRegister(){
                         Cancelar
                     </ActionButton>
                 </div>
+                <p style={{ color: 'red' }}>{message}</p>
             </form>
         </div>
     )

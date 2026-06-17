@@ -508,7 +508,7 @@ function inputFormattedToDateTime(date: string){
 
     return(
         <div>
-            <h1>Cadastrar Pacote</h1>
+            <h1>Gerenciar atendimentos</h1>
             <div style={{ display: 'flex', gap: '10px'}}>
                 <AlterColorButton color={packageDataButtonColor} 
                     onClick={() => {
