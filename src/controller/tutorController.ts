@@ -58,35 +58,40 @@ class TutorController{
         const addressController = new AddressController()
         const streetController = new StreetController()
         const neighberhoodController = new NeighborhoodController()
+        
+        try{
+            const tutorFound = await tutorRepository.findByPhone(oldPhone)
 
-        const tutorFound = await tutorRepository.findByPhone(oldPhone)
+            if(!tutorFound){
+                return response.status(404).json({
+                    message: "Tutor não existe"
+                })
+            }
 
-        if(!tutorFound){
-            return response.status(404).json({
-                message: "Tutor não existe"
+            await tutorRepository.alterTutorData(tutorFound.id, name, newPhone)
+
+            const tutorId: string [] = []
+            tutorId.push(tutorFound.id)
+
+            const address = await addressController.listAddresses(tutorId)
+
+            const streetFound = await streetController.checkIfStreetExistIfDontCreate(street)
+            const neighborhoodFound = await neighberhoodController.checkIfNeighbothoodExistIfDontCreate(neighborhood)
+
+            for(const item of address){
+                addressController.alterAddressData(item.addressId, neighborhoodFound.id, streetFound.id, number)
+            }
+
+            return response.status(200).json({
+                message: "Dados alterados"
+            })
+        }catch(error){
+            return response.status(500).json({
+                message: "Não foi possível alterar os dados" + error
             })
         }
 
-        const tutorId: string [] = []
-        tutorId.push(tutorFound.id)
-
-        const address = await addressController.listAddresses(tutorId)
-
-        let streetFound: any
-        let neighborhoodFound: any
-
-        for(const item of address){
-            streetFound = await streetController.checkIfStreetExistIfDontCreate(item.streetName)
-            neighborhoodFound = await neighberhoodController.checkIfNeighbothoodExistIfDontCreate(item.neighborhoodName)
-        }
-
-        console.log(address)
-        console.log(streetFound)
-        console.log(neighborhoodFound)
-
         
-
-        //const alteredTutor = await tutorRepository.alterTutorData(tutorFound.id, name, newPhone)
 
     }
 

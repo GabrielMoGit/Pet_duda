@@ -65,6 +65,7 @@ class NeighborhoodController{
 
         if(!neighborhoodFound){
             const createdNeighbothood = this.localCreate(name)
+            return createdNeighbothood
         }
 
         return neighborhoodFound
