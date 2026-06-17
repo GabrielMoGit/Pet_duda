@@ -39,6 +39,15 @@ class PetRepository{
         return pets
     }
 
+    async listExistentPetsForTutor(id_tutor: string){
+        const pets = await this.repository.findBy({id_tutor})
+
+        if(!pets){
+            throw new Error("Pets não encontrados")
+        }
+        return pets
+    }
+
 }
 
 export {PetRepository}
