@@ -90,9 +90,6 @@ class TutorController{
                 message: "Não foi possível alterar os dados" + error
             })
         }
-
-        
-
     }
 
     async filterTutorForId(id: string[]){
