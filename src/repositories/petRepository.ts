@@ -19,7 +19,7 @@ class PetRepository{
         return this.repository.findOneBy({name, id_tutor})
     }
 
-    async alterPetData(id: string, name:string){
+    async alterPetData(id: string, name: string){
         const petFound = await this.repository.findOneBy({id})
 
         if(!petFound){
@@ -28,7 +28,9 @@ class PetRepository{
 
         petFound.name = name
 
-        await this.repository.save(petFound)
+        const alteredPet = await this.repository.save(petFound)
+
+        return alteredPet
     }
 
     async returnTutorAndPetNameFromPetId(id: string){

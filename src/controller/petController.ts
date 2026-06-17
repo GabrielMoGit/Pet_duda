@@ -70,7 +70,9 @@ class PetController{
         const pets = await petRepository.listAllExistentPets()
 
         if(!pets){
-            return
+            return response.status(404).json({
+                message: "Não foi possível carregar a lista"
+            })
         }
 
         for(const item of pets){
@@ -111,6 +113,24 @@ class PetController{
         }
 
         return response.status(200).json(pets) 
+    }
+
+    async alterPetsData(request: Request, response: Response){
+        const {id, name} = request.body
+
+        const petRepository = new PetRepository()
+
+        const alteredPet = await petRepository.alterPetData(id, name)
+
+        if(!alteredPet){
+            return response.status(500).json({
+                message: "Pet não encontrado"
+            })
+        }
+
+        return response.status(200).json({
+            message: "Nome Alterado"
+        })
     }
 }
 
