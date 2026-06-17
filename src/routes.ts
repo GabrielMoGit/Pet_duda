@@ -45,7 +45,7 @@ router.delete('/deleteService', servicePackageController.cancelPackage)
 
 
 //test route
-router.get('/test', tutorController.returnTutorDataFromPhone)
+router.get('/test', petController.listExistentPetsForTutor)
 
 
 
