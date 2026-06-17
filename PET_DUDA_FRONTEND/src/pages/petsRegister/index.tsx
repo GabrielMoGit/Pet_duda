@@ -75,6 +75,24 @@ export function PetRegister(){
         }   
     }
 
+    async function alterPetData(id: string, name: string){
+
+        try{    
+            const response = await api.patch('/alterPetData', {
+                id: id,
+                name: name
+            })
+
+            setMessage(response.data.message)
+
+        }catch(error: any){
+            if(error.response){
+                setMessage(error.response.data.error)
+            }
+
+        }
+    }
+
     return(
         <div>
             <h1>Cadastrar Pet</h1>
@@ -136,13 +154,22 @@ export function PetRegister(){
                         <HiddenInputStyled
                             name={pet.id}
                             value={pet.name}
-                            onChange={(e) => (e.target.value)}
+                            onChange={(e) => {
+                            setPetList(oldList =>
+                                oldList.map(item =>
+                                    item.id === pet.id
+                                        ? { ...item, name: e.target.value }
+                                        : item
+                                )
+                            )
+                        }}
                         />
                         <div style={{width: '50%',display: 'flex', gap: '4px'}}>
                             <ActionButton
                                 name={'alterPetNameButton'}
+                                type={'button'}
                                 onClick={(e) => {
-                                    
+                                    alterPetData(pet.id, pet.name)
                                 }}
                                 style={{backgroundColor: '#007bff'}}
                             >
