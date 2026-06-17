@@ -1,5 +1,7 @@
 import { GenericStyledInput } from '../../components/inputs/genericInput'
 import { RegisterButton } from '../../components/buttons/registerButton'
+import { HiddenInputStyled } from '../../components/inputs/hiddenInput/style'
+import { ActionButton } from '../../components/buttons/ActionButton'
 import { useState } from 'react'
 import { api } from '../../services/api'
 
@@ -10,6 +12,7 @@ export function PetRegister(){
     const [message, setMessage] = useState('')
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
+    const [selectedPetId, setSelectedPetId] = useState("")
 
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
@@ -96,6 +99,33 @@ export function PetRegister(){
                     </RegisterButton>
                 </div>
                 <br/>
+                <div style={{display: 'flex', gap: '5px'}}>
+                    <HiddenInputStyled
+                        name={"fourthDate"}
+                        value={""}
+                        onChange={(e) => (e.target.value)}
+                    />
+                    <div style={{width: '50%',display: 'flex', gap: '4px'}}>
+                        <ActionButton
+                            name={'alterPetNameButton'}
+                            onClick={(e) => {
+                            }}
+                            style={{backgroundColor: '#007bff'}}
+                        >
+                            Alterar
+                        </ActionButton>
+                        <ActionButton
+                            name={'RemovePetButton'}
+                            onClick={(e) => {
+                            }}
+                            style={{backgroundColor: 'red'}}
+                        >
+                            Cancelar
+                        </ActionButton>
+                    </div>
+                    
+                </div>
+                
             </form>
         </div>
     )
