@@ -42,6 +42,7 @@ class AddressRepository{
         address.number = number
 
         const alteredAddress = await this.repository.save(address)
+        
         return alteredAddress
     }
 }

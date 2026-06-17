@@ -3,6 +3,7 @@ import { TutorRepository } from "../repositories/tutorRepository";
 import { AddressRepository } from "../repositories/addressRepository";
 import { AddressController } from "./addressController";
 import { StreetController } from "./streetController";
+import { NeighborhoodController } from "./neighberhoodController";
 
 class TutorController{
     async create(request: Request, response: Response){
@@ -56,6 +57,7 @@ class TutorController{
         const tutorRepository = new TutorRepository()
         const addressController = new AddressController()
         const streetController = new StreetController()
+        const neighberhoodController = new NeighborhoodController()
 
         const tutorFound = await tutorRepository.findByPhone(oldPhone)
 
@@ -71,13 +73,16 @@ class TutorController{
         const address = await addressController.listAddresses(tutorId)
 
         let streetFound: any
+        let neighborhoodFound: any
 
         for(const item of address){
             streetFound = await streetController.checkIfStreetExistIfDontCreate(item.streetName)
+            neighborhoodFound = await neighberhoodController.checkIfNeighbothoodExistIfDontCreate(item.neighborhoodName)
         }
 
+        console.log(address)
         console.log(streetFound)
-        
+        console.log(neighborhoodFound)
 
         
 

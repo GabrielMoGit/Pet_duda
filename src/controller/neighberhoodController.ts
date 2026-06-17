@@ -49,6 +49,26 @@ class NeighborhoodController{
 
         return neighborhoods
     }
+
+    async localCreate(name: string){
+        const neighborhoodRepository = new NeighborhoodRepository()
+
+        const createdNeighbothood = await neighborhoodRepository.createAndSave(name)
+
+        return createdNeighbothood
+    }
+
+    async checkIfNeighbothoodExistIfDontCreate(name: string){
+        const neighborhoodRepository = new NeighborhoodRepository()
+
+        const neighborhoodFound = await neighborhoodRepository.checkIfNeighborhoodAlreadyExist(name)
+
+        if(!neighborhoodFound){
+            const createdNeighbothood = this.localCreate(name)
+        }
+
+        return neighborhoodFound
+    }
 }
 
 export { NeighborhoodController }

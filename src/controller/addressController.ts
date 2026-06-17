@@ -63,10 +63,23 @@ class AddressController{
         const neighborhoods = await neighberhoodController.filterNeighborhoodFromId(neighborhoodId)
 
         return addresses.map((addr, index) => ({
+            addressId: addr.id,
             streetName: streets[index]?.name,
             neighborhoodName: neighborhoods[index]?.name,
             number: addr.number
         }))
+    }
+
+    async alterAddressData(id: string, neighborhood_id: string, street_id: string, number: string){
+        const addressRepository = new AddressRepository()
+
+        const alteredAddress = await addressRepository.alterAddressData(id, neighborhood_id, street_id, number)
+
+        if(!alteredAddress){
+            throw new Error("Não foi possível alterar as informações do endereço")
+        }
+
+        return alteredAddress
     }
 
 }
