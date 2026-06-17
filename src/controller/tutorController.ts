@@ -32,6 +32,7 @@ class TutorController{
 
         const tutorFound = await tutorRepository.findByPhone(phone)
 
+
         if(!tutorFound){
             return response.status(404).json({
                 message: "Tutor não encontrado"
@@ -49,12 +50,12 @@ class TutorController{
     }
 
     async alterTutorData(request: Request, response: Response){
-        const {name, phone, street, neighborhood, number} = request.body
+        const {name, newPhone, oldPhone, street, neighborhood, number} = request.body
 
         const tutorRepository = new TutorRepository()
         const addressController = new AddressController()
 
-        const tutorFound = await tutorRepository.findByPhone(phone)
+        const tutorFound = await tutorRepository.findByPhone(oldPhone)
 
         if(!tutorFound){
             return response.status(404).json({
@@ -62,9 +63,14 @@ class TutorController{
             })
         }
 
-        const alteredTutor = await tutorRepository.alterTutorData(tutorFound.id, phone, name)
+        const tutorId: string [] = []
+        tutorId.push(tutorFound.id)
 
-        
+        const address = await addressController.listAddresses(tutorId)
+
+        console.log(address)
+
+        //const alteredTutor = await tutorRepository.alterTutorData(tutorFound.id, name, newPhone)
 
     }
 

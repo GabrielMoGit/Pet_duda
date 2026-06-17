@@ -14,6 +14,9 @@ export function TutorRegister(){
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
 
+    //phone number to save de original phone, in case to change, to found in backend
+    const [oldPhone, setOldPhone] = useState('')
+
     const [submitButtonName, setSubmitButtonName] = useState('Cadastrar')
 
     const [userHasRegister, setUserHasRegister] = useState<any>()
@@ -38,7 +41,6 @@ export function TutorRegister(){
     //Initial state to know wich item is been selected, "-1" = none selected
     const [ selectedIndex, setSelectedIndex] = useState(-1)
 
-    const [houseNumber, setHouseNumber] = useState("")
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
        
@@ -123,7 +125,7 @@ export function TutorRegister(){
             })
 
             if(response){
-                
+                setOldPhone(phone)
                 setUserHasRegister(true)
                 setSubmitType('update')
                 setSubmitButtonName("Alterar")
@@ -236,14 +238,20 @@ export function TutorRegister(){
             }
             if(submitType === "update"){
 
-                await api.patch('/AlterTutorData', {
+                try{
+
+                    await api.patch('/AlterTutorData', {
                     name: name,
-                    phone: cleanPhone,
+                    newPhone: cleanPhone,
+                    oldPhone: oldPhone,
                     street: streetTyped,
                     neighborhood: neighborhoodTyped,
                     number: number
-
                 })
+
+                }catch{
+
+                }
             }
         }
         catch(error: any){
