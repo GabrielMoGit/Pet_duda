@@ -51,10 +51,10 @@ export function PetRegister(){
         <div>
             <h1>Cadastrar Pet</h1>
 
-            <form onSubmit={handleSubmit}>
+            <form autoComplete="off" onSubmit={handleSubmit}>
                 <GenericStyledInput 
                 name="tutorPhone"
-                placeholder="telefone do Tutor" 
+                placeholder="telefone do Tutor"     
                 value = {phone}
                 onChange={(e) =>{
                     const onlyNumbers = e.target.value.replace(/\D/g, '')
@@ -80,7 +80,6 @@ export function PetRegister(){
                 hasSuccess={hasSuccess}
                 />
                 <br />
-                <br />
                 <GenericStyledInput 
                 name="name"
                 placeholder="Nome" 
@@ -96,6 +95,7 @@ export function PetRegister(){
                     type="submit">Cadastrar
                     </RegisterButton>
                 </div>
+                <br/>
             </form>
         </div>
     )
