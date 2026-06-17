@@ -19,6 +19,20 @@ class PetRepository{
         return this.repository.findOneBy({name, id_tutor})
     }
 
+    async alterPetData(id: string, name: string){
+        const petFound = await this.repository.findOneBy({id})
+
+        if(!petFound){
+            throw new Error("Pet não encontrado")
+        }
+
+        petFound.name = name
+
+        const alteredPet = await this.repository.save(petFound)
+
+        return alteredPet
+    }
+
     async returnTutorAndPetNameFromPetId(id: string){
         const pet = await this.repository.findOneBy({id})
 
@@ -38,6 +52,28 @@ class PetRepository{
         
         return pets
     }
+
+    async listExistentPetsForTutor(id_tutor: string){
+        const pets = await this.repository.findBy({id_tutor})
+
+        if(!pets){
+            throw new Error("Pets não encontrados")
+        }
+        return pets
+    }
+
+    async deletePet(id: string){
+        const pet = await this.repository.findOneBy({id})
+
+        if(!pet){
+            throw new Error("Pet não encontrado")
+        }
+
+        await this.repository.delete(pet)
+        
+        return true
+    }
+
 
 }
 

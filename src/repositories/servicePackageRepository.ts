@@ -70,6 +70,7 @@ class ServicePackageRepository {
             pet_id,
             active_package: 1
         })
+
     }
 
     async checkIfPetAlreadyHaveUnicService(pet_id: string){

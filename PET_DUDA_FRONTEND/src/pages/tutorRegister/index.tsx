@@ -1,6 +1,7 @@
 import { GenericStyledInput } from '../../components/inputs/genericInput'
 import { RegisterButton } from '../../components/buttons/registerButton'
 import { SuggestionList } from '../../components/suggestionList'
+import { ActionButton } from '../../components/buttons/ActionButton'
 import { useState, useRef, useEffect } from 'react'
 import { api } from '../../services/api'   
 
@@ -12,6 +13,15 @@ export function TutorRegister(){
     const [message, setMessage] = useState('')
     const [hasError, setHasError] = useState(false)
     const [hasSuccess, setHasSuccess] = useState(false)
+
+    //phone number to save de original phone, in case to change, to found in backend
+    const [oldPhone, setOldPhone] = useState('')
+
+    const [submitButtonName, setSubmitButtonName] = useState('Cadastrar')
+
+    const [userHasRegister, setUserHasRegister] = useState<any>()
+
+    const [submitType, setSubmitType] = useState('register')
 
     //variables for interactive input to search streets
     const [streetTyped, setStreetTyped] = useState("")
@@ -31,7 +41,6 @@ export function TutorRegister(){
     //Initial state to know wich item is been selected, "-1" = none selected
     const [ selectedIndex, setSelectedIndex] = useState(-1)
 
-    const [houseNumber, setHouseNumber] = useState("")
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
        
@@ -80,6 +89,17 @@ export function TutorRegister(){
         }
     }
 
+    const resetPageInfo = () => {
+        setName('')
+        setPhone('')
+        setStreetTyped('')
+        setNeighborhoodTyped('')
+        setNumber('')
+        setUserHasRegister(false)
+        setSubmitButtonName('Cadastrar')
+        setSubmitType('register')
+    }
+
     //function do identify where the click mouse happens
     useEffect(() => {
         const handleClickOutside = (e: TouchEvent) => {
@@ -95,6 +115,31 @@ export function TutorRegister(){
             document.removeEventListener('touchend', handleClickOutside)
         }
     })
+
+    async function loadTutorData(phone: string){
+        try{
+            const response = await api.get('/loadTutorData',{
+                params:{
+                    phone: phone
+                }
+            })
+
+            if(response){
+                setOldPhone(phone)
+                setUserHasRegister(true)
+                setSubmitType('update')
+                setSubmitButtonName("Alterar")
+                setName(response.data.tutorFound.name)
+                setStreetTyped(response.data.addressFound[0].streetName)
+                setNeighborhoodTyped(response.data.addressFound[0].neighborhoodName)
+                setNumber(response.data.addressFound[0].number)
+            }
+        }catch{
+            
+        }
+        
+
+    }
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) =>{
         const text = e.target.value
@@ -135,8 +180,6 @@ export function TutorRegister(){
                     return
                 }
             }
-            
-                
         }catch{ } 
     }
 
@@ -162,63 +205,124 @@ export function TutorRegister(){
             return
         }
 
-        try{
-
-            const neighborhoodResponse = await api.post('/neighborhood', {
-                name: neighborhoodTyped
-            })
-
-            const streetResponse = await api.post('/street', {
-                name: streetTyped
-            })
-
-            const tutorResponse = await api.post('/tutor',{
-                name,
-                phone: cleanPhone
-            })  
-
-            const addressResponse = await api.post('/address', {
-                tutorPhone: cleanPhone,
-                streetName: streetTyped,
-                neighborhoodName: neighborhoodTyped,
-                number: number
-            })
-
-            
-
+        if(submitType === "register"){
+            try{
+                await api.post('/neighborhood', {
+                    name: neighborhoodTyped
+                })
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criaçao de bairro')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return 
+            }
+            try{
+                await api.post('/street', {
+                    name: streetTyped
+                })
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criação de rua')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return
+            }
+            try{
+                await api.post('/tutor',{
+                    name,
+                    phone: cleanPhone
+                })
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criação de tutor')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return
+            }
+            try{
+                await api.post('/address', {
+                    tutorPhone: cleanPhone,
+                    streetName: streetTyped,
+                    neighborhoodName: neighborhoodTyped,
+                    number: number
+                })
+            }catch{
+                setHasError(true)
+                setMessage('Erro em criação de endereço')
+                setTimeout(() => setHasError(false), 500)
+                setTimeout(() => setMessage(""), 2000)
+                return
+            }
             setHasSuccess(true)
-            setMessage(tutorResponse.data.message)
+            setMessage("Tutor criado")
             setTimeout(() => setHasSuccess(false), 500)
             setName('')
             setPhone('')
             setNeighborhoodTyped('')
             setStreetTyped('')
         }
-        catch(error: any){
-            if(error.response){
-                if(error.response.status === 400){
-                    setMessage(error.response.data.error)
-                    setTimeout(() => {setMessage("")}, 2000)
-                    setHasError(true)
-                    setTimeout(() => setHasError(false), 500)
-                }else{
-                    setMessage('Erro ao cadastrar tutor')
-                    setTimeout(() => {setMessage("")}, 4000)
-                }
-            }   
-            else{
-                setMessage("Erro de conexão com o servidor")
-                setTimeout(() => {setMessage("")}, 4000)
+        if(submitType === "update"){
+            try{
+                const response = await api.patch('/AlterTutorData', {
+                name: name,
+                newPhone: cleanPhone,
+                oldPhone: oldPhone,
+                street: streetTyped,
+                neighborhood: neighborhoodTyped,
+                number: number
+            })
+            setHasSuccess(true)
+            setMessage(response.data.message)   
+            setTimeout(() => setHasSuccess(false), 500)
+            setTimeout(() => setMessage(""), 2000)
+
+            }catch(error: any){
+            setHasError(true)
+            setMessage(error.response?.data?.message)   
+            setTimeout(() => setHasError(false), 500)
+            setTimeout(() => setMessage(""), 2000)
             }
         }
     }
 
     return (
         <div>
-            <h1>Cadastrar Tutor</h1>
+            <h1>Gerenciar dados do Tutor</h1>
 
             <form autoComplete="off" onSubmit={handleSubmit}>
+                <GenericStyledInput 
+                    name="phone"
+                    placeholder="telefone" 
+                    value = {phone}
+                    onChange={(e) =>{
+                        const onlyNumbers = e.target.value.replace(/\D/g, '')
+                        const limitedNumbers = onlyNumbers.slice(0, 11)
 
+                        let formatted = limitedNumbers
+
+                        if(limitedNumbers.length > 0){
+                            formatted = '(' + limitedNumbers
+                        }
+
+                        if(limitedNumbers.length > 2){
+                            formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2)
+                        }
+
+                        if(limitedNumbers.length > 7){
+                            formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
+                        }
+
+                        setPhone(formatted)
+                        if(onlyNumbers.length === 11){
+                            loadTutorData(onlyNumbers)
+                        }
+                    }}
+                    
+                    hasError={hasError}
+                    hasSuccess={hasSuccess}
+                />
+                <br />
                 <GenericStyledInput 
                 name="name"
                 placeholder="Nome" 
@@ -228,34 +332,7 @@ export function TutorRegister(){
                 hasSuccess={hasSuccess}
                 />
                 <br/>
-                <GenericStyledInput 
-                name="phone"
-                placeholder="telefone" 
-                value = {phone}
-                onChange={(e) =>{
-                    const onlyNumbers = e.target.value.replace(/\D/g, '')
-                    const limitedNumbers = onlyNumbers.slice(0, 11)
-
-                    let formatted = limitedNumbers
-
-                    if(limitedNumbers.length > 0){
-                        formatted = '(' + limitedNumbers
-                    }
-
-                    if(limitedNumbers.length > 2){
-                        formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2)
-                    }
-
-                    if(limitedNumbers.length > 7){
-                        formatted = '(' + limitedNumbers.slice(0,2) + ')' + limitedNumbers.slice(2,7) + '-' + limitedNumbers.slice(7)
-                    }
-                    setPhone(formatted)
-                }}
                 
-                hasError={hasError}
-                hasSuccess={hasSuccess}
-                />
-                <br />
                 <div 
                     data-type="street"
                     style={{ position: "relative", flex: 1, width: '100%' }} 
@@ -326,9 +403,24 @@ export function TutorRegister(){
                     />
                 </div>
                 <br/>
-                <RegisterButton 
-                    type="submit">Cadastrar
-                </RegisterButton>
+                <div style={{display: 'flex', gap: '10px'}}>
+                    <RegisterButton 
+                        type="submit"
+                    >
+                        {submitButtonName}
+                    </RegisterButton>
+                    <ActionButton
+                        name={'cancelButton'}
+                        type={'button'}
+                        onClick={(e) =>{
+                            resetPageInfo()
+                        }}
+                        style={{display: userHasRegister ? 'block' : 'none', backgroundColor: 'red'}}
+                    >
+                        Cancelar
+                    </ActionButton>
+                </div>
+                <p style={{ color: 'red' }}>{message}</p>
             </form>
         </div>
     )

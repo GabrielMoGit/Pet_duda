@@ -16,7 +16,8 @@ class AddressRepository{
     }
 
     async checkIfAddressAlreadyExist(tutor_id: string, neighborhood_id: string, street_id: string, number: string){
-        return this.repository.findOneBy({tutor_id, neighborhood_id, street_id, number})
+        const address = this.repository.findOneBy({tutor_id, neighborhood_id, street_id, number})
+        return address
     }
 
     async ListAllAddressesFromTutorId(tutor_id: string){
@@ -26,12 +27,23 @@ class AddressRepository{
             throw new Error('endereço não encontrado')
         }
 
-        return{
-            tutor_id: addresses.tutor_id,
-            neighborhood_id: addresses.neighborhood_id,
-            street_id: addresses.street_id,
-            number: addresses.number
+        return addresses
+    }
+
+    async alterAddressData(id: string, neighborhood_id: string, street_id: string, number: string){
+        const address = await this.repository.findOneBy({id})
+
+        if(!address){
+            throw new Error('endereço não encontrado')
         }
+
+        address.neighborhood_id = neighborhood_id
+        address.street_id = street_id
+        address.number = number
+
+        const alteredAddress = await this.repository.save(address)
+        
+        return alteredAddress
     }
 }
 

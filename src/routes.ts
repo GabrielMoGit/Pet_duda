@@ -18,9 +18,14 @@ const servicePackageController = new ServicePackageController()
 const serviceController = new ServiceController()
 
 router.post("/tutor", tutorController.create)
+router.get("/loadTutorData", tutorController.returnTutorDataFromPhone)
+router.patch("/AlterTutorData", tutorController.alterTutorData)
 
 router.post("/pet", petController.create)
 router.get("/listPetsAndRespectiveTutors", petController.listAllPetsAndRespectiveTutors)
+router.get('/listPetsForTutor', petController.listExistentPetsForTutor)
+router.patch("/alterPetData", petController.alterPetsData)
+router.delete("/deletePet", petController.deletePet)
 
 router.post("/street", streetController.create)
 router.get("/listStreets", streetController.listStreets)
@@ -43,7 +48,7 @@ router.delete('/deleteService', servicePackageController.cancelPackage)
 
 
 //test route
-router.patch('/test', servicePackageController.updateServicePackage)
+router.post('/test', petController.create)
 
 
 

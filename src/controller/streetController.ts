@@ -52,6 +52,28 @@ class StreetController{
 
         return streets
     }
-}
+
+    async locelCreate(name: string){
+        const streetReposiroty = new StreetRepository()
+
+        const createdStreet = await streetReposiroty.createAndSave(name)
+
+        return createdStreet
+    }
+
+    async checkIfStreetExistIfDontCreate(name: string){
+        const streetReposiroty = new StreetRepository()
+        
+        const streetFound = await streetReposiroty.checkIfStreetAlreadyExist(name)
+
+        if(!streetFound){
+            const createdStreet = this.locelCreate(name)
+            return createdStreet
+        }
+
+        return streetFound
+    
+    }
+}   
 
 export { StreetController }
