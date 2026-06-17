@@ -21,10 +21,12 @@ export function PetRegister(){
     const [selectedPetId, setSelectedPetId] = useState("")
     const [petList, setPetList] = useState<Pets[]>([])
 
+    const cleanPhone = phone.replace(/\D/g, '')
+
     async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>){
         e.preventDefault()
         
-        const cleanPhone = phone.replace(/\D/g, '')
+        
         try{
             const response = await api.post('/pet',{
                 name,
@@ -84,12 +86,33 @@ export function PetRegister(){
             })
 
             setMessage(response.data.message)
+            setTimeout(() => setMessage(""), 2000)
 
         }catch(error: any){
             if(error.response){
                 setMessage(error.response.data.error)
             }
 
+        }
+    }
+
+    async function deletePet(id: string){
+
+        try{
+            const response = await api.delete('/deletePet', {  
+                params:{
+                    id: id
+                }
+            })
+
+            setMessage(response.data.message)
+            setTimeout(() => setMessage(""), 2000)
+            loadTutorsPets(cleanPhone)
+
+        }catch(error: any){
+            if(error.response){
+                setMessage(error.response.data.error)
+            }
         }
     }
 
@@ -177,7 +200,9 @@ export function PetRegister(){
                             </ActionButton>
                             <ActionButton
                                 name={'RemovePetButton'}
+                                type={'button'}
                                 onClick={(e) => {
+                                    deletePet(pet.id)
                                 }}
                                 style={{backgroundColor: 'red'}}
                             >
