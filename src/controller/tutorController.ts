@@ -1,116 +1,122 @@
-import { Request, Response} from "express"
+import { Request, Response } from "express";
 import { TutorRepository } from "../repositories/tutorRepository";
 import { AddressRepository } from "../repositories/addressRepository";
 import { AddressController } from "./addressController";
 import { StreetController } from "./streetController";
 import { NeighborhoodController } from "./neighberhoodController";
 
-class TutorController{
-    async create(request: Request, response: Response){
-        const {name, phone} = request.body
-        const tutorRepository = new TutorRepository()
-     
-        const tutorAlreadyExist = await tutorRepository.findByPhone(phone)
+class TutorController {
+  async create(request: Request, response: Response) {
+    const { name, phone } = request.body;
+    const tutorRepository = new TutorRepository();
 
-        if(tutorAlreadyExist){
-            return response.status(400).json({
-                error: "Telefone já cadastrado"
-            })
-        }
+    const tutorAlreadyExist = await tutorRepository.findByPhone(phone);
 
-        tutorRepository.createAndSave(name, phone)
-
-        return response.status(200).json({
-            message: "Tutor cadastrado!"
-        })
-        
+    if (tutorAlreadyExist) {
+      return response.status(400).json({
+        error: "Telefone já cadastrado",
+      });
     }
 
-    async returnTutorDataFromPhone(request: Request, response: Response){
-        const phone = request.query.phone as string
+    tutorRepository.createAndSave(name, phone);
 
-        const tutorRepository = new TutorRepository()
-        const addressController = new AddressController()
+    return response.status(200).json({
+      message: "Tutor cadastrado!",
+    });
+  }
 
-        const tutorFound = await tutorRepository.findByPhone(phone)
+  async returnTutorDataFromPhone(request: Request, response: Response) {
+    const phone = request.query.phone as string;
 
+    const tutorRepository = new TutorRepository();
+    const addressController = new AddressController();
 
-        if(!tutorFound){
-            return response.status(404).json({
-                message: "Tutor não encontrado"
-            })
-        }
+    const tutorFound = await tutorRepository.findByPhone(phone);
 
-        const tutorId: string [] = []
-
-        tutorId.push(tutorFound.id)
-
-        const addressFound = await addressController.listAddresses(tutorId)
-
-        return response.status(200).json({addressFound, tutorFound})
-
+    if (!tutorFound) {
+      return response.status(404).json({
+        message: "Tutor não encontrado",
+      });
     }
 
-    async alterTutorData(request: Request, response: Response){
-        const {name, newPhone, oldPhone, street, neighborhood, number} = request.body
+    const tutorId: string[] = [];
 
-        const tutorRepository = new TutorRepository()
-        const addressController = new AddressController()
-        const streetController = new StreetController()
-        const neighberhoodController = new NeighborhoodController()
-        
-        try{
-            const tutorFound = await tutorRepository.findByPhone(oldPhone)
+    tutorId.push(tutorFound.id);
 
-            if(!tutorFound){
-                return response.status(404).json({
-                    message: "Tutor não existe"
-                })
-            }
+    const addressFound = await addressController.listAddresses(tutorId);
 
-            await tutorRepository.alterTutorData(tutorFound.id, name, newPhone)
+    return response.status(200).json({ addressFound, tutorFound });
+  }
 
-            const tutorId: string [] = []
-            tutorId.push(tutorFound.id)
+  async alterTutorData(request: Request, response: Response) {
+    const { name, newPhone, oldPhone, street, neighborhood, number } =
+      request.body;
 
-            const address = await addressController.listAddresses(tutorId)
+    const tutorRepository = new TutorRepository();
+    const addressController = new AddressController();
+    const streetController = new StreetController();
+    const neighberhoodController = new NeighborhoodController();
 
-            const streetFound = await streetController.checkIfStreetExistIfDontCreate(street)
-            const neighborhoodFound = await neighberhoodController.checkIfNeighbothoodExistIfDontCreate(neighborhood)
+    try {
+      const tutorFound = await tutorRepository.findByPhone(oldPhone);
 
-            for(const item of address){
-                addressController.alterAddressData(item.addressId, neighborhoodFound.id, streetFound.id, number)
-            }
+      if (!tutorFound) {
+        return response.status(404).json({
+          message: "Tutor não existe",
+        });
+      }
 
-            return response.status(200).json({
-                message: "Dados alterados"
-            })
-        }catch(error){
-            return response.status(500).json({
-                message: "Não foi possível alterar os dados" + error
-            })
-        }
+      await tutorRepository.alterTutorData(tutorFound.id, name, newPhone);
+
+      const tutorId: string[] = [];
+      tutorId.push(tutorFound.id);
+
+      const address = await addressController.listAddresses(tutorId);
+
+      const streetFound =
+        await streetController.checkIfStreetExistIfDontCreate(street);
+      const neighborhoodFound =
+        await neighberhoodController.checkIfNeighbothoodExistIfDontCreate(
+          neighborhood,
+        );
+
+      for (const item of address) {
+        addressController.alterAddressData(
+          item.addressId,
+          neighborhoodFound.id,
+          streetFound.id,
+          number,
+        );
+      }
+
+      return response.status(200).json({
+        message: "Dados alterados",
+      });
+    } catch (error) {
+      return response.status(500).json({
+        message: "Não foi possível alterar os dados" + error,
+      });
+    }
+  }
+
+  async filterTutorForId(id: string[]) {
+    const tutorRepository = new TutorRepository();
+
+    type Tutors = {
+      tutorName: string;
+      tutorPhone: string;
+    };
+
+    let tutors: Tutors[] = [];
+
+    for (const item of id) {
+      const response = await tutorRepository.findById(item);
+
+      tutors.push(response.tutor);
     }
 
-    async filterTutorForId(id: string[]){
-
-        const tutorRepository = new TutorRepository()
-
-        type Tutors = {
-            tutorName: string;
-            tutorPhone: string
-        }
-
-        let tutors: Tutors[] = []
-
-        for(const item of id){
-            const response = await tutorRepository.findById(item)
-
-            tutors.push(response.tutor)
-        }
-
-        return tutors
-    }
+    return tutors;
+  }
 }
 
-export {TutorController};
+export { TutorController };
