@@ -2,149 +2,206 @@ import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServicePackageRepository } from "../repositories/servicePackageRepository";
 
-class ServiceController{
+class ServiceController {
+  private createBiweeklyDates(initialDate: Date): Date[] {
+    const dates: Date[] = [];
 
-    private createBiweeklyDates(initialDate: Date): Date[]{
-        const dates: Date[] = []
+    dates.push(new Date(initialDate));
 
-        dates.push(new Date(initialDate))
+    const secondDate = new Date(initialDate);
+    secondDate.setDate(initialDate.getDate() + 14);
 
-        const secondDate = new Date(initialDate)
-        secondDate.setDate(initialDate.getDate() + 14)
-        
-        dates.push(secondDate)
+    dates.push(secondDate);
 
-        return dates
+    return dates;
+  }
+
+  private createWeeklyDates(initialDate: Date): Date[] {
+    const dates: Date[] = [];
+
+    dates.push(new Date(initialDate));
+
+    for (let i = 0; i < 3; i++) {
+      const newDate = new Date(initialDate);
+      newDate.setDate(initialDate.getDate() + (i + 1) * 7);
+      dates.push(newDate);
     }
 
-    private createWeeklyDates(initialDate: Date): Date[]{
-        const dates: Date [] = []
+    return dates;
+  }
 
-        dates.push(new Date(initialDate))
+  async listAllServicesForPackageId(package_id: number) {
+    const serviceRepository = new ServiceRepository();
 
-        for(let i = 0; i < 3; i ++){
-            const newDate = new Date(initialDate)
-            newDate.setDate(initialDate.getDate() + ((i + 1) * 7))
-            dates.push(newDate)
-        }
+    const response = await serviceRepository.listByservicePackageId(package_id);
 
-        return dates
+    return response;
+  }
+
+  async createIndependentService(request: Request, response: Response) {
+    const { service_date, value, service_description } = request.body;
+
+    try {
+      const createdService = await this.create(
+        0,
+        service_date,
+        value,
+        service_description,
+      );
+
+      return response.status(200).json(createdService);
+    } catch (error) {
+      return response.status(500).json({
+        error: "Erro ao criar serviço",
+      });
     }
-    
-    async listAllServicesForPackageId(package_id: number){
+  }
 
-        const serviceRepository = new ServiceRepository()
+  async create(
+    service_package_id: number,
+    service_date: Date,
+    value: string,
+    service_description: string,
+  ) {
+    const serviceRepository = new ServiceRepository();
+    const servicePackageRepository = new ServicePackageRepository();
 
-        
-        const response = await serviceRepository.listByservicePackageId(package_id)
+    let dates: Date[] = [];
 
-        return response
+    try {
+      const results = [];
 
+      const response =
+        await servicePackageRepository.findOneById(service_package_id);
+
+      if (response?.package_type === "Quinzenal") {
+        dates = this.createBiweeklyDates(service_date);
+      }
+
+      if (response?.package_type === "Semanal") {
+        dates = this.createWeeklyDates(service_date);
+      }
+      if (response?.package_type === "Único") {
+        dates.push(new Date(service_date));
+      }
+
+      for (let i = 0; i < dates.length; i++) {
+        const services = await serviceRepository.createAndSave(
+          service_package_id,
+          dates[i],
+          0,
+        );
+        results.push(services);
+      }
+
+      return results;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async checkIfAllPackagesServicesIsDone(service_package_id: number) {
+    const serviceRepository = new ServiceRepository();
+
+    const services =
+      await serviceRepository.listByservicePackageId(service_package_id);
+
+    return services;
+  }
+
+  async returnDateForPackageId(servicePackageId: number) {
+    const serviceRepository = new ServiceRepository();
+
+    const date =
+      await serviceRepository.returnDatesFromPackage(servicePackageId);
+
+    return date;
+  }
+
+  async alterServiceDate(service_id: number, service_date: Date) {
+    const serviceRepository = new ServiceRepository();
+
+    const service = await serviceRepository.alterServiceDate(
+      service_id,
+      service_date,
+    );
+
+    return service;
+  }
+
+  async removeDate(id: number) {
+    const serviceRepository = new ServiceRepository();
+
+    try {
+      const date = await serviceRepository.removeDate(id);
+
+      return date;
+    } catch (error) {
+      return {
+        message: "Não foi possível remover" + error,
+      };
+    }
+  }
+
+  async turnDoneThePassedServices() {
+    const serviceRepository = new ServiceRepository();
+
+    await serviceRepository.turnDonethepPassedServices();
+  }
+
+  async returnServicesForDate(request: Request, response: Response) {
+    const { first_date, last_date } = request.body;
+
+    const serviceRepository = new ServiceRepository();
+
+    const ordenadeServices = await serviceRepository.listAllServices();
+
+    type Services = {
+      id: number;
+      service_package_id: number;
+      service_date: Date;
+      service_done: number;
+    };
+
+    ordenadeServices.sort(
+      (a, b) =>
+        new Date(a.service_date).getTime() - new Date(b.service_date).getTime(),
+    );
+
+    if (!first_date && !last_date) {
+      return response.json({ ordenadeServices });
     }
 
-    async createIndependentService(request: Request, response: Response){
-        const {service_date, value, service_description} = request.body
+    const initialDate = new Date(first_date);
+    const limitDate = new Date(last_date);
 
-        try{
+    let intervelDate: Services[] = [];
 
-            const createdService = await this.create(0, service_date, value, service_description)
-
-            return response.status(200).json(createdService) 
-
-        }catch(error){
-            return response.status(500).json({
-                error: "Erro ao criar serviço"
-            })
-        }
+    if (first_date && last_date) {
+      intervelDate = ordenadeServices.filter(
+        (item) =>
+          new Date(item.service_date).getTime() >= initialDate.getTime() &&
+          new Date(item.service_date).getTime() <= limitDate.getTime(),
+      );
+      return response.json({ intervelDate });
     }
 
-    async create(service_package_id: number, service_date: Date, value: string, service_description: string){
-
-        const serviceRepository = new ServiceRepository()
-        const servicePackageRepository = new ServicePackageRepository()
-        
-        let dates: Date [] = []
-
-        try{
-
-            const results = []
-            
-            const response = await servicePackageRepository.findOneById(service_package_id)
-
-            if(response?.package_type === "Quinzenal"){
-                dates = this.createBiweeklyDates(service_date)
-            }
-
-            if(response?.package_type === "Semanal"){
-                dates = this.createWeeklyDates(service_date)
-            }
-            if(response?.package_type === "Único"){
-                dates.push(new Date(service_date))
-            }
-            
-            
-            for(let i = 0; i < dates.length; i ++){
-                const services = await serviceRepository.createAndSave(service_package_id, dates[i], 0)
-                results.push(services)
-            }
-            
-            return results
-        }
-
-        catch(error){
-            console.error(error)
-            throw error
-        }
+    if (first_date) {
+      intervelDate = ordenadeServices.filter(
+        (item) =>
+          new Date(item.service_date).getTime() >= initialDate.getTime(),
+      );
+      return response.json({ intervelDate });
     }
 
-    async checkIfAllPackagesServicesIsDone(service_package_id: number){
-
-        const serviceRepository = new ServiceRepository()
-
-        const services = await serviceRepository.listByservicePackageId(service_package_id)
-
-        return services
-
+    if (last_date) {
+      intervelDate = ordenadeServices.filter(
+        (item) => new Date(item.service_date).getTime() <= limitDate.getTime(),
+      );
+      return response.json({ intervelDate });
     }
-
-    async returnDateForPackageId(servicePackageId: number){
-        const serviceRepository = new ServiceRepository()
-
-        const date = await serviceRepository.returnDatesFromPackage(servicePackageId)
-
-        return date
-    }   
-
-    async alterServiceDate(service_id: number, service_date: Date){
-        const serviceRepository = new ServiceRepository()
-
-        const service = await serviceRepository.alterServiceDate(service_id, service_date)
-
-        return service
-
-    }
-
-    async removeDate(id: number){
-        const serviceRepository = new ServiceRepository()
-
-        try{
-            const date = await serviceRepository.removeDate(id)
-
-            return date
-            
-        }catch(error){
-            return {
-                message: ('Não foi possível remover' + error)
-            }
-        }
-    }
-
-    async turnDoneThePassedServices(){
-
-        const serviceRepository = new ServiceRepository()
-
-        await serviceRepository.turnDonethepPassedServices()
-    }
+  }
 }
 
-export { ServiceController }
+export { ServiceController };

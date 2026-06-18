@@ -42,6 +42,7 @@ router.post(
   "/createService",
   serviceController.createIndependentService.bind(serviceController),
 );
+router.get("/listServices", serviceController.returnServicesForDate);
 
 router.post(
   "/servicePackage",
