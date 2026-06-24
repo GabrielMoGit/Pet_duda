@@ -5,6 +5,7 @@ import { api } from "../../services/api";
 type Service = {
   id: number;
   pet_name: string;
+  pkg_description?: string;
   service_date: string;
   service_done: number;
   service_package_id: number;
@@ -12,6 +13,32 @@ type Service = {
   tutor_name: string;
   tutor_phone: string;
 };
+
+function FormatDateForCard(date: string) {
+  const transformeToDateType = new Date(date);
+
+  const formattedDate = transformeToDateType.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  const formattedHour = transformeToDateType.toLocaleString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const finalFormat = formattedDate + " • " + formattedHour;
+
+  return String(finalFormat);
+}
+
+function FormatPhoneForCard(phone: string) {
+  const formattedPhone =
+    "(" + phone.slice(0, 2) + ")" + phone.slice(2, 7) + "-" + phone.slice(7);
+
+  return formattedPhone;
+}
 
 export function ServiceReport() {
   const [loading, setLoading] = useState(true);
@@ -31,7 +58,6 @@ export function ServiceReport() {
           },
         });
         setServices(data.intervalDate ?? []);
-        console.log(services);
       } catch (err) {
         console.error("Erro ao carregar pacotes", err);
       } finally {
@@ -53,11 +79,12 @@ export function ServiceReport() {
         {services.map((services) => (
           <AppointmentCard
             id={services.service_package_id}
-            date="18 Jun 2026 • 14:30"
+            date={FormatDateForCard(services.service_date)}
             service_type={services.service_type}
+            pkg_description={services.pkg_description}
             pet={services.pet_name}
             tutor={services.tutor_name}
-            phone={services.tutor_phone}
+            phone={FormatPhoneForCard(services.tutor_phone)}
           />
         ))}
       </div>

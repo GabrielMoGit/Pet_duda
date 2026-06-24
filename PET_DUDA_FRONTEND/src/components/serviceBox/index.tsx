@@ -9,6 +9,7 @@ import {
   Tutor,
   Phone,
   Icon,
+  Description,
 } from "./style";
 
 interface AppointmentCardProps {
@@ -18,6 +19,7 @@ interface AppointmentCardProps {
   pet: string;
   tutor: string;
   phone: string;
+  pkg_description?: string;
 }
 
 export function AppointmentCard({
@@ -27,6 +29,7 @@ export function AppointmentCard({
   pet,
   tutor,
   phone,
+  pkg_description,
 }: AppointmentCardProps) {
   return (
     <div style={{ marginBottom: "5px" }}>
@@ -37,6 +40,10 @@ export function AppointmentCard({
         </Header>
 
         <Badge>{service_type}</Badge>
+
+        <div style={{ display: pkg_description !== "" ? "block" : "none" }}>
+          <Description>{pkg_description}</Description>
+        </div>
 
         <Footer>
           <PetInfo>

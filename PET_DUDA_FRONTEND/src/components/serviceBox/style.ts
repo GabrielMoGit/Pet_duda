@@ -41,6 +41,21 @@ export const Badge = styled.div`
   color: #1d4ed8;
 `;
 
+export const Description = styled.div`
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: #dbfee4;
+  color: #1dd852;
+`;
+
 export const Footer = styled.div`
   display: flex;
   justify-content: space-between;
