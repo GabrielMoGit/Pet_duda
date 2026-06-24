@@ -1,6 +1,13 @@
 import { Request, Response } from "express";
 import { ServiceRepository } from "../repositories/serviceRespository";
 import { ServicePackageRepository } from "../repositories/servicePackageRepository";
+import { PetRepository } from "../repositories/petRepository";
+import { TutorRepository } from "../repositories/tutorRepository";
+
+const tutorRepository = new TutorRepository();
+const serviceRepository = new ServiceRepository();
+const servicePackageRepository = new ServicePackageRepository();
+const petRepository = new PetRepository();
 
 class ServiceController {
   private createBiweeklyDates(initialDate: Date): Date[] {
@@ -31,8 +38,6 @@ class ServiceController {
   }
 
   async listAllServicesForPackageId(package_id: number) {
-    const serviceRepository = new ServiceRepository();
-
     const response = await serviceRepository.listByservicePackageId(package_id);
 
     return response;
@@ -63,9 +68,6 @@ class ServiceController {
     value: string,
     service_description: string,
   ) {
-    const serviceRepository = new ServiceRepository();
-    const servicePackageRepository = new ServicePackageRepository();
-
     let dates: Date[] = [];
 
     try {
@@ -102,8 +104,6 @@ class ServiceController {
   }
 
   async checkIfAllPackagesServicesIsDone(service_package_id: number) {
-    const serviceRepository = new ServiceRepository();
-
     const services =
       await serviceRepository.listByservicePackageId(service_package_id);
 
@@ -111,8 +111,6 @@ class ServiceController {
   }
 
   async returnDateForPackageId(servicePackageId: number) {
-    const serviceRepository = new ServiceRepository();
-
     const date =
       await serviceRepository.returnDatesFromPackage(servicePackageId);
 
@@ -120,8 +118,6 @@ class ServiceController {
   }
 
   async alterServiceDate(service_id: number, service_date: Date) {
-    const serviceRepository = new ServiceRepository();
-
     const service = await serviceRepository.alterServiceDate(
       service_id,
       service_date,
@@ -131,8 +127,6 @@ class ServiceController {
   }
 
   async removeDate(id: number) {
-    const serviceRepository = new ServiceRepository();
-
     try {
       const date = await serviceRepository.removeDate(id);
 
@@ -145,61 +139,82 @@ class ServiceController {
   }
 
   async turnDoneThePassedServices() {
-    const serviceRepository = new ServiceRepository();
-
     await serviceRepository.turnDonethepPassedServices();
   }
 
   async returnServicesForDate(request: Request, response: Response) {
-    const { first_date, last_date } = request.body;
+    const { first_date, last_date, service_done } = request.query;
 
-    const serviceRepository = new ServiceRepository();
-
-    const ordenadeServices = await serviceRepository.listAllServices();
+    console.log(first_date, last_date);
 
     type Services = {
       id: number;
       service_package_id: number;
       service_date: Date;
       service_done: number;
+      service_type?: string;
+      tutor_name?: string;
+      tutor_phone?: string;
+      pet_name?: string;
+      pkg_description?: string;
     };
 
-    ordenadeServices.sort(
+    let ordenadeServices = await serviceRepository.listAllServices();
+
+    if (service_done !== "") {
+      ordenadeServices = ordenadeServices.filter(
+        (item) => item.service_done === Number(service_done),
+      );
+    }
+
+    let intervalDate: Services[] = ordenadeServices;
+
+    for (const item of intervalDate) {
+      const pkg = await servicePackageRepository.findOneById(
+        item.service_package_id,
+      );
+      const pet = await petRepository.findById(pkg.pet_id);
+      const tutor = await tutorRepository.findById(pet.id_tutor);
+      item.service_type = pkg.package_type;
+      item.pet_name = pet.name;
+      item.tutor_name = tutor.tutor.tutorName;
+      item.tutor_phone = tutor.tutor.tutorPhone;
+      item.pkg_description = pkg.service_description;
+    }
+
+    intervalDate.sort(
       (a, b) =>
         new Date(a.service_date).getTime() - new Date(b.service_date).getTime(),
     );
 
     if (!first_date && !last_date) {
-      return response.json({ ordenadeServices });
+      return response.json({ intervalDate });
     }
-
-    const initialDate = new Date(first_date);
-    const limitDate = new Date(last_date);
-
-    let intervelDate: Services[] = [];
+    const initialDate = new Date(String(first_date));
+    const limitDate = new Date(String(last_date));
 
     if (first_date && last_date) {
-      intervelDate = ordenadeServices.filter(
+      intervalDate = ordenadeServices.filter(
         (item) =>
           new Date(item.service_date).getTime() >= initialDate.getTime() &&
           new Date(item.service_date).getTime() <= limitDate.getTime(),
       );
-      return response.json({ intervelDate });
+      return response.json({ intervalDate });
     }
 
     if (first_date) {
-      intervelDate = ordenadeServices.filter(
+      intervalDate = ordenadeServices.filter(
         (item) =>
           new Date(item.service_date).getTime() >= initialDate.getTime(),
       );
-      return response.json({ intervelDate });
+      return response.json({ intervalDate });
     }
 
     if (last_date) {
-      intervelDate = ordenadeServices.filter(
+      intervalDate = ordenadeServices.filter(
         (item) => new Date(item.service_date).getTime() <= limitDate.getTime(),
       );
-      return response.json({ intervelDate });
+      return response.json({ intervalDate });
     }
   }
 }
