@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../../services/api";
-import { StyledBox } from "../../components/packageBox";
-import { PackageCard } from "../../components/layout/packageCard";
+import { PackageCard } from "../../components/packageCard";
 
 type Service = {
   service_id: number;
