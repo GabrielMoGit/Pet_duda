@@ -166,6 +166,7 @@ class ServicePackageController {
       package_paid: number;
       services: Service[];
       value: string;
+      reference_date: Date;
     };
 
     let finalPackages: CompletePackage[] = [];
@@ -228,6 +229,7 @@ class ServicePackageController {
       const package_done = packageRepositoryResponse[i].package_done;
       const package_paid = packageRepositoryResponse[i].paid;
       const value = packageRepositoryResponse[i].value;
+      const reference_date = packageRepositoryResponse[i].reference_date;
 
       finalPackages.push({
         package_id: packageId,
@@ -245,6 +247,7 @@ class ServicePackageController {
         package_paid: package_paid,
         services: services,
         value: value,
+        reference_date: reference_date,
       });
 
       services = [];

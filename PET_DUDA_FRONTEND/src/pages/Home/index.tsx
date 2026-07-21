@@ -24,6 +24,7 @@ type ServicePackage = {
   package_paid: number;
   services: Service[];
   value: string;
+  reference_date: Date;
 };
 
 function FormatPhoneForCard(phone: string) {
@@ -46,6 +47,7 @@ export function Home() {
           },
         });
         setServicePackages(data.finalPackages ?? []);
+        console.log(servicePackages);
       } catch (err) {
         console.error("Erro ao carregar pacotes", err);
       } finally {
@@ -82,6 +84,7 @@ export function Home() {
             paid={pkg.package_paid}
             services={pkg.services}
             value={pkg.value}
+            reference_date={pkg.reference_date}
           />
         ))}
       </div>

@@ -4,6 +4,10 @@ interface StatusBadgeProps {
   $status: string;
 }
 
+interface CopyMessageButtonProps {
+  $visible?: boolean;
+}
+
 export const Card = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -49,6 +53,34 @@ export const Badge = styled.div<StatusBadgeProps>`
     $status === "success" ? "#DCFCE7" : "#FEF3C7"};
 
   color: ${({ $status }) => ($status === "success" ? "#15803D" : "#D97706")};
+`;
+
+export const CopyMessageButton = styled.button<CopyMessageButtonProps>`
+  display: ${({ $visible = true }) => ($visible ? "inline-flex" : "none")};
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: #dcfce7;
+  color: #15803d;
+
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
 `;
 
 export const InfoSection = styled.div`

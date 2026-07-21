@@ -12,6 +12,7 @@ import {
   ServiceInfo,
   Footer,
   Price,
+  CopyMessageButton,
 } from "./styles";
 
 interface Service {
@@ -32,6 +33,7 @@ interface PackageCardProps {
   done: number;
   value: string;
   paid: number;
+  reference_date: Date;
 }
 
 const serviceStatus = "";
@@ -52,7 +54,27 @@ function FormatDateForCard(date: string) {
 
   const finalFormat = formattedDate + " - " + formattedHour;
 
-  return String(finalFormat);
+  return finalFormat;
+}
+
+function textToSend(
+  pet_name: string,
+  services: Service[],
+  next_package_date: string | Date,
+  value: string,
+) {
+  const date = new Date(next_package_date);
+  const hourAndWeekDay = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    weekday: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+  const message = `
+    Vindas ${pet_name} (${hourAndWeekDay})
+  `;
+
+  return message;
 }
 
 export function PackageCard({
@@ -67,6 +89,7 @@ export function PackageCard({
   done,
   value,
   paid,
+  reference_date,
 }: PackageCardProps) {
   return (
     <div>
@@ -75,9 +98,21 @@ export function PackageCard({
         <Header>
           <PackageId>Pacote #{id}</PackageId>
 
-          <Badge $status={done ? "success" : "warning"}>
-            {done ? "finalizado" : "Em andamento"}
-          </Badge>
+          <div style={{ display: "flex", gap: "5px" }}>
+            <CopyMessageButton
+              $visible={done === 1}
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  textToSend("kiara", services, reference_date, "150,00"),
+                )
+              }
+            >
+              Mensagem
+            </CopyMessageButton>
+            <Badge $status={done ? "success" : "warning"}>
+              {done ? "finalizado" : "Em andamento"}
+            </Badge>
+          </div>
         </Header>
 
         <InfoSection>
