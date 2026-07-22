@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../../services/api";
 import {
   Card,
   Header,
@@ -15,6 +16,7 @@ import {
 } from "./style";
 
 interface AppointmentCardProps {
+  package_id: number;
   id: number;
   date: string;
   service_type: string;
@@ -24,7 +26,18 @@ interface AppointmentCardProps {
   pkg_description?: string;
 }
 
+async function alterServiceDoneStatus(service_id: number) {
+  try {
+    await api.patch("/alterServiceDoneStatus", {
+      service_id: service_id,
+    });
+  } catch (err) {
+    console.error("Erro ao alterar status do serviço", err);
+  }
+}
+
 export function AppointmentCard({
+  package_id,
   id,
   date,
   service_type,
@@ -38,7 +51,7 @@ export function AppointmentCard({
     <div style={{ marginBottom: "5px" }}>
       <Card $status={serviceDone ? "success" : "warning"}>
         <Header>
-          <Info>{"pacote: " + id}</Info>
+          <Info>{"pacote: " + package_id}</Info>
           <Info>{date}</Info>
         </Header>
 
@@ -62,7 +75,11 @@ export function AppointmentCard({
         <br />
         <ServiceButton
           $status={serviceDone === true ? "success" : "warning"}
-          onClick={() => setServiceDone(serviceDone === true ? false : true)}
+          onClick={() => {
+            setServiceDone(serviceDone === true ? false : true);
+            alterServiceDoneStatus(id);
+            console.log(id);
+          }}
         >
           {serviceDone === true ? "Finalizado ✓" : "Marcar como concluído"}
         </ServiceButton>

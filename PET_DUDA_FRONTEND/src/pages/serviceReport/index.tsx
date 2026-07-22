@@ -231,8 +231,9 @@ export function ServiceReport() {
       <div>
         {services.map((service) => (
           <AppointmentCard
+            package_id={service.service_package_id}
             key={service.id}
-            id={service.service_package_id}
+            id={service.id}
             date={formatDateForCard(service.service_date)}
             service_type={service.service_type}
             pkg_description={service.pkg_description}
