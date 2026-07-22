@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Header,
@@ -10,6 +11,7 @@ import {
   Phone,
   Icon,
   Description,
+  ServiceButton,
 } from "./style";
 
 interface AppointmentCardProps {
@@ -31,9 +33,10 @@ export function AppointmentCard({
   phone,
   pkg_description,
 }: AppointmentCardProps) {
+  const [serviceDone, setServiceDone] = useState(false);
   return (
     <div style={{ marginBottom: "5px" }}>
-      <Card>
+      <Card $status={serviceDone ? "success" : "warning"}>
         <Header>
           <Info>{"pacote: " + id}</Info>
           <Info>{date}</Info>
@@ -56,6 +59,13 @@ export function AppointmentCard({
             {phone}
           </Phone>
         </Footer>
+        <br />
+        <ServiceButton
+          $status={serviceDone === true ? "success" : "warning"}
+          onClick={() => setServiceDone(serviceDone === true ? false : true)}
+        >
+          {serviceDone === true ? "Finalizado ✓" : "Marcar como concluído"}
+        </ServiceButton>
       </Card>
     </div>
   );

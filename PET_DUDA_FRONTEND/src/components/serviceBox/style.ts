@@ -1,7 +1,48 @@
 import styled from "styled-components";
 
-export const Card = styled.div`
-  background: #ffffff;
+interface StatusCardProps {
+  $status: string;
+}
+
+interface ServiceButtonProps {
+  $status: "success" | "warning";
+}
+
+export const ServiceButton = styled.button<ServiceButtonProps>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  background: ${({ $status }) =>
+    $status === "success" ? "#DCFCE7" : "#FEF3C7"};
+
+  color: ${({ $status }) => ($status === "success" ? "#15803D" : "#D97706")};
+
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+
+  &:active {
+    transform: translateY(0);
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid
+      ${({ $status }) => ($status === "success" ? "#86EFAC" : "#FCD34D")};
+    outline-offset: 2px;
+  }
+`;
+
+export const Card = styled.div<StatusCardProps>`
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 16px;
@@ -9,6 +50,9 @@ export const Card = styled.div`
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 
   transition: transform 0.2s ease;
+
+  background: ${({ $status }) =>
+    $status === "success" ? "#DCFCE7" : "#ffffff;"};
 
   &:hover {
     transform: translateY(-2px);
