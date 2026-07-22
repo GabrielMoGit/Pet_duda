@@ -51,7 +51,7 @@ router.post(
 router.get("/listPackages", servicePackageController.listPackages);
 router.patch(
   "/alterPackagePaymentStatus",
-  servicePackageController.turnPackagesToPaidStatus,
+  servicePackageController.alterPackagePaymentStatus,
 );
 router.get(
   "/returnPackage",

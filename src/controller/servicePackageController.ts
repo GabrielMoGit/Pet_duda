@@ -286,12 +286,12 @@ class ServicePackageController {
     }
   }
 
-  async turnPackagesToPaidStatus(request: Request, response: Response) {
-    const { package_id } = request.body;
+  async alterPackagePaymentStatus(request: Request, response: Response) {
+    const package_id = request.body;
 
     const servicePackageRepository = new ServicePackageRepository();
 
-    await servicePackageRepository.payPackage(package_id);
+    await servicePackageRepository.alterPackagePaymentStatus(package_id);
 
     return response.json({
       message: "Pacote pago",
