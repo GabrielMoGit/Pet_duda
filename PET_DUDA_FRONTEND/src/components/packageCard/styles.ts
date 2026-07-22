@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 interface StatusBadgeProps {
   $status: string;
@@ -7,6 +7,31 @@ interface StatusBadgeProps {
 interface CopyMessageButtonProps {
   $visible?: boolean;
 }
+
+const ButtonStyle = css`
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+`;
 
 export const Card = styled.div`
   background: #ffffff;
@@ -56,31 +81,21 @@ export const Badge = styled.div<StatusBadgeProps>`
 `;
 
 export const CopyMessageButton = styled.button<CopyMessageButtonProps>`
+  ${ButtonStyle}
+
   display: ${({ $visible = true }) => ($visible ? "inline-flex" : "none")};
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 6px 12px;
-  border: none;
-  border-radius: 999px;
-
-  font-size: 13px;
-  font-weight: 600;
 
   background: #dcfce7;
   color: #15803d;
+`;
 
-  cursor: pointer;
-  transition: opacity 0.2s ease;
+export const PaymentButton = styled.button<StatusBadgeProps>`
+  ${ButtonStyle}
 
-  &:hover {
-    opacity: 0.85;
-  }
+  background: ${({ $status }) =>
+    $status === "success" ? "#DCFCE7" : "#FEF3C7"};
 
-  &:active {
-    opacity: 0.7;
-  }
+  color: ${({ $status }) => ($status === "success" ? "#15803D" : "#D97706")};
 `;
 
 export const InfoSection = styled.div`

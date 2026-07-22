@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Header,
@@ -13,6 +14,7 @@ import {
   Footer,
   Price,
   CopyMessageButton,
+  PaymentButton,
 } from "./styles";
 
 interface Service {
@@ -37,6 +39,13 @@ interface PackageCardProps {
 }
 
 const serviceStatus = "";
+
+const openWhatsApp = (phone: string, message: string) => {
+  const cleanPhone = phone.replace(/\D/g, "");
+  const encodedMessage = encodeURIComponent(message);
+
+  window.open(`https://wa.me/55${cleanPhone}?text=${encodedMessage}`, "_blank");
+};
 
 function FormatDateForCard(date: string) {
   const transformeToDateType = new Date(date);
@@ -70,9 +79,47 @@ function textToSend(
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-  const message = `
-    Vindas ${pet_name} (${hourAndWeekDay})
-  `;
+  const serviceLines = [
+    `📌 Primeira vinda - (${FormatDateForCard(String(services[0].service_date)).slice(0, 18)})`,
+  ];
+
+  if (services.length > 1) {
+    serviceLines.push(
+      `📌 Segunda vinda - (${FormatDateForCard(String(services[1].service_date)).slice(0, 18)})`,
+    );
+  }
+
+  if (services.length > 2) {
+    serviceLines.push(
+      `📌 Terceira vinda - (${FormatDateForCard(String(services[2].service_date)).slice(0, 18)})`,
+      `📌 Quarta vinda - (${FormatDateForCard(String(services[3].service_date)).slice(0, 18)})`,
+    );
+  }
+
+  const finalQuantityServices = serviceLines.join("\n");
+  const message = `Vindas ${pet_name} (${hourAndWeekDay}h)
+
+Início do plano - R$${value}
+
+Pix: 51.409.503/0001-56
+Nome: Maria Eduarda de Andrade Araújo
+
+${finalQuantityServices}
+
+📌 Renovação - (${FormatDateForCard(String(next_package_date)).slice(0, 18)}) - R$${value}
+
+❗ Evite atrasos, nossa tolerância é de até 5 minutos.
+
+❗ Caso precise realizar alguma mudança nas
+datas agendadas, é só avisar com no mínimo *24
+horas de antecedência* que remarcamos
+sem perder nenhum atendimento. O atendimento
+será perdido apenas em caso de falta sem aviso
+ou aviso com menos de 24 horas de antecedência.
+
+❗ O plano deve ser utilizado dentro do
+prazo de 30 dias.
+`;
 
   return message;
 }
@@ -91,6 +138,7 @@ export function PackageCard({
   paid,
   reference_date,
 }: PackageCardProps) {
+  const [isPaid, setIsPaid] = useState(paid);
   return (
     <div>
       <Card>
@@ -101,13 +149,18 @@ export function PackageCard({
           <div style={{ display: "flex", gap: "5px" }}>
             <CopyMessageButton
               $visible={done === 1}
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  textToSend("kiara", services, reference_date, "150,00"),
-                )
-              }
+              onClick={() => {
+                const message = textToSend(
+                  pet,
+                  services,
+                  reference_date,
+                  value,
+                );
+
+                openWhatsApp(phone, message);
+              }}
             >
-              Mensagem
+              WhatsApp
             </CopyMessageButton>
             <Badge $status={done ? "success" : "warning"}>
               {done ? "finalizado" : "Em andamento"}
@@ -164,9 +217,12 @@ export function PackageCard({
         </ServicesContainer>
 
         <Footer>
-          <Badge $status={paid ? "success" : "warning"}>
-            {paid ? "Pago" : "Não Pago"}
-          </Badge>
+          <PaymentButton
+            $status={isPaid === 1 ? "success" : "warning"}
+            onClick={() => setIsPaid(isPaid === 1 ? 0 : 1)}
+          >
+            {isPaid === 1 ? "Pago" : "Não Pago"}
+          </PaymentButton>
 
           <Price>{value}</Price>
         </Footer>
