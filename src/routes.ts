@@ -49,7 +49,10 @@ router.post(
   servicePackageController.userResponse.bind(servicePackageController),
 );
 router.get("/listPackages", servicePackageController.listPackages);
-router.patch("/payPackage", servicePackageController.turnPackagesToPaidStatus);
+router.patch(
+  "/alterPackagePaymentStatus",
+  servicePackageController.turnPackagesToPaidStatus,
+);
 router.get(
   "/returnPackage",
   servicePackageController.returnExistentPackageForPetid,

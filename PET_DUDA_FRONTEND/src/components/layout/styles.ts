@@ -40,8 +40,8 @@ export const SidePanel = styled.div<{ isOpen: boolean }>`
   background-color: #000000;
   padding: 10px;
   display: flex;
-  flex-direction: column;  
-  gap: 10px;               
+  flex-direction: column;
+  gap: 10px;
 
   @media (max-width: 768px) {
     position: fixed;
@@ -57,7 +57,7 @@ export const SidePanel = styled.div<{ isOpen: boolean }>`
 export const SidePanelHeader = styled.div`
   font-size: 50px;
   font-weight: bold;
-  margin-bottom: 20px;    
+  margin-bottom: 20px;
   color: #fff;
   text-align: center;
 `;
@@ -91,27 +91,24 @@ export const Content = styled.div`
 `;
 
 type PageContentProps = {
-  hasContent: boolean
-}
- 
+  hasContent: boolean;
+};
+
 export const PageContent = styled.div<PageContentProps>`
   width: 93%;
   padding: 20px;
   height: 87%;
   margin-top: 25px;
   margin-left: 25px;
-  background-color: ${({ hasContent }) => 
-    hasContent  
-      ? "rgba(142, 140, 140, 0.0)"
-      : "rgba(142, 140, 140, 0.4)"};
+  background-color: ${({ hasContent }) =>
+    hasContent ? "rgba(142, 140, 140, 0.0)" : "rgba(142, 140, 140, 0.4)"};
 
   ${({ hasContent }) =>
     !hasContent &&
     `
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-    `
-  }
+    `}
 
   border-radius: 10px;
 
