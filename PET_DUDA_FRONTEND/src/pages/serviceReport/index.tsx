@@ -113,6 +113,7 @@ export function ServiceReport() {
       });
 
       setServices(data.intervalDate ?? []);
+      console.log(data);
     } catch (err) {
       console.error("Erro ao carregar serviços", err);
     } finally {
@@ -231,9 +232,10 @@ export function ServiceReport() {
       <div>
         {services.map((service) => (
           <AppointmentCard
-            package_id={service.service_package_id}
             key={service.id}
+            package_id={service.service_package_id}
             id={service.id}
+            service_done={service.service_done}
             date={formatDateForCard(service.service_date)}
             service_type={service.service_type}
             pkg_description={service.pkg_description}

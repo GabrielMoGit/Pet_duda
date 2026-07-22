@@ -18,6 +18,7 @@ import {
 interface AppointmentCardProps {
   package_id: number;
   id: number;
+  service_done: number;
   date: string;
   service_type: string;
   pet: string;
@@ -39,6 +40,7 @@ async function alterServiceDoneStatus(service_id: number) {
 export function AppointmentCard({
   package_id,
   id,
+  service_done,
   date,
   service_type,
   pet,
@@ -46,7 +48,7 @@ export function AppointmentCard({
   phone,
   pkg_description,
 }: AppointmentCardProps) {
-  const [serviceDone, setServiceDone] = useState(false);
+  const [serviceDone, setServiceDone] = useState(service_done);
   return (
     <div style={{ marginBottom: "5px" }}>
       <Card $status={serviceDone ? "success" : "warning"}>
@@ -74,14 +76,14 @@ export function AppointmentCard({
         </Footer>
         <br />
         <ServiceButton
-          $status={serviceDone === true ? "success" : "warning"}
+          $status={serviceDone === 1 ? "success" : "warning"}
           onClick={() => {
-            setServiceDone(serviceDone === true ? false : true);
+            const newStatus = serviceDone === 1 ? 0 : 1;
+            setServiceDone(newStatus);
             alterServiceDoneStatus(id);
-            console.log(id);
           }}
         >
-          {serviceDone === true ? "Finalizado ✓" : "Marcar como concluído"}
+          {serviceDone === 1 ? "Finalizado ✓" : "Marcar como concluído"}
         </ServiceButton>
       </Card>
     </div>
