@@ -111,8 +111,8 @@ ${finalQuantityServices}
 ❗ Evite atrasos, nossa tolerância é de até 5 minutos.
 
 ❗ Caso precise realizar alguma mudança nas
-datas agendadas, é só avisar com no mínimo *24
-horas de antecedência* que remarcamos
+datas agendadas, é só avisar com no mínimo 24
+horas de antecedência que remarcamos
 sem perder nenhum atendimento. O atendimento
 será perdido apenas em caso de falta sem aviso
 ou aviso com menos de 24 horas de antecedência.
@@ -156,6 +156,8 @@ export function PackageCard({
                   reference_date,
                   value,
                 );
+
+                navigator.clipboard.writeText(message);
 
                 openWhatsApp(phone, message);
               }}
