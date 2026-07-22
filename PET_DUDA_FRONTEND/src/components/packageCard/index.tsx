@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { api } from "../../services/api";
 import {
   Card,
   Header,
@@ -36,6 +37,16 @@ interface PackageCardProps {
   value: string;
   paid: number;
   reference_date: Date;
+}
+
+async function alterPaymentStatus(packageId: number) {
+  try {
+    const databaseResponse = await api.patch("/alterPackagePaymentStatus", {
+      package_id: packageId,
+    });
+  } catch (err) {
+    console.error("Erro ao alterar status de pagamento", err);
+  }
 }
 
 const serviceStatus = "";
@@ -221,7 +232,10 @@ export function PackageCard({
         <Footer>
           <PaymentButton
             $status={isPaid === 1 ? "success" : "warning"}
-            onClick={() => setIsPaid(isPaid === 1 ? 0 : 1)}
+            onClick={() => {
+              setIsPaid(isPaid === 1 ? 0 : 1);
+              alterPaymentStatus(id);
+            }}
           >
             {isPaid === 1 ? "Pago" : "Não Pago"}
           </PaymentButton>
