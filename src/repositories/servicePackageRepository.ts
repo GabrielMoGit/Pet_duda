@@ -75,14 +75,18 @@ class ServicePackageRepository {
     await this.repository.save(pkg);
   }
 
-  async payPackage(id: number) {
+  async alterPackagePaymentStatus(id: number) {
     const pkg = await this.repository.findOneBy({ id });
 
     if (!pkg) {
       return;
     }
 
-    pkg.paid = 1;
+    if (pkg.paid === 0) {
+      pkg.paid = 1;
+    } else {
+      pkg.paid = 0;
+    }
 
     await this.repository.save(pkg);
   }
