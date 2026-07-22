@@ -217,6 +217,28 @@ class ServiceController {
       return response.json({ intervalDate });
     }
   }
+
+  async alterServiceDoneStatus(request: Request, response: Response) {
+    const { service_id } = request.body;
+
+    const serviceRepository = new ServiceRepository();
+    try {
+      const serviceFound = serviceRepository.alterServiceDoneStatus(service_id);
+      if (!serviceFound) {
+        return response.status(404).json({
+          message: "Serviço não encontrado",
+        });
+      }
+
+      return response.status(200).json({
+        message: "Status de finalizado alterado",
+      });
+    } catch (error) {
+      return response.status(500).json({
+        message: "Não foi possível acesar o banco" + error,
+      });
+    }
+  }
 }
 
 export { ServiceController };

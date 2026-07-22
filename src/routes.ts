@@ -43,6 +43,10 @@ router.post(
   serviceController.createIndependentService.bind(serviceController),
 );
 router.get("/listServices", serviceController.returnServicesForDate);
+router.patch(
+  "/alterServiceDoneStatus",
+  serviceController.alterServiceDoneStatus,
+);
 
 router.post(
   "/servicePackage",
