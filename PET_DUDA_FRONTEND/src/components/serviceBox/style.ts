@@ -24,21 +24,15 @@ export const ServiceButton = styled.button<ServiceButtonProps>`
   transition: all 0.2s ease;
 
   background: ${({ $status }) =>
-    $status === "success" ? "#DCFCE7" : "#FEF3C7"};
+    $status === "success" ? "#DCFCE7" : "#f4f4f4"};
 
-  color: ${({ $status }) => ($status === "success" ? "#15803D" : "#D97706")};
+  color: ${({ $status }) => ($status === "success" ? "#15803D" : "#cb8331")};
 
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 
   &:active {
     transform: translateY(0);
     opacity: 0.8;
-  }
-
-  &:focus-visible {
-    outline: 2px solid
-      ${({ $status }) => ($status === "success" ? "#86EFAC" : "#FCD34D")};
-    outline-offset: 2px;
   }
 `;
 
@@ -52,7 +46,7 @@ export const Card = styled.div<StatusCardProps>`
   transition: transform 0.2s ease;
 
   background: ${({ $status }) =>
-    $status === "success" ? "#DCFCE7" : "#ffffff;"};
+    $status === "success" ? "#f1fff6" : "#ffffff"};
 
   &:hover {
     transform: translateY(-2px);
@@ -97,7 +91,7 @@ export const Description = styled.div`
   font-weight: 600;
 
   background: #dbfee4;
-  color: #1dd852;
+  color: #17933a;
 `;
 
 export const Footer = styled.div`
