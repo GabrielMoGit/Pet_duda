@@ -287,7 +287,7 @@ class ServicePackageController {
   }
 
   async alterPackagePaymentStatus(request: Request, response: Response) {
-    const package_id = request.body;
+    const { package_id } = request.body;
 
     const servicePackageRepository = new ServicePackageRepository();
 
