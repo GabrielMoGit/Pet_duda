@@ -2,79 +2,86 @@ import { dataSource } from "../database/dataSource";
 import { pets } from "../models/pets";
 import { Repository } from "typeorm";
 
-class PetRepository{
+class PetRepository {
+  private repository: Repository<pets>;
 
-    private repository: Repository<pets>
+  constructor() {
+    this.repository = dataSource.getRepository(pets);
+  }
 
-    constructor(){
-        this.repository = dataSource.getRepository(pets)
+  async createAndSave(name: string, id_tutor: string) {
+    const pet = await this.repository.create({ name, id_tutor });
+    return await this.repository.save(pet);
+  }
+
+  async findById(id: string) {
+    const pet = await this.repository.findOneBy({ id });
+
+    if (!pet) {
+      throw new Error("Pet não existe");
     }
 
-    async createAndSave(name: string, id_tutor: string){
-        const pet = this.repository.create({name, id_tutor})
-        return this.repository.save(pet)
+    return pet;
+  }
+
+  async checkIfPetAlreadyExistForTutor(name: string, id_tutor: string) {
+    return await this.repository.findOneBy({ name, id_tutor });
+  }
+
+  async alterPetData(id: string, name: string) {
+    const petFound = await this.repository.findOneBy({ id });
+
+    if (!petFound) {
+      throw new Error("Pet não encontrado");
     }
 
-    async checkIfPetAlreadyExistForTutor(name: string, id_tutor: string){
-        return this.repository.findOneBy({name, id_tutor})
+    petFound.name = name;
+
+    const alteredPet = await this.repository.save(petFound);
+
+    return alteredPet;
+  }
+
+  async returnTutorAndPetNameFromPetId(id: string) {
+    const pet = await this.repository.findOneBy({ id });
+
+    if (!pet) {
+      throw new Error("Pet não encontrado no banco de dados");
+    }
+    return {
+      pet: {
+        petName: pet?.name,
+        idTutor: pet?.id_tutor,
+      },
+    };
+  }
+
+  async listAllExistentPets() {
+    const pets = await this.repository.find();
+
+    return pets;
+  }
+
+  async listExistentPetsForTutor(id_tutor: string) {
+    const pets = await this.repository.findBy({ id_tutor });
+
+    if (!pets) {
+      throw new Error("Pets não encontrados");
+    }
+    return pets;
+  }
+
+  async deletePet(id: string) {
+    const pet = await this.repository.findOneBy({ id });
+
+    if (!pet) {
+      throw new Error("Pet não encontrado");
     }
 
-    async alterPetData(id: string, name: string){
-        const petFound = await this.repository.findOneBy({id})
+    await this.repository.delete(pet);
 
-        if(!petFound){
-            throw new Error("Pet não encontrado")
-        }
-
-        petFound.name = name
-
-        const alteredPet = await this.repository.save(petFound)
-
-        return alteredPet
-    }
-
-    async returnTutorAndPetNameFromPetId(id: string){
-        const pet = await this.repository.findOneBy({id})
-
-        if (!pet) {
-        throw new Error("Pet não encontrado no banco de dados")
-        }
-        return {
-            pet:{
-                petName: pet?.name,
-                idTutor: pet?.id_tutor
-            }
-        }
-    }
-
-    async listAllExistentPets(){
-        const pets = await this.repository.find()
-        
-        return pets
-    }
-
-    async listExistentPetsForTutor(id_tutor: string){
-        const pets = await this.repository.findBy({id_tutor})
-
-        if(!pets){
-            throw new Error("Pets não encontrados")
-        }
-        return pets
-    }
-
-    async deletePet(id: string){
-        const pet = await this.repository.findOneBy({id})
-
-        if(!pet){
-            throw new Error("Pet não encontrado")
-        }
-
-        await this.repository.delete(pet)
-        
-        return true
-    }
-
-
+    return true;
+  }
 }
 
-export {PetRepository}
+export { PetRepository };

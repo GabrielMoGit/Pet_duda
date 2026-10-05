@@ -2,82 +2,106 @@ import { dataSource } from "../database/dataSource";
 import { services } from "../models/services";
 import { Repository, LessThan } from "typeorm";
 
-class ServiceRepository{
+class ServiceRepository {
+  private repository: Repository<services>;
 
-    private repository : Repository<services>
+  constructor() {
+    this.repository = dataSource.getRepository(services);
+  }
 
-    constructor(){
-        this.repository = dataSource.getRepository(services)
+  async createAndSave(
+    service_package_id: number,
+    service_date: Date,
+    service_done: number,
+  ) {
+    const service = this.repository.create({
+      service_package_id,
+      service_date,
+      service_done,
+    });
+    return this.repository.save(service);
+  }
+
+  async listByservicePackageId(service_package_id: number) {
+    return this.repository.findBy({ service_package_id });
+  }
+
+  async listAllServices() {
+    return await this.repository.find();
+  }
+
+  async turnDonethepPassedServices() {
+    const now = new Date();
+
+    const services = await this.repository.find({
+      where: {
+        service_date: LessThan(now),
+        service_done: 0,
+      },
+    });
+
+    for (const item of services) {
+      item.service_done = 1;
     }
 
-    async createAndSave(service_package_id: number, service_date: Date, service_done: number){
-        const service = this.repository.create({service_package_id, service_date, service_done})
-        return this.repository.save(service)
+    await this.repository.save(services);
+  }
+
+  async alterServiceDate(id: number, service_date: Date) {
+    const service = await this.repository.findOneBy({ id });
+    const now = new Date();
+
+    if (!service) {
+      return;
     }
 
-    async listByservicePackageId(service_package_id: number){
-        return this.repository.findBy({service_package_id})
+    if (now.getTime() > service_date.getTime()) {
+      service.service_done = 1;
+    }
+    service.service_date = service_date;
+
+    await this.repository.save(service);
+    return service;
+  }
+
+  async removeDate(id: number) {
+    const date = await this.repository.findOneBy({ id });
+
+    if (!date) {
+      return {
+        message: "Data não localizada",
+      };
     }
 
-    async listAllServices(){
-        return await this.repository.find()
+    await this.repository.remove(date);
+    return {
+      message: "Data removida",
+    };
+  }
+
+  async returnDatesFromPackage(service_package_id: number) {
+    return await this.repository.find({
+      where: { service_package_id },
+    });
+  }
+
+  async alterServiceDoneStatus(id: number) {
+    const serviceFound = await this.repository.findOneBy({ id });
+
+    if (!serviceFound) {
+      return {
+        message: "Serviço não encontrado",
+      };
     }
 
-    async turnDonethepPassedServices(){
-        const now = new Date()
-
-        const services = await this.repository.find({
-            where: {
-                service_date: LessThan(now),
-                service_done: 0
-            }
-        })
-
-        for(const item of services){
-            item.service_done = 1
-        }
-
-        await this.repository.save(services)
+    if (serviceFound.service_done === 0) {
+      serviceFound.service_done = 1;
+    } else {
+      serviceFound.service_done = 0;
     }
 
-    async alterServiceDate(id: number, service_date: Date){
-        const service = await this.repository.findOneBy({id})
-        const now = new Date()
-        
-        if(!service){
-            return 
-        }
-
-        if(now.getTime() > service_date.getTime()){
-            service.service_done = 1
-        }
-        service.service_date = service_date
-
-        await this.repository.save(service)
-        return (service)
-    }
-
-    async removeDate(id: number){
-        const date =await this.repository.findOneBy({id})
-
-        if(!date){
-            return {
-                message: 'Data não localizada'
-            }
-        }
-
-        await this.repository.remove(date)
-        return {
-            message: 'Data removida'
-        }
-    }
-
-    async returnDatesFromPackage(service_package_id: number){
-        return await this.repository.find({
-            where: { service_package_id}
-        })
-    }
-    
+    await this.repository.save(serviceFound);
+  }
 }
 
-export { ServiceRepository  }  
+export { ServiceRepository };
